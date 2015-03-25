@@ -33,11 +33,13 @@ tokens += [ x.upper() for x in keywords ]
 
 def t_IDENTIFIER(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
+
     if t.value in keywords:
-        t.type = t.value.upper()
-        if t.type == "TRUE" or t.type == "FALSE":
+        if t.value in ["True", "False"]:
             t.type = "BOOLEAN"
             t.value = True if t.value == "True" else False
+        else:
+            t.type = t.value.upper()
     return t
 
 def t_SQUOTESTRING(t):
