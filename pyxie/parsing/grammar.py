@@ -11,15 +11,15 @@ class Grammar(object):
 
     def p_program(self, p):
         "program : statements"
-        p[0] = [ "statements", p[1] ]
+        p[0] = [ "program", p[1] ]
 
     def p_statements_1(self, p):
         "statements : statement"
-        p[0] = [ "statements", p[1] ]
+        p[0] = [ "statements", [ p[1] ]]
 
     def p_statements_2(self, p):
         "statements : statement statements"
-        p[0] = [ "statements", p[1], p[2] ]
+        p[0] = [ "statements", [ p[1] ] + p[2][1] ]
 
     def p_statement_1(self, p):
         """statement : NUMBER EOL
