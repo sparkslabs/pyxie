@@ -55,6 +55,10 @@ class Grammar(object):
         "value_literal : BOOLEAN"
         p[0] = [ "value_literal", p[1], "BOOLEAN", "INT", p.lineno(1) ]
 
+    def p_value_literal_8(self, p):
+        "value_literal : IDENTIFIER"
+        p[0] = [ "value_literal", p[1], "IDENTIFIER", p.lineno(1) ]
+
 
 
 

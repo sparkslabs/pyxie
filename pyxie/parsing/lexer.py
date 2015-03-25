@@ -20,7 +20,7 @@ tokens = [
    'EOL'
 ]
 
-tokens += [ x.upper() for x in keywords ]
+tokens += [ x.upper() for x in keywords if (x not in [ "True", "False" ])]
 
 ## Regular expression rules for simple tokens
 #t_PLUS    = r'\+'
