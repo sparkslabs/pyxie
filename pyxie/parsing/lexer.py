@@ -16,7 +16,8 @@ tokens = [
    'BINARY',
    'STRING',
    'IDENTIFIER',
-   'BOOLEAN'
+   'BOOLEAN',
+   'EOL'
 ]
 
 tokens += [ x.upper() for x in keywords ]
@@ -81,9 +82,10 @@ def t_NUMBER(t):
 
 
 # Define a rule so we can track line numbers
-def t_newline(t):
+def t_EOL(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
+    return t
 
 # A string containing ignored characters (spaces and tabs)
 t_ignore  = ' \t'
