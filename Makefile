@@ -41,15 +41,18 @@ clean:
 	$(PYTHON) setup.py clean
 	rm -rf build/ MANIFEST
 	find . -name '*.pyc' -delete
+	rm -f parser.out parsetab.py
 
 distclean:
 	$(PYTHON) setup.py clean
 	rm -rf dist
 	rm -rf build/ MANIFEST
 	find . -name '*.pyc' -delete
+	rm -f parser.out parsetab.py
 
 devloop: purge distclean deb use
 	echo
 
 test:
-	behave
+	PYTHONPATH="." ./bin/pyxie
+	# behave
