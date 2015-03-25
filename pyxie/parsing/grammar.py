@@ -22,10 +22,19 @@ class Grammar(object):
         p[0] = [ "statements", [ p[1] ] + p[2][1] ]
 
     def p_statement_1(self, p):
+        "statement : assignment_statement EOL"
+        p[0] = [ "statement", p[1] ]
+
+    def p_statement_2(self, p):
         "statement : value_literal EOL"
         p[0] = [ "statement", p[1] ]
 
-
+    def p_assignment_statement(self, p):
+        "assignment_statement : IDENTIFIER ASSIGN value_literal"
+        p[0] = ["assignment_statement", [p[1], "IDENTIFIER", p.lineno(1) ],
+                                        ["ASSIGN", p[2]],
+                                        p[3]
+               ]
 
     def p_value_literal_1(self, p):
         "value_literal : NUMBER"

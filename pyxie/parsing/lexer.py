@@ -19,8 +19,10 @@ tokens = [
    'BOOLEAN',
    'EOL'
 ]
+symbols = [ "ASSIGN" ]
 
 tokens += [ x.upper() for x in keywords if (x not in [ "True", "False" ])]
+tokens += symbols
 
 ## Regular expression rules for simple tokens
 #t_PLUS    = r'\+'
@@ -30,6 +32,7 @@ tokens += [ x.upper() for x in keywords if (x not in [ "True", "False" ])]
 #t_LPAREN  = r'\('
 #t_RPAREN  = r'\)'
 
+t_ASSIGN = r'='
 
 def t_IDENTIFIER(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
