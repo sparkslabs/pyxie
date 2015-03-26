@@ -6,7 +6,7 @@ import ply
 import ply.lex as lex
 
 
-keywords = [ "True", "False" ]
+keywords = [ "True", "False","print" ]
 
 tokens = [
    'NUMBER',
@@ -18,8 +18,8 @@ tokens = [
    'IDENTIFIER',
    'BOOLEAN',
    'EOL'
-]
-symbols = [ "ASSIGN" ]
+   ]
+symbols = [ "ASSIGN", "COMMA" ]
 
 tokens += [ x.upper() for x in keywords if (x not in [ "True", "False" ])]
 tokens += symbols
@@ -33,6 +33,7 @@ tokens += symbols
 #t_RPAREN  = r'\)'
 
 t_ASSIGN = r'='
+t_COMMA = r','
 
 def t_IDENTIFIER(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'

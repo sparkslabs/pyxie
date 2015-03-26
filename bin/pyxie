@@ -1,0 +1,29 @@
+#!/usr/bin/python
+
+from pyxie.parsing.lexer import lexer
+from pyxie.parsing.grammar import parse
+
+import os
+import pprint
+
+# Parse testing
+
+testdir = "test-data/progs/"
+for testfile in os.listdir(testdir):
+    if not testfile.endswith(".pyxie"):
+        # Suitable for parse testing, but not compiling.
+        continue
+    print "_______________________________________________________________"
+    print "TEST PARSING", testfile
+    data = open(os.path.join(testdir,testfile)).read()
+    x = parse(data, lexer)
+    pprint.pprint(x)
+
+# Compilation Tests
+testdir = "test-data/progs/"
+for testfile in os.listdir(testdir):
+    if not testfile.endswith(".pyxie"):
+        # Suitable for parse testing, but not compiling.
+        continue
+    print "_______________________________________________________________"
+    print "TEST COMPILING", testfile
