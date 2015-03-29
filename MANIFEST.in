@@ -2,5 +2,6 @@ recursive-include examples *
 recursive-include features *
 recursive-include test-data *
 recursive-include bin *
+
 include README.md
 include stdeb.cfg
