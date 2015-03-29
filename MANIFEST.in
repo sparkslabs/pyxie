@@ -1,0 +1,5 @@
+recursive-include doc *
+recursive-include examples *
+recursive-include features *
+include README.md
+include stdeb.cfg
