@@ -17,23 +17,26 @@
 
 from pyxie.parsing.lexer import lexer
 from pyxie.parsing.grammar import parse
+from pyxie.model.transform import ast_to_cst
+from pyxie.codegen.simple_cpp import C_Program, source, makefile_tmpl
 
 import os
 import pprint
 
 # Parse testing
 
-testdir = "test-data/progs/"
-for testfile in os.listdir(testdir):
-    if not testfile.endswith(".pyxie"):
-        # Suitable for parse testing, but not compiling.
-        continue
-    print "_______________________________________________________________"
-    print "TEST PARSING", testfile
-    data = open(os.path.join(testdir,testfile)).read()
-    x = parse(data, lexer)
-    pprint.pprint(x)
-
+if 0:
+    testdir = "test-data/progs/"
+    for testfile in os.listdir(testdir):
+        if not testfile.endswith(".pyxie"):
+            # Suitable for parse testing, but not compiling.
+            continue
+        print "_______________________________________________________________"
+        print "TEST PARSING", testfile
+        data = open(os.path.join(testdir,testfile)).read()
+        x = parse(data, lexer)
+        pprint.pprint(x)
+# ast_to_cst
 # Compilation Tests
 testdir = "test-data/progs/"
 for testfile in os.listdir(testdir):
@@ -42,3 +45,48 @@ for testfile in os.listdir(testdir):
         continue
     print "_______________________________________________________________"
     print "TEST COMPILING", testfile
+    data = open(os.path.join(testdir,testfile)).read()
+    AST = parse(data, lexer)
+    pprint.pprint(AST)
+    cname = testfile.replace(".pyxie", "")
+    CST = ast_to_cst(cname, AST)
+    print "CST:", pprint.pformat(CST)
+
+    program = C_Program.fromjson(CST)
+    program.generate()
+
+    print source
+
+    import time
+    import pprint
+    import os
+
+    pprint.pprint(source, width=200)
+    now = int(time.time())
+    dirname = str(now - 1427000000)
+    print "BUILDING PROGRAM", dirname
+    os.mkdir(dirname)
+    f = open(os.path.join(dirname,program.name+".c"), "w")
+    for line in source:
+        f.write(line)
+        f.write("\n")
+    f.close()
+
+    makefile = makefile_tmpl % {"filename": program.name }
+    f = open(os.path.join(dirname,"Makefile"), "w")
+    f.write(makefile)
+    f.close()
+
+    os.chdir(dirname)
+    os.system("make")
+
+
+
+
+
+
+
+
+
+
+

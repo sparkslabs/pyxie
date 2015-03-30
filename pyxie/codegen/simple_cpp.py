@@ -24,7 +24,7 @@ def Print(*args):
 
 def mkStatement(statement_spec):
     ss = statement_spec
-    if ss[0] == "assigment":
+    if ss[0] == "assignment":
         return Assigment( ss[1], ss[3], ss[2])
 
     if ss[0] == "print_statement":
@@ -119,7 +119,7 @@ class Assigment(object):
         self.assigntype = assigntype
 
     def json(self):
-        return ["assigment", self.lvalue, self.assigntype, self.rvalue ]
+        return ["assignment", self.lvalue, self.assigntype, self.rvalue ]
 
     def code(self):
         return self.lvalue + " "+self.assigntype+" " + self.rvalue

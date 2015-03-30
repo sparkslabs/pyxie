@@ -46,16 +46,16 @@ class Grammar(object):
 
     def p_print_statement_1(self, p):
         "print_statement : PRINT expr_list"
-        p[0] = [ "print_statement ", p[2][1] ]
+        p[0] = [ "print_statement", p[2][1] ]
 
 
     def p_expr_list_1(self,p):
         "expr_list : value_literal"
-        p[0] = [ "expr_list ", [ p[1] ] ]
+        p[0] = [ "expr_list", [ p[1] ] ]
 
     def p_expr_list_2(self,p):
         "expr_list : value_literal COMMA expr_list"
-        p[0] = [ "expr_list ", [ p[1] ] + p[3][1] ]
+        p[0] = [ "expr_list", [ p[1] ] + p[3][1] ]
 
     def p_statement_3(self, p):
         "statement : value_literal EOL"
