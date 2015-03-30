@@ -67,14 +67,29 @@ be, by definition, a non-dynamic (or limitedly dynamic subset)
 
 ## Why write this?
 
-Well, I wrote something similar to this at work, and I don't know if that
-code will ever be made public.  Also, I'd find it useful, and since I work
-with kids in my spare time, it opens up options there.  By definition, it's
-a ground up rewrite. One major difference between the two things is that
-this will aim to be a more rounded implementation, and also that rather
-than doing code generation from the concrete syntax tree that it will
-build a proper AST and do perform tree transformations before generating
-code.
+Well, I wrote something similar to this at work, and but this is a complete
+rewrite from scratch, so I can share this with others.
+
+There's various reasons for that, but aside from the fact I'd find it useful,
+I  also work with kids in my spare time, and it opens up options there.
+
+By definition, it's a ground up rewrite. One major difference between the
+two things is that this will aim to be a more rounded implementation, and
+also that rather than doing code generation from the concrete syntax tree
+that it will build a proper AST and do perform tree transformations before
+generating code.
+
+## Is this part of any larger project?
+
+No. Not even a little bit.
+
+It's similar to something else I started last year, but this is a complete
+rewrite from scratch, entirely in my own time, using my own kit scratching
+a personal itch. It's derived in part on my SWP project from about 10 years
+ago. Furthermore, it's much, much better structured.
+
+The aspiration for this is to help support The Scout Association's "Digital
+Maker" badge, but that's some way off!
 
 
-Michael Sparks, March 2015
+Michael Sparks, 29 March 2015
