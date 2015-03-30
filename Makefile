@@ -44,7 +44,7 @@ deb:
 
 ppadeb:
 	python setup.py sdist
-	cd dist && py2dsc $(PROJECT)-* && cd deb_dist/$(PROJECT)-$(VERSION) && debuild -S && dput ppa:sparkslabs/packages $(PROJECT)_*_source.changes
+	cd dist && py2dsc $(PROJECT)-* && cd deb_dist/$(PROJECT)-$(VERSION) && debuild -S && cd .. && dput ppa:sparkslabs/packages $(PROJECT)_*_source.changes
 
 use:
 	sudo dpkg -i dist/deb_dist/python-$(PROJECT)*deb
