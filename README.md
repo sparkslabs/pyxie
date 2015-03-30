@@ -22,6 +22,28 @@ In the past I've written a test driven compiler suite, so I'll be following
 the same approach here.  It did consider actually making Pyxie use that as a
 frontend, but for the moment, I'd like python compatibility.
 
+## Status
+
+For the impatient: this does NOT do what you want yet.
+
+What it *does* do:
+
+- Recognise python programs with simple assigment & print statements
+- Parse those to an AST
+- Can represent equivalent C programs using a concrete C representation (CST)
+- Can translate the AST to the CST and then generate C++ code from the CST
+
+That means it can compile one very very simple type of python program
+that looks like this:
+
+    greeting = "hello"
+    name = "world"
+
+    print greeting, name
+
+
+Yes, that's not a lot. But on the flipside, it's a starting point.
+
 ## Influences
 
 Many moons ago, I made a generic language parser which I called SWP (semantic
