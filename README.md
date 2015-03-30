@@ -34,13 +34,14 @@ What it *does* do:
 - Can translate the AST to the CST and then generate C++ code from the CST
 
 That means it can compile one very very simple type of python program
-that looks like this:
+that looks like this...
 
     greeting = "hello"
     name = "world"
 
     print greeting, name
 
+... into the equivalent C program.
 
 Yes, that's not a lot. But on the flipside, it's a starting point.
 
