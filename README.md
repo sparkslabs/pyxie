@@ -24,7 +24,7 @@ frontend, but for the moment, I'd like python compatibility.
 
 ## Status
 
-For the impatient: this does NOT do what you want yet.
+For the impatient: this does NOT do what you want, **yet**.
 
 What it *does* do:
 
