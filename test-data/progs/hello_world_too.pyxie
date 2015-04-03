@@ -1,0 +1,6 @@
+greeting = "hello"
+name = "world"
+extra = "Yay"
+
+print greeting, name, extra
+
