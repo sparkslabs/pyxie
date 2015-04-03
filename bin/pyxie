@@ -18,6 +18,7 @@ from pyxie.parsing.lexer import lexer
 from pyxie.parsing.grammar import parse
 from pyxie.model.transform import ast_to_cst
 from pyxie.codegen.simple_cpp import C_Program, source, makefile_tmpl
+import pyxie.codegen.simple_cpp
 
 import os
 import pprint
@@ -43,6 +44,7 @@ testprogs_dir = os.path.join(testdir, "progs")
 
 rootdir = os.getcwd()
 for testfile in os.listdir(testprogs_dir):
+    pyxie.codegen.simple_cpp.source = []
     os.chdir(rootdir)
     if not testfile.endswith(".pyxie"):
         # Suitable for parse testing, but not compiling.
@@ -59,13 +61,13 @@ for testfile in os.listdir(testprogs_dir):
     program = C_Program.fromjson(CST)
     program.generate()
 
-    print source
+    print pyxie.codegen.simple_cpp.source
 
     allresults_dir = os.path.join(testdir, "genprogs")
     
     thisresult_dir = os.path.join(allresults_dir, testfile)
     
-    pprint.pprint(source, width=200)
+    pprint.pprint(pyxie.codegen.simple_cpp.source, width=200)
 
     now = int(time.time())
 
@@ -76,7 +78,7 @@ for testfile in os.listdir(testprogs_dir):
        if e.errno != 17: # Directory exists
            raise
     f = open(os.path.join(thisresult_dir,program.name+".c"), "w")
-    for line in source:
+    for line in pyxie.codegen.simple_cpp.source:
         f.write(line)
         f.write("\n")
     f.close()
