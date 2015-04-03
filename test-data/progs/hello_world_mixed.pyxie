@@ -1,0 +1,8 @@
+first = 1
+second = 2
+third = 3
+
+print first, second, third
+print 1, 2, "hello"
+print 1, 2.1, 0x20, 0b10101, 0100, True, False, "hello"
+

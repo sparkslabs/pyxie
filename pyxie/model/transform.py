@@ -101,20 +101,53 @@ def convert_assignment(assignment):
 #    rvalue = rvalue[1]
     return ["assignment", lvalue, "=", rvalue ]
 #    return ["assignment", lvalue, "=", '"'+rvalue+'"' ]
+def convert_value_literal(arg):
+    print repr(arg), arg
+    stype = None
+    try:
+        tag, value, vtype, line = arg
+    except ValueError:
+        tag, value, vtype, stype, line = arg
+    if vtype == "STRING":
+        return ["string",  value]
+    if vtype == "NUMBER":
+        return ["integer",  value]
+    if vtype == "FLOAT":
+        return ["double",  value]
+    if vtype == "IDENTIFIER":
+        return ["identifier",  value]
+    if vtype == "BOOLEAN":
+        print "VALUE", repr(value), value
+        if value == True:
+            value = "true"
+        else:
+            value = "false"
+        return ["boolean",  value]
+
+    todo("Cannot handle other value literals")
+    raise CannotConvert("Cannot convert value-literal of type" + repr(arg))
+
+def convert_arg(arg):
+    if arg[0] == "value_literal":
+        return convert_value_literal(arg)
+    else:
+        todo("Handle print for non-value-literals")
+        raise CannotConvert("Cannot convert print for non-value-literals")
 
 def convert_print(arg_spec):
+    print "convert_print(arg_spec)", repr(arg_spec[0]), len(arg_spec[0])
     arg_spec = arg_spec[0]
     cstatement = []
     cargs = []
     print "arg_spec",arg_spec[0]
     for arg in arg_spec:
         print arg[0]
-        if arg[0] != "value_literal":
-            todo("Handle print for non-value-literals")
-            raise CannotConvert("Cannot convert print for non-value-literals")
-        carg = arg[1]
+        print "We need to convert the arg", arg
+        crepr = convert_arg(arg)
+        carg = crepr
         cargs.append(carg)
     return ["print_statement"] + cargs
+
 
 def convert_statements(AST):
     cstatements = []
@@ -178,40 +211,48 @@ def ast_to_cst(program_name, AST):
 
 
 if __name__ == "__main__":
-    AST =  ['program',
+    AST =   ['program',
              ['statements',
               [['assignment_statement',
-                ['greeting', 'IDENTIFIER', 1],
+                ['first', 'IDENTIFIER', 1],
                 ['ASSIGN', '='],
-                ['value_literal', 'hello', 'STRING', 1]],
+                ['value_literal', 1, 'NUMBER', 'INT', 1]],
                ['assignment_statement',
-                ['name', 'IDENTIFIER', 2],
+                ['second', 'IDENTIFIER', 2],
                 ['ASSIGN', '='],
-                ['value_literal', 'world', 'STRING', 2]],
+                ['value_literal', 2, 'NUMBER', 'INT', 2]],
+               ['assignment_statement',
+                ['third', 'IDENTIFIER', 3],
+                ['ASSIGN', '='],
+                ['value_literal', 3, 'NUMBER', 'INT', 3]],
                ['print_statement',
-                [['value_literal', 'greeting', 'IDENTIFIER', 4],
-                 ['value_literal', 'name', 'IDENTIFIER', 4]]]]]]
-    expect = {
-                 "PROGRAM": {
-                     "name": "hello",
-                     "includes": [ "<iostream>", "<string>" ],
-                     "main": {
-                         "c_frame": {
-                             "identifiers": [
-                                 [ "identifier", "string", "greeting" ],
-                                 [ "identifier", "string", "name" ]
-                             ],
-                             "statements": [
-                                 [ "assignment", "greeting", "=", "\"hello\"" ],
-                                 [ "assignment", "name", "=", "\"world\"" ],
-                                 [ "print_statement", "greeting", "name" ]
-                             ]
-                         }
-                     }
-                 }
-             }
+                [['value_literal', 'first', 'IDENTIFIER', 5],
+                 ['value_literal', 'second', 'IDENTIFIER', 5],
+                 ['value_literal', 'third', 'IDENTIFIER', 5]]],
+               ['print_statement',
+                [['value_literal', 1, 'NUMBER', 'INT', 6],
+                 ['value_literal', 2, 'NUMBER', 'INT', 6],
+                 ['value_literal', 'hello', 'STRING', 6]]]]]]
 
-    actual = ast_to_cst("hello", AST)
+    expect = {
+        'PROGRAM': {'includes': ['<iostream>', '<iostream>'],
+             'main': {'c_frame': {'identifiers': [['identifier', 'int', 'second'],
+                                                  ['identifier', 'int', 'third'],
+                                                  ['identifier', 'int', 'first']],
+                                  'statements': [['assignment', 'first', '=', '1'],
+                                                 ['assignment', 'second', '=', '2'],
+                                                 ['assignment', 'third', '=', '3'],
+                                                 ['print_statement',
+                                                      ['identifier', 'first'],
+                                                      ['identifier', 'second'],
+                                                      ['identifier', 'third']],
+                                                 ['print_statement',
+                                                      ["integer", 1],
+                                                      ["integer", 2],
+                                                      ["string", 'hello']]]}},
+             'name': 'hello_world_mixed'}}
+
+    actual = ast_to_cst("hello_world_mixed", AST)
 
     print "actual == expect --->", actual == expect
 

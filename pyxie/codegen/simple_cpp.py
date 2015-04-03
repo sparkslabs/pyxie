@@ -45,7 +45,6 @@ class C_Program(object):
         program.includes = list(prog_desc["includes"])
         main_spec = prog_desc["main"]["c_frame"]
         for identifier in main_spec["identifiers"]:
-            print "IDENTIFIERS"
             program.main_cframe.identifiers.append(Identifier(identifier[1], identifier[2]))
 
         for statement in main_spec["statements"]:
@@ -83,7 +82,7 @@ class C_Frame(object):
 
     def json(self):
         for y in self.statements:
-            print y
+            Print(y)
         return {"c_frame": {"identifiers" : [ x.json() for x in self.identifiers ],
                             "statements" : [y.json() for y in self.statements ] }
                }
@@ -124,15 +123,48 @@ class Assigment(object):
     def code(self):
         return self.lvalue + " "+self.assigntype+" " + self.rvalue
 
+def todo(*args):
+    print("TODO", " ".join([repr(x) for x in args]))
+
+class ArgumentList(object):
+    def __init__(self, *args):
+        self.args = args
+    def json(self):
+        return list(self.args[:])
+
+    def code_list(self):
+        cargs = []
+        for arg in self.args:
+            if arg[0] == "identifier":
+                c_str = arg[1]
+            elif arg[0] == "integer":
+                c_str = repr(arg[1])
+            elif arg[0] == "string":
+                carg = arg[1].replace('"', '\\"')
+                c_str = '"' + carg + '"' # Force double quotes
+            elif arg[0] == "double":
+                c_str = repr(arg[1])
+            elif arg[0] == "boolean":
+                c_str = arg[1]
+            else:
+                todo("Handle print value types that are more than the basic types")
+                raise NotImplementedError("Handle print value types that are more than the basic types" + repr(arg))
+            cargs.append(c_str)
+        return cargs
+
+    def code(self):
+        return ",".join(self.code_list())
+
 class PrintStatement(object):
     def __init__(self, *args):
         self.args = args
+        self.arg_list = ArgumentList(*args)
 
     def json(self):
-        return ["print_statement" ] + list(self.args[:])
+        return ["print_statement" ] + self.arg_list.json()
 
     def code(self):
-        return "cout << " + " << \" \" << ".join(self.args) + " << endl"
+        return "cout << " + " << \" \" << ".join(self.arg_list.code_list()) + " << endl"
 
 makefile_tmpl = """
 all :
@@ -171,7 +203,7 @@ if __name__ == "__main__":
 
     program = program_clone
 
-    print "--------------------------------------------------------------"
+    Print("--------------------------------------------------------------")
     pprint.pprint(progj2)
 
     program.generate()
@@ -183,7 +215,7 @@ if __name__ == "__main__":
     pprint.pprint(source, width=200)
     now = int(time.time())
     dirname = str(now - 1427000000)
-    print "BUILDING PROGRAM", dirname
+    Print("BUILDING PROGRAM", dirname)
     os.mkdir(dirname)
     f = open(os.path.join(dirname,program.name+".c"), "w")
     for line in source:
