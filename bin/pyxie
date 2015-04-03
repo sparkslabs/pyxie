@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 from pyxie.parsing.lexer import lexer
 from pyxie.parsing.grammar import parse
 from pyxie.model.transform import ast_to_cst
@@ -22,6 +21,7 @@ from pyxie.codegen.simple_cpp import C_Program, source, makefile_tmpl
 
 import os
 import pprint
+import time
 
 # Parse testing
 
@@ -38,14 +38,18 @@ if 0:
         pprint.pprint(x)
 # ast_to_cst
 # Compilation Tests
-testdir = "test-data/progs/"
-for testfile in os.listdir(testdir):
+testdir = "test-data"
+testprogs_dir = os.path.join(testdir, "progs")
+
+rootdir = os.getcwd()
+for testfile in os.listdir(testprogs_dir):
+    os.chdir(rootdir)
     if not testfile.endswith(".pyxie"):
         # Suitable for parse testing, but not compiling.
         continue
     print "_______________________________________________________________"
     print "TEST COMPILING", testfile
-    data = open(os.path.join(testdir,testfile)).read()
+    data = open(os.path.join(testprogs_dir,testfile)).read()
     AST = parse(data, lexer)
     pprint.pprint(AST)
     cname = testfile.replace(".pyxie", "")
@@ -57,36 +61,30 @@ for testfile in os.listdir(testdir):
 
     print source
 
-    import time
-    import pprint
-    import os
-
+    allresults_dir = os.path.join(testdir, "genprogs")
+    
+    thisresult_dir = os.path.join(allresults_dir, testfile)
+    
     pprint.pprint(source, width=200)
+
     now = int(time.time())
-    dirname = str(now - 1427000000)
-    print "BUILDING PROGRAM", dirname
-    os.mkdir(dirname)
-    f = open(os.path.join(dirname,program.name+".c"), "w")
+
+    print "BUILDING PROGRAM", thisresult_dir
+    try:
+        os.mkdir(thisresult_dir)
+    except OSError as e:
+       if e.errno != 17: # Directory exists
+           raise
+    f = open(os.path.join(thisresult_dir,program.name+".c"), "w")
     for line in source:
         f.write(line)
         f.write("\n")
     f.close()
 
     makefile = makefile_tmpl % {"filename": program.name }
-    f = open(os.path.join(dirname,"Makefile"), "w")
+    f = open(os.path.join(thisresult_dir ,"Makefile"), "w")
     f.write(makefile)
     f.close()
 
-    os.chdir(dirname)
+    os.chdir(thisresult_dir)
     os.system("make")
-
-
-
-
-
-
-
-
-
-
-
