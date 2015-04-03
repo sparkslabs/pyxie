@@ -72,6 +72,15 @@ def includes_for_ctype(ctype):
 def includes_for_cstatement(cstatement):
     if cstatement[0] == "print_statement": return "<iostream>"
 
+def crepr_literal(pyliteral):
+    assert pyliteral[0] == "value_literal"
+    ctype = pyliteral[2]
+    if ctype == "STRING":
+        return '"' + pyliteral[1] + '"'
+    if ctype == "NUMBER":
+        return repr(pyliteral[1])
+    raise ValueError("Do not not know how to create crepr_literal for " + repr(pyliteral))
+
 
 def convert_assignment(assignment):
     lvalue, assigntype, rvalue = assignment
@@ -86,9 +95,12 @@ def convert_assignment(assignment):
         todo("assignment where the rvalue is not a value_literal")
         raise CannotConvert("Cannot convert assignment where the rvalue is not a value_literal")
 
+    print rvalue
     lvalue = lvalue[0]
-    rvalue = rvalue[1]
-    return ["assignment", lvalue, "=", '"'+rvalue+'"' ]
+    rvalue = crepr_literal(rvalue)
+#    rvalue = rvalue[1]
+    return ["assignment", lvalue, "=", rvalue ]
+#    return ["assignment", lvalue, "=", '"'+rvalue+'"' ]
 
 def convert_print(arg_spec):
     arg_spec = arg_spec[0]
