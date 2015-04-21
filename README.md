@@ -105,14 +105,12 @@ of programs from code as well.
 
 ## Is this part of any larger project?
 
-No.
-
-If anything, it's a continuation of the personal itch around SWP from about 10
-years ago. Unlike that though, it's much, much better structured.
+Not directly. If anything, it's a continuation of the personal itch around SWP
+from about 10 years ago. Unlike that though, it's much, much better structured.
 
 One thing that may happen though is the ability to take python classes and
 derive iotoy device implementations/interfaces directly. (since iotoy was
 inspired heavily by python introspection) That's quite some time off.
 
 
-Michael Sparks, 29 March 2015
+Michael Sparks, April 2015
