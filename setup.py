@@ -45,7 +45,7 @@ packages = find_packages(".")
 package_names = packages.keys()
 
 setup(name = "pyxie",
-      version = "0.0.2",
+      version = "0.0.3",
       description = "Little Python to C++ Compiler",
       url='http://www.sparkslabs.com/michael/',
       author='Michael Sparks (sparkslabs)',
@@ -62,6 +62,15 @@ setup(name = "pyxie",
       long_description = """
 Pyxie -- A Little Python to C++ Compiler
 ========================================
+
+Status
+------
+
+For the impatient: this probably does **NOT** do what you want, **yet**.
+Check back in a couple of months time.
+
+Description
+-----------
 
 Pyxie is intended to be a simple Python to C++ compiler, with a target of
 compiling python code such that it can run on a microcontroller - like
@@ -84,9 +93,19 @@ In the past I've written a test driven compiler suite, so I'll be following
 the same approach here.  It did consider actually making Pyxie use that as a
 frontend, but for the moment, I'd like python compatibility.
 
-## Status
+Huh? What job does this do?
+---------------------------
 
-For the impatient: this does NOT do what you want, **yet**.
+It allows a user to write code in a familiar high level language that can
+then be compiled to run on an arbitrary embedded system - that is devices
+with very low power CPUs and very little memory.
+
+In particular, one thing it should do (when complete) help support The
+Scout Association's "Digital Maker" badge, but that's some way off!
+
+
+What does it do?
+----------------
 
 What it *does* do:
 
@@ -107,7 +126,8 @@ that looks like this...
 
 Yes, that's not a lot. But on the flipside, it's a starting point.
 
-## Influences
+Influences
+----------
 
 Many moons ago, I made a generic language parser which I called SWP (semantic
  whitespace parser), or Gloop.
@@ -121,39 +141,49 @@ Lisp like language that would look like python or ruby. It turns out that you
 can and there's lots of interesting things that arise if you do. (Best seen
 in the slideshare link)
 
-## Which version of Python?
+Which version of Python?
+------------------------
 
 Well, it won't be a complete subset of any particular python - it will
 probably be based around the intersection points in python 2 and 3.  It will
-be, by definition, a non-dynamic (or limitedly dynamic subset)
+be, by definition, a non-dynamic subset - at least at first
 
-## Why write this?
+(The language definition is coming)
 
-Well, I wrote something similar to this at work, and but this is a complete
-rewrite from scratch, so I can share this with others.
+Why write this?
+---------------
 
-There's various reasons for that, but aside from the fact I'd find it useful,
-I  also work with kids in my spare time, and it opens up options there.
+Personally, having built something simpler in the past, I know I'd find it
+useful. (I use python rather than C++ often because I can write more quicker
+with the former). Also, I work with kids in my spare time, and it opens up
+options there.
 
-By definition, it's a ground up rewrite. One major difference between the
-two things is that this will aim to be a more rounded implementation, and
-also that rather than doing code generation from the concrete syntax tree
-that it will build a proper AST and do perform tree transformations before
-generating code.
+I've written something like this for work last year, but that was much more
+limited and restricted in both aspiration and implementation. This rewrite is
+something I've done on my own time, with my own tools, from scratch, which
+allows me to share this with others.
 
-## Is this part of any larger project?
+Two major changes:
 
-No. Not even a little bit.
+* This aims to be a more rounded implementation
+* This performs transforms from an AST (abstract syntax tree) to a CCR (concrete
+  code representation), rather than munging code directly from a concrete parse
+  tree.
 
-It's similar to something else I started last year, but this is a complete
-rewrite from scratch, entirely in my own time, using my own kit scratching
-a personal itch. It's derived in part on my SWP project from about 10 years
-ago. Furthermore, it's much, much better structured.
+That potentially allows other things, like creation of visual representations
+of programs from code as well.
 
-The aspiration for this is to help support The Scout Association's "Digital
-Maker" badge, but that's some way off!
+Is this part of any larger project?
+-----------------------------------
+
+Not directly. If anything, it's a continuation of the personal itch around SWP
+from about 10 years ago. Unlike that though, it's much, much better structured.
+
+One thing that may happen though is the ability to take python classes and
+derive iotoy device implementations/interfaces directly. (since iotoy was
+inspired heavily by python introspection) That's quite some time off.
 
 
-Michael Sparks, 29 March 2015
+Michael Sparks, April 2015
 """
       )

@@ -4,7 +4,7 @@ Pyxie -- A Little Python to C++ Compiler
 ## Status
 
 For the impatient: this probably does **NOT** do what you want, **yet**.
-Check back in around 2-4 months time.
+Check back in a couple of months time.
 
 ## Description
 
