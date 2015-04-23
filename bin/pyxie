@@ -14,43 +14,53 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from pyxie.parsing.lexer import lexer
+from pyxie.parsing.lexer import build_lexer
 from pyxie.parsing.grammar import parse
 from pyxie.model.transform import ast_to_cst
-from pyxie.codegen.simple_cpp import C_Program, source, makefile_tmpl
+from pyxie.codegen.simple_cpp import C_Program, source, makefile_tmpl, reset_parser
 import pyxie.codegen.simple_cpp
 
 import os
 import pprint
 import time
 
-# Parse testing
+import sys
 
-if 0:
-    testdir = "test-data/progs/"
-    for testfile in os.listdir(testdir):
-        if not testfile.endswith(".pyxie"):
-            # Suitable for parse testing, but not compiling.
-            continue
-        print "_______________________________________________________________"
-        print "TEST PARSING", testfile
-        data = open(os.path.join(testdir,testfile)).read()
-        x = parse(data, lexer)
-        pprint.pprint(x)
-# ast_to_cst
-# Compilation Tests
 testdir = "test-data"
 testprogs_dir = os.path.join(testdir, "progs")
 
-rootdir = os.getcwd()
-for testfile in os.listdir(testprogs_dir):
-    pyxie.codegen.simple_cpp.source = []
-    os.chdir(rootdir)
-    if not testfile.endswith(".pyxie"):
-        # Suitable for parse testing, but not compiling.
-        continue
+def get_test_programs(program_suffix):
+    testprogs = [x for x in os.listdir(testprogs_dir) ]
+    testprogs = [x for x in testprogs if x.endswith(program_suffix) ]
+    return testprogs
+
+def parse_file(testprogs_dir, testfile):
+    lexer = build_lexer()
+    reset_parser()
     print "_______________________________________________________________"
-    print "TEST COMPILING", testfile
+    print "PARSING", testfile
+    filename = os.path.join(testprogs_dir,testfile)
+    data = open(filename).read()
+    AST = parse(data, lexer)
+    pprint.pprint(AST)
+
+def parsing_tests():
+    # Run parsing tests. These are in the "progs" test directory, and are in
+    # filenames ending ".p"
+
+    rootdir = os.getcwd()
+    testprogs = get_test_programs(".p")
+
+    for testfile in testprogs:
+        parse_file(testprogs_dir, testfile)
+        os.chdir(rootdir)
+
+def compile_file(testprogs_dir, testfile):
+    lexer = build_lexer()
+    reset_parser()
+    print "_______________________________________________________________"
+    print "COMPILING", testfile
+
     data = open(os.path.join(testprogs_dir,testfile)).read()
     AST = parse(data, lexer)
     pprint.pprint(AST)
@@ -64,9 +74,8 @@ for testfile in os.listdir(testprogs_dir):
     print pyxie.codegen.simple_cpp.source
 
     allresults_dir = os.path.join(testdir, "genprogs")
-    
     thisresult_dir = os.path.join(allresults_dir, testfile)
-    
+
     pprint.pprint(pyxie.codegen.simple_cpp.source, width=200)
 
     now = int(time.time())
@@ -77,6 +86,7 @@ for testfile in os.listdir(testprogs_dir):
     except OSError as e:
        if e.errno != 17: # Directory exists
            raise
+
     f = open(os.path.join(thisresult_dir,program.name+".c"), "w")
     for line in pyxie.codegen.simple_cpp.source:
         f.write(line)
@@ -90,3 +100,52 @@ for testfile in os.listdir(testprogs_dir):
 
     os.chdir(thisresult_dir)
     os.system("make")
+
+def compilation_tests():
+    # ast_to_cst
+    # Compilation Tests
+    rootdir = os.getcwd()
+    testprogs = get_test_programs(".pyxie")
+
+    for testfile in testprogs:
+        compile_file(testprogs_dir, testfile)
+        os.chdir(rootdir)
+
+
+    print "COMPILING DONE", testprogs
+
+def show_help():
+    print """\npyxie -- A little python compiler\nUsage:\n
+    pyxie -- show runtime arguments
+    pyxie run-tests -- Run all tests
+    pyxie parse-tests -- Just run parse tests
+    pyxie compile-tests -- Just run compile tests
+    pyxie parse filename -- Parses a given test given a certain filename
+    pyxie compile filename -- Compiles a given test given a certain filename
+"""
+
+if len(sys.argv) == 1:
+    # Default - do everything.
+    show_help()
+
+elif sys.argv[1] == "run-tests":
+    parsing_tests()
+    compilation_tests()
+
+elif sys.argv[1] == "parse-tests":
+    parsing_tests()
+
+elif sys.argv[1] == "compile-tests":
+    compilation_tests()
+
+elif sys.argv[1] == "parse" and len(sys.argv) == 3:
+    filename = sys.argv[2]
+    if not filename.endswith(".p"):
+        filename = filename + ".p"
+        parse_file(testprogs_dir, filename)
+
+elif sys.argv[1] == "compile" and len(sys.argv) == 3:
+    filename = sys.argv[2]
+    if not filename.endswith(".pyxie"):
+        filename = filename + ".pyxie"
+        compile_file(testprogs_dir, filename)

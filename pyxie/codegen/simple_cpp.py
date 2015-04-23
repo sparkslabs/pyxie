@@ -22,6 +22,10 @@ def Print(*args):
     y = " ".join([str(x) for x in args])
     source.append(y)
 
+def reset_parser():
+    global source
+    source = []
+
 def mkStatement(statement_spec):
     ss = statement_spec
     if ss[0] == "assignment":

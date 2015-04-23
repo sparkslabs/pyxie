@@ -1,8 +1,14 @@
 first = 1
 second = 2
 third = 3
+fourth = c'"'
+fifth = c'h'
+sixth  = c"w"
+seventh = c"'"
 
 print first, second, third
+print fourth, fifth, sixth, seventh
+
 print 1, 2, "hello"
 print 1, 2.1, 0x20, 0b10101, 0100, True, False, "hello"
 print -1, -2.1, -0x20, -0b10101, -0100, True, False, "hello"

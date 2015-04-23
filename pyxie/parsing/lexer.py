@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 
+import re
 import ply
 
 # ------------------------------------------------------------
@@ -81,6 +82,22 @@ t_NORMAL_ignore  = ' \t'
 t_INITIAL_BLOCKS_ignore  = ''
 t_ENDBLOCKS_ignore  = ''
 
+def t_NORMAL_SCHARACTER(t):
+    r"c'([^\\']|(\\.))'"
+    t.value = t.value[2:-1]
+    t.value = t.value.replace('\\\'', '\'')
+    t.value = t.value.replace('\\\"', '\"')
+    t.type = "CHARACTER"
+    return t
+
+def t_NORMAL_DCHARACTER(t):
+    r'c"([^\\"]|(\\.))"'
+    t.value = t.value[2:-1]
+    t.value = t.value.replace('\\\'', '\'')
+    t.value = t.value.replace('\\\"', '\"')
+    t.type = "CHARACTER"
+    return t
+
 
 def t_NORMAL_IDENTIFIER(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
@@ -140,7 +157,7 @@ def t_NORMAL_NUMBER(t):
 # Define a rule so we can track line numbers
 def t_INITIAL_NORMAL_ENDBLOCKS_EOL(t):
     r'\n+'
-    lexer.curr_indent = 0
+    t.lexer.curr_indent = 0
     t.lexer.lineno += len(t.value)
 
     t.lexer.begin('BLOCKS') # We are always in BLOCKS state if we reach EOL
@@ -149,7 +166,7 @@ def t_INITIAL_NORMAL_ENDBLOCKS_EOL(t):
 
 def t_BLOCKS_EOL(t):
     r'\n+'
-    lexer.curr_indent = 0
+    t.lexer.curr_indent = 0
     t.lexer.lineno += len(t.value)
 
     return t
@@ -169,7 +186,7 @@ def t_INITIAL_BLOCKS_WS(t):
       if char == "\t":
           count += tabsize
 
-    lexer.curr_indent = count
+    t.lexer.curr_indent = count
 
 def t_INITIAL_BLOCKS_INDENT(t):
     r'[^ \t\n]'
@@ -181,11 +198,11 @@ def t_INITIAL_BLOCKS_INDENT(t):
     t.lexer.lexpos -= 1
 
     # Decide whether to switch to ENDBLOCKS or NORMAL mode
-    curr_indent = lexer.curr_indent
+    curr_indent = t.lexer.curr_indent
     dedents_needed = 0
 
-    while lexer.indents[-1] > curr_indent:
-        lexer.indents.pop()
+    while t.lexer.indents[-1] > curr_indent:
+        t.lexer.indents.pop()
         dedents_needed += 1
 
     if dedents_needed > 0:
@@ -196,8 +213,8 @@ def t_INITIAL_BLOCKS_INDENT(t):
     # Not closing a block, so parsing inside a block
 
     # If it's a new one, add it to the "lexer.indents" stack
-    if curr_indent > lexer.indents[-1]:
-        lexer.indents.append(lexer.curr_indent)
+    if curr_indent > t.lexer.indents[-1]:
+        t.lexer.indents.append(lexer.curr_indent)
         return t
 
     t.lexer.begin('NORMAL')
@@ -226,15 +243,19 @@ def t_ANY_error(t):
     print "Illegal character '%s'" % t.value[0]
     t.lexer.skip(1)
 
-import re
+def build_lexer():
+    # Build the lexer
+    lexer =  lex.lex(reflags=re.MULTILINE)
+    lexer.lineno = 1
+    lexer.curr_indent = 0
+    lexer.indents = [0]
+    return lexer
 
-# Build the lexer
-lexer =  lex.lex(reflags=re.MULTILINE)
-lexer.curr_indent = 0
-lexer.indents = [0]
+# lexer = build_lexer()
 
 if __name__ == "__main__":
 
+    lexer = build_lexer()
     # Test it out
     data = '''\
 and not or

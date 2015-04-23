@@ -1,0 +1,93 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+This project adheres to [Semantic Versioning](http://semver.org/).
+
+### In progress
+Core Expressions
+
+## [0.0.6] - 2015-04-26
+Overview -- Character Literals, math expressions, build/test improvements
+### Changed
+- Character literals - parsing and compilation
+- Initial version of changelog
+- Mark WIP/TBD, add character
+ - Adds character type, mark which bits of the spec are now TBD, and which are WIP
+- Add "in progress" section to CHANGELOG
+- Build lexer explicitly
+- Basic mathematical expression parsing
+ - Parsing of basic expressions involving basic mathematical operators, as opposed to just value_literals.
+- Test case for parsing mathematical expressions
+- Allow parser to be reset
+- Restructure test harness to allow more selective testing
+  This also changes the test harness to be closer to a standard
+  compiler style API.
+- Run all tests from makefile
+- Codegen test for basic math expressions
+  Simplest possible test initially
+
+
+## [0.0.5] - 2015-04-23
+### Added
+- Core lexical analysis now matches language spec - collection of changes, which can be summarised as follows:
+ - Language spec updated relative to implementation & lexing states
+ - Lexical analysis of block structure
+ - Lexical analysis of operators, punctuation, numerical negation
+ - Implement numbers part of the grammar (including negation), including basic tests
+ - Fleshed out lexical tokens to match language spec
+
+### Changed
+- Code cleanups
+
+## [0.0.4] - 2015-04-22
+### Added
+- Extends C AST to match python AST semantics
+- Ability to use mixed literals in a print statement (1,True, "hello" etc)
+- Argument list management
+- Convert argument lists explicitly
+
+### Changed
+- Use Print not print
+
+### Fixed
+- Cleaned up debug output.
+
+## [0.0.3] - 2015-04-21
+### Added
+- Adds ability to print and work with a small number of variables
+- Better handling, and code gneration for integer literals
+
+### Changed
+- Add long description (setup.py)
+- Update README.md to reflect project slightly better
+- Reworded/tightened up README
+- Updated documentation
+- Emphasise "yet" when saying what it does (README)
+- Zap the source between compilation runs
+- Build test results inside the test-data/genprogs directory
+
+
+## [0.0.2] - 2015-03-30
+
+*Initial Release*
+
+Simple assignment
+
+### Added
+- Transform Python AST to C CST - compile python to C++ for v simple program
+
+### Changed
+- Various tweaks for README/docs
+- Packaging for pypi and Ubuntu Launchpad PPA for initial release 0.0.2
+
+## [0.0.1] - Unreleased - rolled into 0.0.2
+### Added
+- Initial structure, loosely based on SWP from a few years ago
+ - http://www.slideshare.net/kamaelian/swp-a-generic-language-parser
+- Initial pyxie parsing/model/codegen modules
+- Basic parsing of value literals, decorated with source information
+- Support for basic identifiers and assignment including simple type inference
+- First pass at a simple C++ code generator for concrete C++ AST
+- Directories to hold semantic models and for code generation
+- Represent C programs as json, and allow construction from json
+- Simple program that matches the C++ code generator

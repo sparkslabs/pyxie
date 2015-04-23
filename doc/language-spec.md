@@ -167,24 +167,25 @@ Should be made that once function calls are integrated.
     comparison           : expression
                          | expression COMPARISON_OPERATOR expression
 
-### Core Expressions
+### Core Expressions  **[WIP]**
 
-    expression           : arith_expression
-                         | arith_expression TIMES expression
-                         | arith_expression DIVIDE expression
-                         | arith_expression POWER expression
+    expression           : arith_expression  **[TBD]**
+                         | arith_expression TIMES expression  **[TBD]**
+                         | arith_expression DIVIDE expression  **[TBD]**
+                         | arith_expression POWER expression  **[TBD]**
 
-    arith_expression     : expression_atom
-                         | expression_atom PLUS arith_expression
-                         | expression_atom MINUS arith_expression
+    arith_expression     : expression_atom  **[TBD]**
+                         | expression_atom PLUS arith_expression  **[TBD]**
+                         | expression_atom MINUS arith_expression  **[TBD]**
 
     expression_atom      : value_literal
-                         | func_call
-                         | PARENL fullexpression PARENR
+                         | func_call  **[TBD]**
+                         | PARENL fullexpression PARENR  **[TBD]**
 
     value_literal        : number
                          | identifier
                          | string
+                         | character
                          | boolean
 
 ### Core Literals 
@@ -197,6 +198,8 @@ Should be made that once function calls are integrated.
                          | MINUS number
 
     string               : STRING
+
+    character            : CHARACTER
 
     boolean              : TRUE | FALSE
 

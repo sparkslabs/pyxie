@@ -11,3 +11,7 @@
 "Hello\" world"
 True
 False
+c'h'
+c'"'
+c"w"
+c"'"

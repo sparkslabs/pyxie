@@ -69,5 +69,5 @@ devloop: purge distclean deb use
 	echo
 
 test:
-	PYTHONPATH="." ./bin/pyxie
+	PYTHONPATH="." ./bin/pyxie run-tests
 	# behave

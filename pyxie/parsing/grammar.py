@@ -53,23 +53,55 @@ class Grammar(object):
 
 
     def p_expr_list_1(self,p):
-        "expr_list : value_literal"
+        "expr_list : expression"
         p[0] = [ "expr_list", [ p[1] ] ]
 
     def p_expr_list_2(self,p):
-        "expr_list : value_literal COMMA expr_list"
+        "expr_list : expression COMMA expr_list"
         p[0] = [ "expr_list", [ p[1] ] + p[3][1] ]
 
     def p_statement_3(self, p):
-        "statement : value_literal EOL"
+        "statement : expression EOL"
         p[0] = [ "statement", p[1] ]
 
     def p_assignment_statement(self, p):
-        "assignment_statement : IDENTIFIER ASSIGN value_literal"
+        "assignment_statement : IDENTIFIER ASSIGN expression"
         p[0] = ["assignment_statement", [p[1], "IDENTIFIER", p.lineno(1) ],
                                         ["ASSIGN", p[2]],
                                         p[3]
                ]
+
+    def p_expression_1(self, p):
+        "expression : arith_expression"
+        p[0] = p[1]
+
+    def p_expression_2(self, p):
+        "expression : arith_expression TIMES expression"
+        p[0] = ["operator_function", "times", p[1], p[3] ]
+
+    def p_expression_3(self, p):
+        "expression : arith_expression DIVIDE expression"
+        p[0] = ["operator_function", "divide", p[1], p[3] ]
+
+    def p_expression_4(self, p):
+        "expression : arith_expression POWER expression"
+        p[0] = ["operator_function", "power", p[1], p[3] ]
+
+    def p_arith_expression_1(self, p):
+        "arith_expression     : expression_atom"
+        p[0] = p[1]
+
+    def p_arith_expression_2(self, p):
+        "arith_expression     : expression_atom PLUS arith_expression"
+        p[0] = ["operator_function", "plus", p[1], p[3] ]
+
+    def p_arith_expression_3(self, p):
+        "arith_expression     : expression_atom MINUS arith_expression"
+        p[0] = ["operator_function", "minus", p[1], p[3] ]
+
+    def p_expression_atom_1(self, p):
+        "expression_atom : value_literal"
+        p[0] = p[1]
 
     ### Core Literals
 
@@ -105,6 +137,10 @@ class Grammar(object):
     def p_value_literal_6(self, p):
         "value_literal : STRING"
         p[0] = [ "value_literal", p[1], "STRING", p.lineno(1) ]
+
+    def p_value_literal_6a(self, p):
+        "value_literal : CHARACTER"
+        p[0] = [ "value_literal", p[1], "CHARACTER", p.lineno(1) ]
 
     def p_value_literal_7(self, p):
         "value_literal : BOOLEAN"

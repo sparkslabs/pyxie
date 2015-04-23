@@ -64,6 +64,7 @@ def python_type_to_c_type(ptype):
     if ptype == "NUMBER":  return "int"
     if ptype == "BOOLEAN": return "bool"
     if ptype == "FLOAT":   return "double"
+    if ptype == "CHARACTER": return "char"
     raise UnknownType("Cannot identify C Type for %s" % ptype)
 
 def includes_for_ctype(ctype):
@@ -77,6 +78,12 @@ def crepr_literal(pyliteral):
     ctype = pyliteral[2]
     if ctype == "STRING":
         return '"' + pyliteral[1] + '"'
+
+    if ctype == "CHARACTER":
+        char = pyliteral[1]
+        char = char.replace("'","\\'")
+        return "'" + char + "'"
+
     if ctype == "NUMBER":
         return repr(pyliteral[1])
     raise ValueError("Do not not know how to create crepr_literal for " + repr(pyliteral))
