@@ -25,30 +25,30 @@ Harder
 
 ### Lexical Analysis TODO
 
-    Keywords: "and", "not", "or", **[TBD]**
+    Keywords: "and", "not", "or",
               "True", "False",
-              "class", "def", "yield", "return", **[TBD]**
-              "while", "for", "in", "elif", "else", "break", "continue", **[TBD]**
-              "from", "import", **[TBD]**
-              "pass", **[TBD]**
+              "class", "def", "yield", "return",
+              "while", "for", "in", "if", "elif", "else", "break", "continue",
+              "from", "import",
+              "pass",
               "print"
 
     Punctuation: ','  '('  ')'  ':'  '*'  '/'  '+'  '-'  '**' **[TBD]**
                  COMPARISON_OPERATOR      **[TBD]**
                  ASSIGN
 
-    COMPARISON_OPERATOR: (<|>|==|>=|<=|<>|!=|in|not +in|is|is +not)  **[TBD]**
+    COMPARISON_OPERATOR: (<|>|==|>=|<=|<>|!=|in|not +in|is|is +not)
     ASSIGN: '='
 
     Structural: EOL INDENT DEDENT
         EOL -- Should be logical, actually '\n'
-        INDENT -- emitted after increased number of leading spaces after EOL  **[TBD]**
-        DEDENT -- emitted after decreased number of leading spaces after EOL  **[TBD]**
+        INDENT -- emitted after increased number of leading spaces after EOL
+        DEDENT -- emitted after decreased number of leading spaces after EOL
 
     Literals: IDENTIFIER NUMBER STRING
         IDENTIFIER:     [a-zA-Z_][a-zA-Z0-9_]*
 
-        NUMBER: BINARY OCTAL HEX FLOAT INTERGER
+        NUMBER: BINARY OCTAL HEX FLOAT INTEGER
             BINARY -- 0b\d+
             OCTAL -- 0o\d+
             HEX -- 0x([abcdef]|\d)+
@@ -194,7 +194,7 @@ Should be made that once function calls are integrated.
                          | HEX
                          | OCTAL
                          | BINARY
-                         | MINUS number  **[TBD]**
+                         | MINUS number
 
     string               : STRING
 
@@ -214,13 +214,13 @@ Should be made that once function calls are integrated.
 
 ## Lexical Analysis Implementation
 
-Lexical analyser will have the following states:   **[TBD]**
+Lexical analyser has the following states:
 
-* INITIAL - Starting state
-* CODE - This is used for usual parsing rules
+* INITIAL - Starting state - actually the same as BLOCKS
+* NORMAL - This is used for usual parsing rules
 * BLOCKS - Switched into after we detect a newline - to allow injection of
   indents, and switching to dedent or code if appropriate. 
-* EMITDEDENTS - Used for emitting sufficient dedents - contains just one rule,
+* ENDBLOCKS - Used for emitting sufficient dedents - contains just one rule,
   that either returns a dedent if needed or switches to CODE. Does not
   consume any tokens
 
@@ -228,7 +228,7 @@ Lexical analyser will have the following states:   **[TBD]**
 
 * The parser is line oriented, should be logical lines   **[TBD]**
 * Statements are separated by NEWLINES
-* Block structure generates INDENT/DEDENT tokens  **[TBD]**
+* Block structure generates INDENT/DEDENT tokens
 * Value literals: Integers, String, Boolean
 * Identifiers
 * basic assignment statements - ie identifer equals expression

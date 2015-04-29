@@ -20,6 +20,9 @@ import ply.yacc as yacc
 from pyxie.parsing.lexer import tokens
 
 class Grammar(object):
+    precedence = (
+        ('right', 'MINUS'),
+    )
     tokens = tokens
     def p_error(self,p):
         print "Syntax error at", p
@@ -68,25 +71,36 @@ class Grammar(object):
                                         p[3]
                ]
 
+    ### Core Literals
+
+    def p_value_literal_0(self, p):
+        "value_literal : number"
+        p[0] = p[1]
+
     def p_value_literal_1(self, p):
-        "value_literal : NUMBER"
+        "number : NUMBER"
         p[0] = [ "value_literal", p[1], "NUMBER", "INT", p.lineno(1) ]
 
     def p_value_literal_2(self, p):
-        "value_literal : FLOAT"
+        "number : FLOAT"
         p[0] = [ "value_literal", p[1], "FLOAT", p.lineno(1) ]
 
     def p_value_literal_3(self, p):
-        "value_literal : HEX"
+        "number : HEX"
         p[0] = [ "value_literal", p[1], "NUMBER", "HEX", p.lineno(1) ]
 
     def p_value_literal_4(self, p):
-        "value_literal : OCTAL"
+        "number : OCTAL"
         p[0] = [ "value_literal", p[1], "NUMBER", "OCTAL", p.lineno(1) ]
 
     def p_value_literal_5(self, p):
-        "value_literal : BINARY"
+        "number : BINARY"
         p[0] = [ "value_literal", p[1], "NUMBER", "BINARY", p.lineno(1) ]
+
+    def p_value_literal_5a(self,p):
+        "number : MINUS number"
+        p[2][1] = -p[2][1]
+        p[0] = p[2]
 
     def p_value_literal_6(self, p):
         "value_literal : STRING"

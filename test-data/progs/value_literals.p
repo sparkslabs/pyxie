@@ -4,6 +4,7 @@
 0xabcdef0
 0o10
 0b101
+-1
 'Hello'
 'Hello\' world'
 "Hello"
