@@ -60,8 +60,12 @@ class C_Program(object):
 
     def generate(self):
         frame_lines = self.main_cframe.concrete()
+        seen = {}
         for include in self.includes:
-            Print( "#include "+ include )
+            if not seen.get(include, False):
+                # Only output each include once
+                Print( "#include "+ include )
+                seen[include] = True
 
         Print()
         Print("using namespace std;")
@@ -136,23 +140,53 @@ class ArgumentList(object):
     def json(self):
         return list(self.args[:])
 
+    def code_op_F(self, arg):
+        if arg[1] == "plus": return "+"
+        if arg[1] == "minus": return "-"
+        if arg[1] == "times": return "*"
+        if arg[1] == "divide": return "/"
+        return None
+
+    def code_op(self,arg):
+        c_op = self.code_op_F(arg)
+        if c_op:
+
+            arg1 = arg[2]
+            arg2 = arg[3]
+            # We would like to try to assert here that the values on both sides
+            # are integers, but at present we cannot do that, since we use too simplistic
+            # a structure. If I remove that constraint, we can generate more code.
+            # But we will need to revisit this.
+            lit_arg1 = self.code_arg(arg1)
+            lit_arg2 = self.code_arg(arg2)
+
+            result = "(" + lit_arg1 + c_op + lit_arg2 + ")"
+            return result
+        todo("Handle code ops for anything other than plus/int,int")
+        raise NotImplementedError("Handle code ops for anything other than plus/int,int" + repr(arg))
+
+
+    def code_arg(self, arg):
+        if arg[0] == "identifier":
+            return arg[1]
+        if arg[0] == "integer":
+            return repr(arg[1])
+        if arg[0] == "string":
+            carg = arg[1].replace('"', '\\"')
+            return '"' + carg + '"' # Force double quotes
+        if arg[0] == "double":
+            return repr(arg[1])
+        if arg[0] == "boolean":
+            return arg[1]
+        if arg[0] == "op":
+            return self.code_op(arg)
+        todo("Handle print value types that are more than the basic types")
+        raise NotImplementedError("Handle print value types that are more than the basic types" + repr(arg))
+
     def code_list(self):
         cargs = []
         for arg in self.args:
-            if arg[0] == "identifier":
-                c_str = arg[1]
-            elif arg[0] == "integer":
-                c_str = repr(arg[1])
-            elif arg[0] == "string":
-                carg = arg[1].replace('"', '\\"')
-                c_str = '"' + carg + '"' # Force double quotes
-            elif arg[0] == "double":
-                c_str = repr(arg[1])
-            elif arg[0] == "boolean":
-                c_str = arg[1]
-            else:
-                todo("Handle print value types that are more than the basic types")
-                raise NotImplementedError("Handle print value types that are more than the basic types" + repr(arg))
+            c_str = self.code_arg(arg)
             cargs.append(c_str)
         return cargs
 
@@ -181,57 +215,98 @@ def build_program(json):
 
 if __name__ == "__main__":
 
+
+
+    if 1:
+        progj = {'PROGRAM': {'includes': ['<iostream>'],
+                             'main': {'c_frame': {'identifiers': [],
+                                                  'statements': [['print_statement',
+                                                                  ['op',
+                                                                   'plus',
+                                                                   ['integer', 1],
+                                                                   ['integer', 1]]]]}},
+                             'name': 'hello_operators'}}
+
+        program = C_Program.fromjson(progj)
+        print program
+
+        program.generate()
+        import time
+        import pprint
+        import os
+
+        pprint.pprint(source, width=200)
+        now = int(time.time())
+        dirname = str(now - 1427000000)
+        # Print("BUILDING PROGRAM", dirname)
+        os.mkdir(dirname)
+        f = open(os.path.join(dirname,program.name+".c"), "w")
+        for line in source:
+            f.write(line)
+            f.write("\n")
+        f.close()
+
+        makefile = makefile_tmpl % {"filename": program.name }
+        f = open(os.path.join(dirname,"Makefile"), "w")
+        f.write(makefile)
+        f.close()
+
+        os.chdir(dirname)
+        os.system("make")
+
+
+
     # Build an example concrete syntax tree
+    if 0:
+        program = C_Program()
 
-    program = C_Program()
+        program.name = ("hello")
+        program.includes.append("<iostream>")
+        program.includes.append("<string>")
 
-    program.name = ("hello")
-    program.includes.append("<iostream>")
-    program.includes.append("<string>")
+        main = program.main_cframe
+        main.identifiers.append(Identifier("string", "greeting"))
+        main.identifiers.append(Identifier("string", "name"))
+        main.statements.append(Assigment("greeting", '"hello"'))
+        main.statements.append(Assigment("name", '"world"'))
+        main.statements.append(PrintStatement("greeting", "name"))
 
-    main = program.main_cframe
-    main.identifiers.append(Identifier("string", "greeting"))
-    main.identifiers.append(Identifier("string", "name"))
-    main.statements.append(Assigment("greeting", '"hello"'))
-    main.statements.append(Assigment("name", '"world"'))
-    main.statements.append(PrintStatement("greeting", "name"))
+        import pprint
 
-    import pprint
+        progj = program.json()
 
-    progj = program.json()
+        pprint.pprint(progj)
 
-    pprint.pprint(progj)
+        program_clone = C_Program.fromjson(progj)
+        progj2 = program_clone.json()
 
-    program_clone = C_Program.fromjson(progj)
-    progj2 = program_clone.json()
+        program = program_clone
 
-    program = program_clone
+        Print("--------------------------------------------------------------")
+        pprint.pprint(progj2)
 
-    Print("--------------------------------------------------------------")
-    pprint.pprint(progj2)
+        program.generate()
 
-    program.generate()
+        import time
+        import pprint
+        import os
 
-    import time
-    import pprint
-    import os
+        pprint.pprint(source, width=200)
+        now = int(time.time())
+        dirname = str(now - 1427000000)
+        Print("BUILDING PROGRAM", dirname)
+        os.mkdir(dirname)
+        f = open(os.path.join(dirname,program.name+".c"), "w")
+        for line in source:
+            f.write(line)
+            f.write("\n")
+        f.close()
 
-    pprint.pprint(source, width=200)
-    now = int(time.time())
-    dirname = str(now - 1427000000)
-    Print("BUILDING PROGRAM", dirname)
-    os.mkdir(dirname)
-    f = open(os.path.join(dirname,program.name+".c"), "w")
-    for line in source:
-        f.write(line)
-        f.write("\n")
-    f.close()
+        makefile = makefile_tmpl % {"filename": program.name }
+        f = open(os.path.join(dirname,"Makefile"), "w")
+        f.write(makefile)
+        f.close()
 
-    makefile = makefile_tmpl % {"filename": program.name }
-    f = open(os.path.join(dirname,"Makefile"), "w")
-    f.write(makefile)
-    f.close()
-
-    os.chdir(dirname)
-    os.system("make")
+        os.chdir(dirname)
+        os.system("make")
 

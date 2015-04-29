@@ -88,6 +88,23 @@ def crepr_literal(pyliteral):
         return repr(pyliteral[1])
     raise ValueError("Do not not know how to create crepr_literal for " + repr(pyliteral))
 
+def crepr_op(py_op):
+    assert py_op[0] == "operator_function"
+    func = py_op[1]
+
+    if func == "plus":
+        return ["op", "plus"]
+    if func == "minus":
+        return ["op", "minus"]
+    if func == "times":
+        return ["op", "times"]
+    if func == "divide":
+        return ["op", "divide"]
+    else:
+        todo("Cannot yet convert operators functions other than plus...")
+        raise CannotConvert("Cannot yet convert operators functions other than plus...:" + repr(py_op))
+
+
 
 def convert_assignment(assignment):
     lvalue, assigntype, rvalue = assignment
@@ -105,9 +122,8 @@ def convert_assignment(assignment):
     print rvalue
     lvalue = lvalue[0]
     rvalue = crepr_literal(rvalue)
-#    rvalue = rvalue[1]
     return ["assignment", lvalue, "=", rvalue ]
-#    return ["assignment", lvalue, "=", '"'+rvalue+'"' ]
+
 def convert_value_literal(arg):
     print repr(arg), arg
     stype = None
@@ -134,9 +150,34 @@ def convert_value_literal(arg):
     todo("Cannot handle other value literals")
     raise CannotConvert("Cannot convert value-literal of type" + repr(arg))
 
+
+def convert_operator_function(arg):
+    print "CONVERT - convert_operator_function", repr(arg)
+    assert arg[0] == "operator_function"
+
+
+    func = arg[1]
+    arg1 = arg[2]
+    arg2 = arg[3]
+
+    crepr_arg1 = convert_arg(arg1)
+    crepr_arg2 = convert_arg(arg2)
+    print "crepr_arg1", repr(crepr_arg1)
+    print "crepr_arg2", repr(crepr_arg2)
+
+    result = crepr_op(arg) + [crepr_arg1, crepr_arg2]
+    print repr(result)
+    return result
+
+    #todo("Cannot yet convert operator functions")
+    #raise CannotConvert("Cannot convert operator function :" + repr(arg))
+
+
 def convert_arg(arg):
     if arg[0] == "value_literal":
         return convert_value_literal(arg)
+    if arg[0] == "operator_function":
+        return convert_operator_function(arg)
     else:
         todo("Handle print for non-value-literals")
         raise CannotConvert("Cannot convert print for non-value-literals")
@@ -161,15 +202,12 @@ def convert_statements(AST):
     statements = get_statements(AST)
     for statement in statements:
         tag, rest = statement[0], statement[1:]
-        print tag
         try:
             if tag == "assignment_statement":
                 cstatement = convert_assignment(rest)
                 print cstatement
                 cstatements.append(cstatement)
-            print "HERE!?", repr(tag)
             if tag == "print_statement":
-                print "Flooble"
                 cstatement = convert_print(rest)
                 cstatements.append(cstatement)
 
@@ -259,7 +297,26 @@ if __name__ == "__main__":
                                                       ["string", 'hello']]]}},
              'name': 'hello_world_mixed'}}
 
-    actual = ast_to_cst("hello_world_mixed", AST)
+    AST = ['program',
+           ['statements',
+            [['print_statement',
+              [['operator_function',
+                'plus',
+                ['value_literal', 1, 'NUMBER', 'INT', 1],
+                ['value_literal', 1, 'NUMBER', 'INT', 1]]]]]]]
+
+    expect = {
+        'PROGRAM': {'includes': ['<iostream>'],
+             'main': {'c_frame': {'identifiers': [],
+                                  'statements': [['print_statement', ['op', 'plus', 
+                                                                            ["integer", 1],
+                                                                            ["integer", 1]]]
+,
+                                                ] }},
+             'name': 'hello_operators'}}
+
+
+    actual = ast_to_cst("hello_operators", AST)
 
     print "actual == expect --->", actual == expect
 
@@ -267,4 +324,5 @@ if __name__ == "__main__":
     import pprint
     # print json.dumps(actual, indent=4)
     pprint.pprint(actual)
+    pprint.pprint(expect)
 

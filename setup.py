@@ -45,7 +45,7 @@ packages = find_packages(".")
 package_names = packages.keys()
 
 setup(name = "pyxie",
-      version = "0.0.6",
+      version = "0.0.7",
       description = "Little Python to C++ Compiler",
       url='http://www.sparkslabs.com/michael/',
       author='Michael Sparks (sparkslabs)',

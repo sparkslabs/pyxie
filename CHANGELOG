@@ -6,6 +6,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### In progress
 Core Expressions
 
+## [0.0.7] - Unreleased
+### Changed
+- Bump revision for release
+- Compiler structure & testing improvements
+- Initial support for infix integer addition expressions
+- Support for plus/minus/times/divide infix operations
+- Add test regarding adding string variables together
+- Make parser more relaxed about source file not ending with a newline
+- Bugfix: Fix precedence for plus/minus/times/divide
+- Bugfix: Only output each include once
+
 ## [0.0.6] - 2015-04-26
 Overview -- Character Literals, math expressions, build/test improvements
 ### Changed

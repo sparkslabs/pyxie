@@ -39,10 +39,65 @@ def parse_file(testprogs_dir, testfile):
     reset_parser()
     print "_______________________________________________________________"
     print "PARSING", testfile
+    print
     filename = os.path.join(testprogs_dir,testfile)
     data = open(filename).read()
     AST = parse(data, lexer)
+    return AST
+
+def compile_file(testprogs_dir, testfile):
+    AST = parse_file(testprogs_dir, testfile)
     pprint.pprint(AST)
+
+    print "_______________________________________________________________"
+    print "COMPILING", testfile
+    print
+
+    p = testfile.rfind(".")
+    cname = testfile[:p]
+
+    CST = ast_to_cst(cname, AST)
+    print "CST:", pprint.pformat(CST)
+
+    program = C_Program.fromjson(CST)
+    program.generate()
+
+    allresults_dir = os.path.join(testdir, "genprogs")
+    thisresult_dir = os.path.join(allresults_dir, testfile)
+
+
+    try:
+        os.mkdir(thisresult_dir)
+    except OSError as e:
+       if e.errno != 17: # Directory exists
+           raise
+
+    build_program(pyxie.codegen.simple_cpp.source, thisresult_dir, program.name)
+
+def build_program(source, work_dir, name):
+    print "_______________________________________________________________"
+    print "BUILDING", work_dir
+    print
+    print "Program to build:"
+    pprint.pprint(source, width=200)
+    print
+
+    f = open(os.path.join(work_dir,name+".c"), "w")
+    for line in source:
+        f.write(line)
+        f.write("\n")
+    f.close()
+
+    makefile = makefile_tmpl % {"filename": name }
+    f = open(os.path.join(work_dir,"Makefile"), "w")
+    f.write(makefile)
+    f.close()
+
+    os.chdir(work_dir)
+    os.system("make")
+    print
+    print "Done!"
+    print
 
 def parsing_tests():
     # Run parsing tests. These are in the "progs" test directory, and are in
@@ -52,54 +107,9 @@ def parsing_tests():
     testprogs = get_test_programs(".p")
 
     for testfile in testprogs:
-        parse_file(testprogs_dir, testfile)
+        AST = parse_file(testprogs_dir, testfile)
+        pprint.pprint(AST)
         os.chdir(rootdir)
-
-def compile_file(testprogs_dir, testfile):
-    lexer = build_lexer()
-    reset_parser()
-    print "_______________________________________________________________"
-    print "COMPILING", testfile
-
-    data = open(os.path.join(testprogs_dir,testfile)).read()
-    AST = parse(data, lexer)
-    pprint.pprint(AST)
-    cname = testfile.replace(".pyxie", "")
-    CST = ast_to_cst(cname, AST)
-    print "CST:", pprint.pformat(CST)
-
-    program = C_Program.fromjson(CST)
-    program.generate()
-
-    print pyxie.codegen.simple_cpp.source
-
-    allresults_dir = os.path.join(testdir, "genprogs")
-    thisresult_dir = os.path.join(allresults_dir, testfile)
-
-    pprint.pprint(pyxie.codegen.simple_cpp.source, width=200)
-
-    now = int(time.time())
-
-    print "BUILDING PROGRAM", thisresult_dir
-    try:
-        os.mkdir(thisresult_dir)
-    except OSError as e:
-       if e.errno != 17: # Directory exists
-           raise
-
-    f = open(os.path.join(thisresult_dir,program.name+".c"), "w")
-    for line in pyxie.codegen.simple_cpp.source:
-        f.write(line)
-        f.write("\n")
-    f.close()
-
-    makefile = makefile_tmpl % {"filename": program.name }
-    f = open(os.path.join(thisresult_dir ,"Makefile"), "w")
-    f.write(makefile)
-    f.close()
-
-    os.chdir(thisresult_dir)
-    os.system("make")
 
 def compilation_tests():
     # ast_to_cst
@@ -140,12 +150,10 @@ elif sys.argv[1] == "compile-tests":
 
 elif sys.argv[1] == "parse" and len(sys.argv) == 3:
     filename = sys.argv[2]
-    if not filename.endswith(".p"):
-        filename = filename + ".p"
-        parse_file(testprogs_dir, filename)
+    AST = parse_file(testprogs_dir, filename)
+    pprint.pprint(AST)
+
 
 elif sys.argv[1] == "compile" and len(sys.argv) == 3:
     filename = sys.argv[2]
-    if not filename.endswith(".pyxie"):
-        filename = filename + ".pyxie"
-        compile_file(testprogs_dir, filename)
+    compile_file(testprogs_dir, filename)

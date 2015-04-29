@@ -76,12 +76,12 @@ class Grammar(object):
         p[0] = p[1]
 
     def p_expression_2(self, p):
-        "expression : arith_expression TIMES expression"
-        p[0] = ["operator_function", "times", p[1], p[3] ]
+        "expression : arith_expression PLUS expression"
+        p[0] = ["operator_function", "plus", p[1], p[3] ]
 
     def p_expression_3(self, p):
-        "expression : arith_expression DIVIDE expression"
-        p[0] = ["operator_function", "divide", p[1], p[3] ]
+        "expression : arith_expression MINUS expression"
+        p[0] = ["operator_function", "minus", p[1], p[3] ]
 
     def p_expression_4(self, p):
         "expression : arith_expression POWER expression"
@@ -92,12 +92,12 @@ class Grammar(object):
         p[0] = p[1]
 
     def p_arith_expression_2(self, p):
-        "arith_expression     : expression_atom PLUS arith_expression"
-        p[0] = ["operator_function", "plus", p[1], p[3] ]
+        "arith_expression     : expression_atom TIMES arith_expression"
+        p[0] = ["operator_function", "times", p[1], p[3] ]
 
     def p_arith_expression_3(self, p):
-        "arith_expression     : expression_atom MINUS arith_expression"
-        p[0] = ["operator_function", "minus", p[1], p[3] ]
+        "arith_expression     : expression_atom DIVIDE arith_expression"
+        p[0] = ["operator_function", "divide", p[1], p[3] ]
 
     def p_expression_atom_1(self, p):
         "expression_atom : value_literal"
@@ -151,6 +151,10 @@ class Grammar(object):
         p[0] = [ "value_literal", p[1], "IDENTIFIER", p.lineno(1) ]
 
 def parse(source,lexer):
+
+   if not source.endswith("\n"): # Be relaxed about end of file
+       source = source+ "\n"
+
    yacc.yacc(module=Grammar())
    result = yacc.parse(source, lexer=lexer)
    return result
