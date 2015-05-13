@@ -129,7 +129,15 @@ class Assigment(object):
         return ["assignment", self.lvalue, self.assigntype, self.rvalue ]
 
     def code(self):
-        return self.lvalue + " "+self.assigntype+" " + self.rvalue
+        print self.rvalue
+        if type(self.rvalue) == list:
+            print "Aha!",self.rvalue
+            crvalue = ArgumentList(self.rvalue)
+            crvalue = crvalue.code()
+            print "AHA!", crvalue
+        else:
+            crvalue = self.rvalue
+        return self.lvalue + " "+self.assigntype+" " + crvalue
 
 def todo(*args):
     print("TODO", " ".join([repr(x) for x in args]))

@@ -17,6 +17,7 @@
 from pyxie.parsing.lexer import build_lexer
 from pyxie.parsing.grammar import parse
 from pyxie.model.transform import ast_to_cst
+from pyxie.model.pynode import jdump
 from pyxie.codegen.simple_cpp import C_Program, source, makefile_tmpl, reset_parser
 import pyxie.codegen.simple_cpp
 
@@ -38,7 +39,7 @@ def parse_file(testprogs_dir, testfile):
     lexer = build_lexer()
     reset_parser()
     print "_______________________________________________________________"
-    print "PARSING", testfile
+    print "PARSING", os.path.join(testprogs_dir,testfile)
     print
     filename = os.path.join(testprogs_dir,testfile)
     data = open(filename).read()
@@ -49,8 +50,11 @@ def compile_file(testprogs_dir, testfile):
     AST = parse_file(testprogs_dir, testfile)
     pprint.pprint(AST)
 
+    JAST = jdump(AST)
+    pprint.pprint(JAST)
+
     print "_______________________________________________________________"
-    print "COMPILING", testfile
+    print "COMPILING", os.path.join(testprogs_dir,testfile)
     print
 
     p = testfile.rfind(".")
@@ -109,6 +113,10 @@ def parsing_tests():
     for testfile in testprogs:
         AST = parse_file(testprogs_dir, testfile)
         pprint.pprint(AST)
+
+        JAST = jdump(AST)
+        pprint.pprint(JAST)
+
         os.chdir(rootdir)
 
 def compilation_tests():

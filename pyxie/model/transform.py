@@ -15,41 +15,52 @@
 # limitations under the License.
 #
 
-def get_statements(AST):
-    statements = []
-    if AST[0] == "program":
-        assert AST[1][0] == "statements"
-        statements = AST[1][1]
-    else:
-        print AST[0]
-    return statements
+# This is currently working from the AST as represented by lists,
+# switching to intermediate lists and then to nodes.
+
+from pyxie.model.pynode import jdump
+import pyxie.model.pynode as nodes
+#def get_statements(AST):
+    ## AST = jdump(AST)
+    #statements = []
+
+    #assert AST.tag == "program"
+    #statements = AST.statements
+    #return statements
 
 def todo(*args):
     print "TODO", " ".join([repr(x) for x in args])
 
 def find_variables(AST):
     variables = {}
-    statements = get_statements(AST)
+    statements = AST.statements
     for statement in statements:
-        tag, rest = statement[0], statement[1:]
-        if tag == "assignment_statement":
-            lvalue, assigntype, rvalue = rest
-            if assigntype[1] != "=":
-                todo("assignment where the assigntype is not '='")
+
+        if statement.tag == "assignment_statement":
+            lvalue, rvalue, assign_type = statement.lvalue, statement.rvalue, statement.assign_type
+            if statement.assign_type != "=":
+                todo("find_variables - assignment where the assign_type is not '='")
                 continue # Skip
-            if lvalue[1] != "IDENTIFIER":
-                todo("assignment where the lvalue is not an identifier")
-                continue # Skip
-            if rvalue[0] != "value_literal":
-                todo("assignment where the rvalue is not a value_literal")
+            if statement.lvalue.tag != "identifier":
+                todo("find_variables - assignment where the lvalue is not an identifier")
                 continue # Skip
 
-            identifer = lvalue[0]
-            v_type = rvalue[2]
+            if ( isinstance(statement.rvalue, nodes.PyOperator) or
+                 isinstance(statement.rvalue, nodes.PyValueLiteral) ) :
+                    identifer = lvalue.value
+                    v_type = rvalue.get_type()
+                    lvalue.context.store(identifer, v_type)
+            else:
+                todo("find_variables - assignment where the rvalue is not a value_literal or simple operator expression %s" % (repr(rvalue),))
+                continue # Skip
+
             if identifer in variables:
                 todo("we could check that the identifier doesn't change type")
                 continue # Skip
             variables[identifer] = v_type
+
+            print "lvalue", lvalue.context, "v_type", v_type
+            print "lvalue.context.lookup(identifer)", lvalue.context.lookup(identifer)
 
     return variables
 
@@ -60,11 +71,11 @@ class CannotConvert(Exception):
     pass
 
 def python_type_to_c_type(ptype):
-    if ptype == "STRING":  return "string"
-    if ptype == "NUMBER":  return "int"
-    if ptype == "BOOLEAN": return "bool"
-    if ptype == "FLOAT":   return "double"
-    if ptype == "CHARACTER": return "char"
+    if ptype == "string":  return "string"
+    if ptype == "integer":  return "int"
+    if ptype == "bool": return "bool"
+    if ptype == "float":   return "double"
+    if ptype == "char": return "char"
     raise UnknownType("Cannot identify C Type for %s" % ptype)
 
 def includes_for_ctype(ctype):
@@ -74,98 +85,120 @@ def includes_for_cstatement(cstatement):
     if cstatement[0] == "print_statement": return "<iostream>"
 
 def crepr_literal(pyliteral):
-    assert pyliteral[0] == "value_literal"
-    ctype = pyliteral[2]
-    if ctype == "STRING":
-        return '"' + pyliteral[1] + '"'
+    assert isinstance(pyliteral, nodes.PyValueLiteral)
 
-    if ctype == "CHARACTER":
-        char = pyliteral[1]
+    ptype = pyliteral.get_type()
+    ctype = python_type_to_c_type(ptype)
+
+    if ctype == "string":
+        result = pyliteral.value
+        result = result.replace('"','\\"')
+        return '"' + result + '"'
+
+    if ctype == "char":
+        char = pyliteral.value
         char = char.replace("'","\\'")
         return "'" + char + "'"
 
-    if ctype == "NUMBER":
-        return repr(pyliteral[1])
+    if ctype == "int":
+        return repr(pyliteral.value)
+
+    if ctype == "double":
+        return repr(pyliteral.value)
+
+    if ctype == "bool":
+        if pyliteral.value:
+            return "true"
+        else:
+            return "false"
+
+
     raise ValueError("Do not not know how to create crepr_literal for " + repr(pyliteral))
 
 def crepr_op(py_op):
-    assert py_op[0] == "operator_function"
-    func = py_op[1]
+    assert isinstance(py_op, nodes.PyOperator)
+#    assert py_op[0] == "operator_function"
+    func = py_op.tag
 
-    if func == "plus":
+    if func == "op_plus":
         return ["op", "plus"]
-    if func == "minus":
+    if func == "op_minus":
         return ["op", "minus"]
-    if func == "times":
+    if func == "op_times":
         return ["op", "times"]
-    if func == "divide":
+    if func == "op_divide":
         return ["op", "divide"]
     else:
         todo("Cannot yet convert operators functions other than plus...")
         raise CannotConvert("Cannot yet convert operators functions other than plus...:" + repr(py_op))
 
-
-
 def convert_assignment(assignment):
-    lvalue, assigntype, rvalue = assignment
+    lvalue, assign_type, rvalue = assignment.lvalue,assignment.assign_type, assignment.rvalue
 
-    if assigntype[1] != "=":
-        todo("Convert Assignment where assigntype is not '='")
-        raise CannotConvert("Cannot convert assignment where assigntype is not '='")
-    if lvalue[1] != "IDENTIFIER":
+    if assign_type != "=":
+        todo("Convert Assignment where assign_type is not '='")
+        raise CannotConvert("Cannot convert assignment where assign_type is not '='")
+
+    if lvalue.tag != "identifier":
         todo("assignment where the lvalue is not an identifier")
         raise CannotConvert("Cannot convert assignment where the lvalue is not an identifier")
-    if rvalue[0] != "value_literal":
-        todo("assignment where the rvalue is not a value_literal")
+
+    if not ( isinstance(assignment.rvalue, nodes.PyOperator) or
+             isinstance(assignment.rvalue, nodes.PyValueLiteral) ) :
+
+        todo("assignment where the rvalue is not a value_literal or operator")
         raise CannotConvert("Cannot convert assignment where the rvalue is not a value_literal")
 
-    print rvalue
-    lvalue = lvalue[0]
-    rvalue = crepr_literal(rvalue)
-    return ["assignment", lvalue, "=", rvalue ]
+    # print rvalue
+    clvalue = lvalue.value # FIXME: This is only valid for identifiers
+    if isinstance(assignment.rvalue, nodes.PyValueLiteral):
+        crvalue = crepr_literal(rvalue)
+
+    if isinstance(assignment.rvalue, nodes.PyOperator):
+        crvalue = convert_operator_function(rvalue)
+
+    return ["assignment", clvalue, "=", crvalue ]
 
 def convert_value_literal(arg):
-    print repr(arg), arg
+    # print repr(arg), arg
     stype = None
-    try:
-        tag, value, vtype, line = arg
-    except ValueError:
-        tag, value, vtype, stype, line = arg
-    if vtype == "STRING":
-        return ["string",  value]
-    if vtype == "NUMBER":
-        return ["integer",  value]
-    if vtype == "FLOAT":
-        return ["double",  value]
-    if vtype == "IDENTIFIER":
+    tag, value, vtype, line = arg.tag, arg.value,arg.get_type(), arg.lineno
+    if tag == "identifier":
         return ["identifier",  value]
-    if vtype == "BOOLEAN":
-        print "VALUE", repr(value), value
+
+    if vtype == "string":
+        return ["string",  value]
+    if vtype == "integer":
+        return ["integer",  value]
+    if vtype == "float":
+        return ["double",  value]
+    if vtype == "bool":
         if value == True:
             value = "true"
         else:
             value = "false"
         return ["boolean",  value]
 
-    todo("Cannot handle other value literals")
+    todo("CONVERSION: Cannot handle other value literals %s" % repr(arg))
+    todo("CONVERSION: %s %s %s %d" % (tag, repr(value), repr(vtype), line))
     raise CannotConvert("Cannot convert value-literal of type" + repr(arg))
 
 
-def convert_operator_function(arg):
-    print "CONVERT - convert_operator_function", repr(arg)
-    assert arg[0] == "operator_function"
+def convert_operator_function(opfunc):
+    print "CONVERT - convert_operator_function", repr(opfunc)
+    assert isinstance(opfunc, nodes.PyOperator)
+#    assert opfunc[0] == "operator_function"
 
-
-    func = arg[1]
-    arg1 = arg[2]
-    arg2 = arg[3]
+    func = opfunc.tag
+    arg1 = opfunc.arg1
+    arg2 = opfunc.arg2
 
     crepr_arg1 = convert_arg(arg1)
     crepr_arg2 = convert_arg(arg2)
     print "crepr_arg1", repr(crepr_arg1)
     print "crepr_arg2", repr(crepr_arg2)
 
-    result = crepr_op(arg) + [crepr_arg1, crepr_arg2]
+    result = crepr_op(opfunc) + [crepr_arg1, crepr_arg2]
     print repr(result)
     return result
 
@@ -174,23 +207,21 @@ def convert_operator_function(arg):
 
 
 def convert_arg(arg):
-    if arg[0] == "value_literal":
+    if isinstance(arg, nodes.PyValueLiteral):
+        print "CONVERTING LITERAL", arg
         return convert_value_literal(arg)
-    if arg[0] == "operator_function":
+    if isinstance(arg, nodes.PyOperator):
         return convert_operator_function(arg)
     else:
         todo("Handle print for non-value-literals")
         raise CannotConvert("Cannot convert print for non-value-literals")
 
-def convert_print(arg_spec):
-    print "convert_print(arg_spec)", repr(arg_spec[0]), len(arg_spec[0])
-    arg_spec = arg_spec[0]
+def convert_print(print_statement):
     cstatement = []
     cargs = []
-    print "arg_spec",arg_spec[0]
-    for arg in arg_spec:
-        print arg[0]
-        print "We need to convert the arg", arg
+    for arg in print_statement.expr_list:
+        #print arg
+        #print "We need to convert the arg", arg
         crepr = convert_arg(arg)
         carg = crepr
         cargs.append(carg)
@@ -199,16 +230,15 @@ def convert_print(arg_spec):
 
 def convert_statements(AST):
     cstatements = []
-    statements = get_statements(AST)
+    statements = AST.statements
     for statement in statements:
-        tag, rest = statement[0], statement[1:]
         try:
-            if tag == "assignment_statement":
-                cstatement = convert_assignment(rest)
+            if statement.tag == "assignment_statement":
+                cstatement = convert_assignment(statement)
                 print cstatement
                 cstatements.append(cstatement)
-            if tag == "print_statement":
-                cstatement = convert_print(rest)
+            if statement.tag == "print_statement":
+                cstatement = convert_print(statement)
                 cstatements.append(cstatement)
 
         except CannotConvert:
@@ -223,11 +253,15 @@ def ast_to_cst(program_name, AST):
     cvariables = []
     ctypes = {}
     includes = []
-    for name in pvariables:
+    names = pvariables.keys()
+    names.sort()
+    for name in names:
         ctype = python_type_to_c_type(pvariables[name])
         identifier = [ "identifier", ctype, name ]
         cvariables.append(identifier)
         ctypes[ctype] = True
+
+    print "cvariables",cvariables
 
     cstatements = convert_statements(AST)
     print cstatements

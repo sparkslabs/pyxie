@@ -6,7 +6,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### In progress
 Core Expressions
 
-## [0.0.7] - Unreleased
+## [0.0.8] - Unreleased
+### Changed
+
+
+## [0.0.7] - 2015-04-29
 ### Changed
 - Bump revision for release
 - Compiler structure & testing improvements
