@@ -1,13 +1,52 @@
 # Change Log
 
 All notable changes to this project will be documented in this file.
-This project adheres to [Semantic Versioning](http://semver.org/).
+This project adheres to [Semantic Versioning](http://semver.org/), within
+reason.
 
 ### In progress
 Core Expressions
 
-## [0.0.8] - Unreleased
+## [0.0.8] - 2015-05-13
 ### Changed
+Switched compilation over to using PyNode objects rather than lists
+
+Rolls up alot of changes, and improvements:
+
+* Simple test case for testing expressions in assignments
+* Added release date for 0.0.7
+* Bump revisions for next release
+* Use PyNodes to represent python programs
+  In particular, this replaces the use of lists with the use of objects.
+  The aim here is to simplify type inference from code, and injection of
+  context - like scoping - into the tree to be able to infer types and
+  usage thereof.
+
+* We're doing this at this stage because the language is complex enough for
+  it to start to be useful, but simple enough for it to be not too difficult
+  to switch over to.
+
+  Furthermore, by allowing nodes to generate a JSON representation, it's easier
+  to see the actual structure being generated - to allow  tree simplification,
+  but also to allow - at least temporarily - decoupling of changes from the
+  python parsing from the C tree generation, and from the C code generation
+
+* Clean up statements node creation in grammar
+* Simplify expression lists
+* Support iterating over statements
+* Transform pynodes to CST lists for assignment
+* Reverse number order to not match line numbers
+* Iterate over expressions within an expr_list
+* Convert assignments from pynodes
+* Remove old code
+* Can now transform basic core programs based on pynodes
+* Code generation for expressions as rvalues
+* Better test for code generation of expression rvalues
+* Add context into pyidentifier nodes
+* Support transforms for expression rvalues in assignment
+* First pass at adding context - variable lookups into the system
+* Test case that derives types for variables
+
 
 
 ## [0.0.7] - 2015-04-29
