@@ -112,5 +112,18 @@ One thing that may happen though is the ability to take python classes and
 derive iotoy device implementations/interfaces directly. (since iotoy was
 inspired heavily by python introspection) That's quite some time off.
 
+## Release History
 
-Michael Sparks, April 2015
+Release History: (and highlights)
+
+* 0.0.9 - UNRELEASED - Grammar changed to be left, not right recursive. Fixes precedence in un-bracketed expressions - aside from anything else!
+* 0.0.8 - 2015-05-13 - Internally switch over to using node objects for structure - resulting in better parsing of expressions with variables and better type inference.
+* 0.0.7 - 2015-04-29 - Structural, testing improvements, infix operators expressions (+ - * / ) for integers, precdence fixes
+* 0.0.6 - 2015-04-26 - Character Literals, "plus" expressions, build/test improvements
+* 0.0.5 - 2015-04-23 - Core lexical analysis now matches language spec, including blocks
+* 0.0.4 - 2015-04-22 - Mixed literals in print statements
+* 0.0.3 - 2015-04-21 - Ability to print & work with a small number of variables
+* 0.0.2 - 2015-03-30 - supports basic assignment
+* 0.0.1 - Unreleased - rolled into 0.0.2 - Initial structure
+
+Michael Sparks, May 2015

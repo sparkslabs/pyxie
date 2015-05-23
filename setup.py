@@ -45,7 +45,7 @@ packages = find_packages(".")
 package_names = packages.keys()
 
 setup(name = "pyxie",
-      version = "0.0.8",
+      version = "0.0.9",
       description = "Little Python to C++ Compiler",
       url='http://www.sparkslabs.com/michael/',
       author='Michael Sparks (sparkslabs)',
@@ -110,17 +110,23 @@ What does it do?
 What it *does* do:
 
 - Recognise python programs with simple assigment & print statements
+- Recognise expressions, derive their types for use in assignment and print statemnets
 - Parse those to an AST
 - Can represent equivalent C programs using a concrete C representation (CST)
 - Can translate the AST to the CST and then generate C++ code from the CST
 
 That means it can compile one very very simple type of python program
-that looks like this...
+that looks like this...::
 
     greeting = "hello"
     name = "world"
+    age = 10
+    next_age = age + 1
+    and_then = age + next_age
+    cliche = greeting + name
 
-    print greeting, name
+    print greeting, name, cliche
+    print age, next_age, and_then
 
 ... into the equivalent C program.
 
@@ -183,7 +189,20 @@ One thing that may happen though is the ability to take python classes and
 derive iotoy device implementations/interfaces directly. (since iotoy was
 inspired heavily by python introspection) That's quite some time off.
 
+Release History
+---------------
+Release History: (and highlights)
 
-Michael Sparks, April 2015
+* 0.0.9 - UNRELEASED - Grammar changed to be left, not right recursive. Fixes precedence in un-bracketed expressions - aside from anything else!
+* 0.0.8 - 2015-05-13 - Internally switch over to using node objects for structure - resulting in better parsing of expressions with variables and better type inference.
+* 0.0.7 - 2015-04-29 - Structural, testing improvements, infix operators expressions (+ - * / ) for integers, precdence fixes
+* 0.0.6 - 2015-04-26 - Character Literals, "plus" expressions, build/test improvements
+* 0.0.5 - 2015-04-23 - Core lexical analysis now matches language spec, including blocks
+* 0.0.4 - 2015-04-22 - Mixed literals in print statements
+* 0.0.3 - 2015-04-21 - Ability to print & work with a small number of variables
+* 0.0.2 - 2015-03-30 - supports basic assignment
+* 0.0.1 - Unreleased - rolled into 0.0.2 - Initial structure
+
+Michael Sparks, May 2015
 """
       )

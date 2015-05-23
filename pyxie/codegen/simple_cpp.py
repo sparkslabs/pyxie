@@ -178,7 +178,10 @@ class ArgumentList(object):
         if arg[0] == "identifier":
             return arg[1]
         if arg[0] == "integer":
-            return repr(arg[1])
+            r = repr(arg[1])
+            if arg[1]<0:
+                r = "(" + r + ")"
+            return r
         if arg[0] == "string":
             carg = arg[1].replace('"', '\\"')
             return '"' + carg + '"' # Force double quotes

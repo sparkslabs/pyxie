@@ -4,8 +4,8 @@ Little Python Language Spec
 Little Python is a restricted subset of Python 3. (and 2.7)
 
 **This is a work in progress.** The implementation does not yet match
-this spec. As a result, the grammar may be bogus. You hopefully get the
-idea though.
+this spec. As a result, the grammar will be slightly bogus. You hopefully
+get the idea though.
 
 ## Semi-formal syntactic language features todo:
 
@@ -14,6 +14,7 @@ idea though.
 Simple
 * Numbers
 * Strings
+** Characters - the only extension beyond standard python because we're working in a restricted environment
 * Booleans
 
 Harder
@@ -59,13 +60,22 @@ Harder
             DQUOTESTRING: "([^"]|.)*"
             SQUOTESTRING: '([^']|.)*'
 
-        CHARACTER: b'[^']'  **[TBD]**
-            If a single character byte string is actually required, do this: b'C'+b'' - ie append
-            an empty byte string. The compiler will be special cased to detect this and force
-            the expression to be the single bytestring b'C'
+        CHARACTER: SCHARACTER | DCHARACTER
+            SCHARACTER: c'([^']|.)'
+            DCHARACTER: c"([^"]|.)"
 
-            This isn't ideal, but it deals with the fact that often we do want to be able to deal
-            with just characters C in embedded systems.
+            I'm actually contemplating having b'<char>' instead, but that
+            makes single character byte string tricky.  This will probably
+            be revisited, but one thought is this: If a single character
+            byte string is actually required, do this: b'C'+b'' - ie append
+            an empty byte string.  The compiler will be special cased to
+            detect this and force the expression to be the single bytestring
+            b'C'. It's a bit icky, so for the moment I've added a character
+            literal instead to see what works better.
+
+            This isn't ideal, but it deals with the fact that often we do
+            want to be able to deal with just characters C in embedded
+            systems.
 
 ### Grammar todo
 
@@ -95,8 +105,9 @@ Harder
 
 ### non-specific statements
 
-print is currently python 2 like, should be python 3 like.
-Should be made that once function calls are integrated.
+NOTE: print is currently python 2 like, should be python 3 like.  Should be
+made that once function calls are integrated.  In the meantime, printing
+without having to implement general function calls is simpler.
 
     print_statement      : PRINT fullexpression 
     pass_statement       : PASS  **[TBD]**
@@ -169,14 +180,14 @@ Should be made that once function calls are integrated.
 
 ### Core Expressions  **[WIP]**
 
-    expression           : arith_expression  **[TBD]**
-                         | arith_expression TIMES expression  **[TBD]**
-                         | arith_expression DIVIDE expression  **[TBD]**
-                         | arith_expression POWER expression  **[TBD]**
+    expression           : arith_expression  **[WIP]**
+                         | arith_expression PLUS expression  **[WIP]**
+                         | arith_expression MINUS expression  **[WIP]**
+                         | arith_expression POWER expression  **[WIP]**
 
-    arith_expression     : expression_atom  **[TBD]**
-                         | expression_atom PLUS arith_expression  **[TBD]**
-                         | expression_atom MINUS arith_expression  **[TBD]**
+    arith_expression     : expression_atom  **[WIP]**
+                         | expression_atom TIMES arith_expression  **[WIP]**
+                         | expression_atom DIVIDE arith_expression  **[WIP]**
 
     expression_atom      : value_literal
                          | func_call  **[TBD]**
@@ -321,4 +332,3 @@ Note: Operator precedence needs ironing out   **[TBD]**
 * There may be an additional syntax to assist with tweaking C compilation.
 * This may use the term "pragma"
 * How to handle/provide exceptions, if at all -- Seems odd not to
-

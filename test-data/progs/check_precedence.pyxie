@@ -1,0 +1,21 @@
+print "Same precedence level should evaluate left to right"
+print "Simple addition"
+print 1+1, 2
+print "Simple 3 way addition"
+print 1+1+1, 3
+print "Add, subtract. 1+2-1 : 1+(2-1) -> 2 OR (1+2)-1 -> 2"
+print 1+2-1, 2
+print "Minus Minus. 1-2-1 : ((1-2)-1) -> -2 NOT 1-(2-1) -> 0"
+print 1-2-1, -2
+print "Minus times. 1-2*3 : 1-(2*3) -> -5 NOT (1-2)*3 -> -3"
+print 1-2*2, -3
+print "Minus times time. 1-2*3-4 : (1-(2*3))-4 -> -9 NOT ((1-2)*3)-4 -> -7 NOT 1-((2*3)-4) -> -1 NOT 1-(2*(3-4)) -> NOT 3"
+print 1-2*3-4, -9
+print "Times Divide. 4*3/2 : ((4*3)/2) -> 6 NOT 4*(3/2) -> 4"
+print 4*3/2, 6
+print "Times Divide Times. 2*6/3*7 : (2*(6/3))*7 -> 28  OR ((2*6)/3)*7 <- More likely ; NOT (2*6)/(3*7)-> 0 NOT 2*(6/(3*7) -> 0"
+print 2*6/3*7, 28
+print 8/2*3, 12
+print 20/4/2, 2
+print 48/6/3*2, 4
+print 4 * -5 +2 - -2, -16

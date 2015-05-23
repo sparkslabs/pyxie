@@ -16,7 +16,7 @@
 PYTHON=`which python`
 DESTDIR=/
 PROJECT=pyxie
-VERSION=0.0.8
+VERSION=0.0.9
 
 all:
 	@echo "make source - Create source package"
@@ -45,6 +45,7 @@ deb:
 ppadeb:
 	python setup.py sdist
 	cd dist && py2dsc $(PROJECT)-* && cd deb_dist/$(PROJECT)-$(VERSION) && debuild -S && cd .. && dput ppa:sparkslabs/packages $(PROJECT)_*_source.changes
+	@echo "Clean up dist before uploading to pypi, or it'll contain too much junk"
 
 use:
 	sudo dpkg -i dist/deb_dist/python-$(PROJECT)*deb
