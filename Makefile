@@ -16,7 +16,7 @@
 PYTHON=`which python`
 DESTDIR=/
 PROJECT=pyxie
-VERSION=0.0.9
+VERSION=0.0.10
 
 all:
 	@echo "make source - Create source package"
@@ -70,5 +70,5 @@ devloop: purge distclean deb use
 	echo
 
 test:
-	PYTHONPATH="." ./bin/pyxie run-tests
+	PYTHONPATH="." ./bin/pyxie --test run-tests
 	# behave

@@ -57,7 +57,9 @@ def parse_testfile(testprogs_dir, testfile, debug=False):
 def generate_code(cname, AST, debug=False):
     CST = ast_to_cst(cname, AST)
     if debug:
-        print "CST:", pprint.pformat(CST)
+        print "CONCRETE C SYNTAX TREE: - - - - - - - - - - - - - - - - - - - -"
+        print pprint.pformat(CST)
+        print "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
     program = C_Program.fromjson(CST)
     program.generate()
     return pyxie.codegen.simple_cpp.source[:]
@@ -68,6 +70,12 @@ def compile_testfile(testprogs_dir, testfile):
     cname = testfile[:p]
 
     AST = parse_testfile(testprogs_dir, testfile, debug=True)
+
+    print "_______________________________________________________________"
+    print "ANALYSING", os.path.join(testprogs_dir,testfile)
+    print
+    AST.analyse()
+
 
     print "_______________________________________________________________"
     print "COMPILING", os.path.join(testprogs_dir,testfile)
@@ -140,9 +148,24 @@ def compilation_tests():
     # Compilation Tests
     rootdir = os.getcwd()
     testprogs = get_test_programs(".pyxie")
+    print "TEST PROGS", testprogs
 
     for testfile in testprogs:
-        compile_testfile(testprogs_dir, testfile)
+        build_fail = True
+        try:
+            compile_testfile(testprogs_dir, testfile)
+            build_fail = False
+        except:
+            if testfile.endswith("shouldfail.pyxie"):
+                print "AS EXPECTED, COMPILE FAILED FOR", testfile
+            else:
+                print "UNEXPECTED FAILURE FOR FILE", testfile
+                raise
+
+        if not build_fail and testfile.endswith("shouldfail.pyxie"):
+            print "UNEXPECTED BUILD SUCCESS FOR FILE", testfile
+            raise Exception("UNEXPECTED BUILD SUCCESS FOR FILE %s" % testfile )
+
         os.chdir(rootdir)
 
     print "COMPILING DONE", testprogs
@@ -194,12 +217,37 @@ def main():
             pprint.pprint(AST.__json__())
             return
 
+        if sys.argv[1] == "analyse" and len(sys.argv) == 3:
+            filename = sys.argv[2]
+            try:
+                AST = parse_file(filename)
+                print "HERE 3------------"
+                pprint.pprint(AST.__json__())
+                print "HERE 4------------"
+                AST.analyse()
+                print "HERE 5------------"
+                pprint.pprint(AST.__info__())
+                print "HERE 6------------"
+            except:
+                from pyxie.parsing.context import Context
+                for cid in Context.contexts:
+                    context = Context.contexts[cid]
+                    print "CONTEXT",context.names
+                raise
+            return
+
         if sys.argv[1] == "compile" and len(sys.argv) == 3 or len(sys.argv) == 4:
 
             rootdir = os.getcwd()
             filename = sys.argv[2]
-            base_dir = filename[:filename.rfind("/")]
-            base_filename = filename[filename.rfind("/")+1:]
+            lastslash_pos = filename.rfind("/")
+            if lastslash_pos != -1:
+                base_dir = filename[:lastslash_pos]
+                base_filename = filename[lastslash_pos+1:]
+            else:
+                base_dir = "." # just a filename
+                base_filename = filename
+
             cname = base_filename[:base_filename.rfind(".")]
 
             if len(sys.argv) == 4:
@@ -214,6 +262,7 @@ def main():
             print "result_filename", result_filename
 
             AST = parse_file(filename)
+            AST.analyse()
             c_code = generate_code(cname, AST, debug=True)
 
             build_dir = os.path.join(base_dir, "build-"+str(int(time.time())))
@@ -238,6 +287,9 @@ def main():
                 for filename in os.listdir(build_dir):
                     os.unlink(os.path.join(build_dir,filename))
                 os.removedirs(build_dir)
+                if base_dir == ".":
+                    os.unlink("parsetab.py")
+                    os.unlink("parser.out")
             return
 
     show_help()

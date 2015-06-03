@@ -31,9 +31,14 @@ def mkStatement(statement_spec):
     if ss[0] == "assignment":
         return Assigment( ss[1], ss[3], ss[2])
 
-    if ss[0] == "print_statement":
+    elif ss[0] == "print_statement":
         return PrintStatement(*statement_spec[1:])
 
+    elif ss[0] == "expression_statement":
+        return ExpressionStatement(*statement_spec[1:])
+
+    else:
+        print "Unknown statement type", ss[0], ss
 
 class C_Program(object):
     def __init__(self):
@@ -138,6 +143,23 @@ class Assigment(object):
         else:
             crvalue = self.rvalue
         return self.lvalue + " "+self.assigntype+" " + crvalue
+
+class ExpressionStatement(object):
+    def __init__(self, expression):
+        self.expression = expression
+
+    def json(self):
+        return ["expression_statement", self.expression ]
+
+    def code(self):
+        print self.expression
+        if type(self.expression) == list:
+            cvalue = ArgumentList(self.expression)
+            cvalue = cvalue.code()
+        else:
+            raise Exception("Fail to understand how to generate code for %s" % repr(self.expression) )
+
+        return cvalue
 
 def todo(*args):
     print("TODO", " ".join([repr(x) for x in args]))

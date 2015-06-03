@@ -1,0 +1,13 @@
+"Contains the assignments in the wrong order. This should fail to run and fail to determine types"
+
+new_age_three = age + new_age_too
+new_age_too = age + 1
+new_age = 10 +1
+age = 10
+
+foobar = foo + bar
+foo = "Hello"
+bar = "World"
+
+print foo, bar, foobar
+print age, new_age, new_age_too, new_age_three 

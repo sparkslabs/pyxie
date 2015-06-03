@@ -5,7 +5,20 @@ This project adheres to [Semantic Versioning](http://semver.org/), within
 reason.
 
 ### In progress
-Core Expressions
+Core Expressions - function calls
+
+## [0.0.10] - 2015-06-03
+
+* Documentation added to pyxie/__init__.py, to allow project level help from "pydoc pyxie"
+* Expression Statements
+* Improved type inference in explicit analysis phase 
+ * Explicit analysis phase added - decorates AST, focussed on types. Results of this phase viewable.
+ * Pynodes are now tree nodes, simplifying tree traversal for common cases
+ * Variables are managed by contexts -- context is added to pynodes during analysis phase, simplifying type inference
+ * Contexts changes to store name and list of expressions -- not name and identifier, again, simplifying and generalising type inference
+ * Ensure all identifies in global context *before* analysis starts, simplifying analysis phase
+ * New strategy for type inference documented, opens up lexical scoping
+* pyxie compile harness now runs/compiles programs outside the pyxie tree
 
 ## [0.0.9] - 2015-05-23
 

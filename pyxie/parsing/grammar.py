@@ -19,34 +19,7 @@ import ply.yacc as yacc
 
 from pyxie.model.pynode import *
 from pyxie.parsing.lexer import tokens
-
-#
-# I was going to have a stack of contexts. Instead, I'll maintain
-# a stack but allow them to point to their parent. This actually means
-# all contexts actually form a graph - which is true. (Many local contexts can
-# point at a parent context)
-#
-# This then allows looking in the current context, and then outwards.
-#
-
-class ContextLeakage(Exception):
-    pass
-
-class Context(object):
-    def __init__(self, parent=None):
-        self.names = {} # Stores the type against the name.
-        self.parent = parent
-    def store(self,name,value):
-        print "Context.store NAME", name, "VALUE", value
-        if name in self.names:
-            print "WARNING: Name %s already exists in names, this may be OK. Storing value %s" % (repr(name), repr(value))
-        self.names[name] = value
-    def lookup(self, name):
-        if name in self.names:
-            return self.names[name]
-        if self.parent:
-            return self.parent(name)
-        raise ContextLeakage("Cannot find name %s in current context stack" % name)
+from pyxie.parsing.context import *
 
 class Grammar(object):
     precedence = (
@@ -55,11 +28,6 @@ class Grammar(object):
         ('right', 'UMINUS')
     )
     tokens = tokens
-    def __init__(self, *args, **argd):
-        super(Grammar, self).__init__(*args, **argd)
-        self.context_stack = [] # Will be necessary for functions/classes/etc
-        self.global_context = Context()
-        self.curr_ctx = self.global_context # Initial context is the global context
 
     def p_error(self,p):
         print "Syntax error at", p
@@ -103,8 +71,7 @@ class Grammar(object):
 
     def p_assignment_statement(self, p):
         "assignment_statement : IDENTIFIER ASSIGN expression"
-        identifier = PyIdentifier(self.curr_ctx, p.lineno(1), p[1])
-        self.curr_ctx.store(p[1], identifier ) # Stuff into the current context
+        identifier = PyIdentifier(p.lineno(1), p[1])
 
         p[0] = PyAssignment(identifier, p[3], p[2])
 
@@ -184,8 +151,7 @@ class Grammar(object):
 
     def p_value_literal_8(self, p):
         "value_literal : IDENTIFIER"
-        p[0] = PyIdentifier(self.curr_ctx, p.lineno(1), p[1])
-        self.curr_ctx.store(p[1], p[0]) # Stuff into the current context
+        p[0] = PyIdentifier(p.lineno(1), p[1])
 
 def parse(source,lexer):
 

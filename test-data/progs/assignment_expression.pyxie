@@ -1,3 +1,6 @@
 age = 10
 new_age = 10 +1
 print age, new_age
+
+1+1
+"hello world"

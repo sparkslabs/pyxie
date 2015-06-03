@@ -20,47 +20,30 @@
 
 from pyxie.model.pynode import jdump
 import pyxie.model.pynode as nodes
-#def get_statements(AST):
-    ## AST = jdump(AST)
-    #statements = []
-
-    #assert AST.tag == "program"
-    #statements = AST.statements
-    #return statements
 
 def todo(*args):
     print "TODO", " ".join([repr(x) for x in args])
 
+# Assumes that the analysis phase has taken place
 def find_variables(AST):
     variables = {}
-    statements = AST.statements
-    for statement in statements:
-
-        if statement.tag == "assignment_statement":
-            lvalue, rvalue, assign_type = statement.lvalue, statement.rvalue, statement.assign_type
-            if statement.assign_type != "=":
+    for node in AST.depth_walk():
+        if node.tag == "assignment_statement":
+            if node.assign_type != "=":
                 todo("find_variables - assignment where the assign_type is not '='")
                 continue # Skip
-            if statement.lvalue.tag != "identifier":
+            if node.lvalue.tag != "identifier":
                 todo("find_variables - assignment where the lvalue is not an identifier")
                 continue # Skip
 
-            if ( isinstance(statement.rvalue, nodes.PyOperator) or
-                 isinstance(statement.rvalue, nodes.PyValueLiteral) ) :
-                    identifer = lvalue.value
-                    v_type = rvalue.get_type()
-                    lvalue.context.store(identifer, v_type)
-            else:
-                todo("find_variables - assignment where the rvalue is not a value_literal or simple operator expression %s" % (repr(rvalue),))
-                continue # Skip
+            lvalue, rvalue, assign_type = node.lvalue, node.rvalue, node.assign_type
+            identifer = lvalue.value
+            v_type = lvalue.ntype
 
             if identifer in variables:
                 todo("we could check that the identifier doesn't change type")
                 continue # Skip
             variables[identifer] = v_type
-
-            print "lvalue", lvalue.context, "v_type", v_type
-            print "lvalue.context.lookup(identifer)", lvalue.context.lookup(identifer)
 
     return variables
 
@@ -227,6 +210,12 @@ def convert_print(print_statement):
         cargs.append(carg)
     return ["print_statement"] + cargs
 
+def convert_expression_statement(statement):
+    print "CONVERTING EXPRESSION STATEMENTS", statement.value
+    crepr = convert_arg(statement.value)
+    print "RECHED HERE"
+    print "CONVERTED ", crepr
+    return ["expression_statement", crepr]
 
 def convert_statements(AST):
     cstatements = []
@@ -237,11 +226,17 @@ def convert_statements(AST):
                 cstatement = convert_assignment(statement)
                 print cstatement
                 cstatements.append(cstatement)
-            if statement.tag == "print_statement":
+            elif statement.tag == "print_statement":
                 cstatement = convert_print(statement)
                 cstatements.append(cstatement)
+            elif statement.tag == "expression_statement":
+                cstatement = convert_expression_statement(statement)
+                cstatements.append(cstatement)
+            else:
+                print "SKIPPING STATEMENT", statement.tag
 
         except CannotConvert:
+            print "REACHED HERE FOR", statement
             pass
     return cstatements
 

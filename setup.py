@@ -45,7 +45,7 @@ packages = find_packages(".")
 package_names = packages.keys()
 
 setup(name = "pyxie",
-      version = "0.0.9",
+      version = "0.0.10",
       description = "Little Python to C++ Compiler",
       url='http://www.sparkslabs.com/michael/',
       author='Michael Sparks (sparkslabs)',
@@ -193,7 +193,8 @@ Release History
 ---------------
 Release History: (and highlights)
 
-* 0.0.9 - UNRELEASED - Grammar changed to be left, not right recursive. Fixes precedence in un-bracketed expressions - aside from anything else!
+* 0.0.10 - 2015-06-03 - Analysis phase to make type inference work better. Lots of related changes. Implementation of expression statements.
+* 0.0.9 - 2015-05-23 - Grammar changed to be left, not right recursive. (Fixes precedence in un-bracketed expressions) Added standalone compilation mode - outputs binaries from python code.
 * 0.0.8 - 2015-05-13 - Internally switch over to using node objects for structure - resulting in better parsing of expressions with variables and better type inference.
 * 0.0.7 - 2015-04-29 - Structural, testing improvements, infix operators expressions (+ - * / ) for integers, precdence fixes
 * 0.0.6 - 2015-04-26 - Character Literals, "plus" expressions, build/test improvements

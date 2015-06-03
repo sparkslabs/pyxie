@@ -91,7 +91,7 @@ Harder
     statement            : EOL
                          | assignment_statement
                          | print_statement // This is really just a function call now
-                         | fullexpression  **[TBD]**
+                         | fullexpression  **[TBD]**  **[PARTIAL]**
                          | while_statement  **[TBD]**
                          | if_statement  **[TBD]**
                          | for_statement  **[TBD]**
@@ -102,6 +102,13 @@ Harder
                          | yield_statement  **[TBD]**
                          | pass_statement  **[TBD]**
 
+Open question:
+
+* try/except
+* assert
+
+(These are open questions because they are harder to implement on some levels,
+assert would be useful though, but more useful if try/except were implemented)
 
 ### non-specific statements
 

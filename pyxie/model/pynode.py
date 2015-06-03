@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+from pyxie.parsing.context import Context
+from pyxie.model.tree import Tree
+
 import json
 
 MULTI_TYPES_WARN = False
@@ -29,6 +32,8 @@ expression_mixed_types = {
         ("op_times", "char","integer") : "string",
     }
 
+# Utility functions
+
 def jdump(thing):
     "Calls __json__ on a thing to try and convert it into a json serialisable thing"
     try:
@@ -36,76 +41,92 @@ def jdump(thing):
     except AttributeError:
         print "WARNING", thing, "is not a pynode"
 
+def warn(message):
+    if WARNINGS_ARE_FAILURES:
+        raise Exception(message)
+    else:
+        print message
 
-class PyNode(object):
+
+# Astract base nodes
+
+class PyNode(Tree):
     """Representation of a python node"""
+    tag = "node"
+    ntype = None # Type for this node
     def __init__(self, *args):
-        raise Exception("Abstract Class")
+        # Initialise the tree
+        super(PyNode,self).__init__()
     def tags(self):
         return ["node"]
     def classname(self):
         return self.__class__.__name__
+    def __info__(self):
+        return { self.tag : {"type":self.ntype} }
 
 class PyOperation(PyNode):
     tag = "operation"
     def __init__(self, *args):
-        raise Exception("Abstract Class")
-
-
+        super(PyOperation,self).__init__()
 
 class PyStatement(PyNode):
     tag = "statement"
     def __init__(self, *args):
-        raise Exception("Abstract Class")
+        super(PyStatement,self).__init__()
 
-class PyAssignment(PyStatement):
-    tag = "assignment_statement"
-    def __init__(self, lvalue, rvalue, assign_type):
-        self.lvalue = lvalue
-        self.rvalue = rvalue
-        self.assign_type = assign_type
-    def __repr__(self):
-        return "PyAssignment(%s,%s,%s)" % (repr(self.lvalue), repr(self.rvalue), repr(self.assign_type))
-    def __json__(self):
-        return [ self.tag, jdump(self.lvalue), jdump(self.rvalue), self.assign_type ]
-
-
-
-class PyExpressionStatement(PyStatement):
-    tag = "expression_statement"
-    def __init__(self, value):
-        self.value = value
-    def __repr__(self):
-        return "PyExpressionStatement(%s)" % (repr(self.value), )
-    def __json__(self):
-        return [ self.tag, jdump(self.value) ]
-
-class PyPrintStatement(PyStatement):
-    tag = "print_statement"
-    def __init__(self, expr_list):
-        self.expr_list = expr_list
-    def __repr__(self):
-        return "PyPrintStatement(%s)" % (repr(self.expr_list), )
-    def __json__(self):
-        return [ self.tag, jdump(self.expr_list) ]
+# Grammar nodes, in approximate grammar order
 
 class PyProgram(PyNode):
     tag = "program"
     def __init__(self, statements):
+        super(PyProgram,self).__init__()
         self.statements = statements
+        self.add_children(statements)
     def __repr__(self):
         return "PyProgram(%s)" % (repr(self.statements), )
     def __json__(self):
         return [ self.tag, jdump(self.statements) ]
 
+    def __info__(self):
+        info = super(PyProgram, self).__info__()
+        info[self.tag].update(self.statements.__info__())
+        contexts = Context.contexts
+        contexts_info = []
+        for context in contexts:
+            contexts_info.append(contexts[context].__json__())
+        info[self.tag]["contexts"] = contexts_info
+        return info
+
+    def analyse(self):
+        print "ANALYSING PROGRAM"
+
+        global_context = Context()
+        for node in self.depth_walk():
+            if node.tag == "identifier":
+                node.context = global_context
+
+        self.ntype = self.get_type()
+        self.statements.analyse() # Descend through the tree
+
+    def get_type(self):
+        # Program has no value so no type
+        return None
+
 
 class PyStatements(PyNode):
     tag = "statements"
     def __init__(self, head, *tail):
+        super(PyStatements,self).__init__()
         self.statements = [ head ]
         if tail:
             for node in tail:
                 self.statements = self.statements + node.statements
+        self.add_children(*(self.statements))
+
+    def __info__(self):
+        info = super(PyStatements, self).__info__()
+        info[self.tag]["block"] = [ x.__info__() for x in self.statements]
+        return info
 
     def __repr__(self):
         return "PyStatements(%s)" % ",\n ".join([repr(x) for x in self.statements])
@@ -117,13 +138,116 @@ class PyStatements(PyNode):
         for statement in self.statements:
             yield statement
 
+    def analyse(self):
+        print "ANALYSING STATEMENTS"
+        self.ntype = self.get_type()
+        for statement in self.statements:
+            statement.analyse() # Descend through the tree
+
+    def get_type(self):
+        # Block of statements has no value, so no type
+        return None
+
+import sys
+class PyAssignment(PyStatement):
+    tag = "assignment_statement"
+    def __init__(self, lvalue, rvalue, assign_type):
+        super(PyAssignment,self).__init__()
+        self.lvalue = lvalue
+        self.rvalue = rvalue
+        self.assign_type = assign_type
+        self.add_children(self.lvalue, self.rvalue)
+
+    def __repr__(self):
+        return "PyAssignment(%s,%s,%s)" % (repr(self.lvalue), repr(self.rvalue), repr(self.assign_type))
+    def __json__(self):
+        return [ self.tag, jdump(self.lvalue), jdump(self.rvalue), self.assign_type ]
+
+    def __info__(self):
+        info = super(PyAssignment, self).__info__()
+        info[self.tag]["lvalue"] = self.lvalue.__info__()
+        info[self.tag]["rvalue"] = self.rvalue.__info__()
+        info[self.tag]["assign_type"] = self.assign_type
+        return info
+
+    def analyse(self):
+        print "ANALYSING ASSIGNMENT"
+        print "ANALYSE RIGHT"
+        self.rvalue.analyse()
+        self.lvalue.add_rvalue(self.rvalue)
+        self.lvalue.analyse()
+
+        self.ntype = self.get_type()
+
+    def get_type(self):
+        ltype = self.lvalue.get_type()
+        rtype = self.rvalue.get_type()
+
+        print "Type for lvalue:", ltype
+        print "Type for rvalue:", rtype
+        print "Types match:", rtype==ltype
+
+        # rtype wins because it's being used to set the left
+        return rtype
+
+
+class PyExpressionStatement(PyStatement):
+    tag = "expression_statement"
+    def __init__(self, value):
+        super(PyExpressionStatement,self).__init__()
+        self.value = value
+        self.add_children(value)
+
+    def __repr__(self):
+        return "PyExpressionStatement(%s)" % (repr(self.value), )
+    def __json__(self):
+        return [ self.tag, jdump(self.value) ]
+    def __info__(self):
+        info = super(PyExpressionStatement, self).__info__()
+        info[self.tag]["value"] = self.value.__info__()
+        return info
+    def analyse(self):
+        print "ANALYSING EXPRESSION STATEMENT"
+        self.value.analyse()
+        self.ntype = self.get_type()
+    def get_type(self):
+        return self.value.get_type()
+
+
+class PyPrintStatement(PyStatement):
+    tag = "print_statement"
+    def __init__(self, expr_list):
+        super(PyPrintStatement,self).__init__()
+        self.expr_list = expr_list
+        self.add_children(expr_list)
+
+    def __repr__(self):
+        return "PyPrintStatement(%s)" % (repr(self.expr_list), )
+    def __json__(self):
+        return [ self.tag, jdump(self.expr_list) ]
+    def __info__(self):
+        info = super(PyPrintStatement, self).__info__()
+        info[self.tag]["args"] = [ x.__info__() for x in self.expr_list ]
+        return info
+    def analyse(self):
+        print "ANALYSING PRINT STATEMENT"
+        for expr in self.expr_list:
+            expr.analyse() # Descend through the tree
+
+        self.ntype = self.get_type()
+    def get_type(self):
+        # Print statement has no return value or default value
+        return None
+
 class PyExprList(PyNode):
     tag = "expression_list"
     def __init__(self, expr, *tail):
+        super(PyExprList,self).__init__()
         self.expressions = [ expr ]
         if tail:
             for node in tail:
                 self.expressions = self.expressions + node.expressions
+        self.add_children(*(self.expressions))
 
     def __repr__(self):
         return "PyExprList(%s)" % ",\n ".join([repr(x) for x in self.expressions])
@@ -135,26 +259,40 @@ class PyExprList(PyNode):
         for expression in self.expressions:
             yield expression
 
+    def __info__(self):
+        raise Exception("Expression List should not have info called directly")
 
+    def analyse(self):
+        raise Exception("Expression List should not have analyse called directly")
+
+# Base node for expressions, and all operators
 class PyOperator(PyOperation):
     tag = "operator"
     def __init__(self, arg1, arg2):
+        super(PyOperator,self).__init__()
         self.arg1 = arg1
         self.arg2 = arg2
-        self._type = None
+        self.ntype = None
+        self.add_children(arg1,arg2)
+
+    def __info__(self):
+        info = super(PyOperator, self).__info__()
+        info[self.tag]["arg1"] = self.arg1.__info__()
+        info[self.tag]["arg2"] = self.arg2.__info__()
+        return info
 
     @property
     def type(self):
-        if self._type != None:
-            return self._type
+        if self.ntype != None:
+            return self.ntype
         try:
             if self.arg1.get_type() == self.arg2.get_type():
-                self._type = self.arg1.get_type()
+                self.ntype = self.arg1.get_type()
             elif (self.tag, self.arg1.get_type(),self.arg2.get_type()) in expression_mixed_types:
-                self._type = expression_mixed_types[self.tag, self.arg1.get_type(),self.arg2.get_type()]
+                self.ntype = expression_mixed_types[self.tag, self.arg1.get_type(),self.arg2.get_type()]
             else:
-                self._type = "Mixed types, need to resolve", self.tag, self.arg1.get_type(),self.arg2.get_type()
-            return self._type
+                self.ntype = "Mixed types, need to resolve", self.tag, self.arg1.get_type(),self.arg2.get_type()
+            return self.ntype
         except:
             print "TAG", self.tag
             print "ARG1", self.arg1.get_type()
@@ -167,16 +305,13 @@ class PyOperator(PyOperation):
         return [ self.tag, jdump(self.arg1), jdump(self.arg2) ]
     def get_type(self):
         return self.type
+    def analyse(self):
+        print "ANALYSING OPERATOR", self.tag
+        self.arg1.analyse()
+        self.arg2.analyse()
 
-class PyValueLiteral(PyNode):
-    tag = "value_literal"
-    def __init__(self, lineno, value):
-        self.lineno = lineno
-        self.value = value
-    def __repr__(self):
-        return "%s(%d, %s)" % (self.classname(),self.lineno, repr(self.value))
-    def __json__(self):
-        return [ self.tag, self.lineno, self.value ]
+        self.ntype = self.get_type()
+
 
 class PyTimesOperator(PyOperator):
     tag = "op_times"
@@ -193,6 +328,70 @@ class PyPlusOperator(PyOperator):
 class PyMinusOperator(PyOperator):
     tag = "op_minus"
 
+# Base class for all Value Literals
+class PyValueLiteral(PyNode):
+    tag = "value_literal"
+    def __init__(self, lineno, value):
+        super(PyValueLiteral,self).__init__()
+        self.lineno = lineno
+        self.value = value
+    def __repr__(self):
+        return "%s(%d, %s)" % (self.classname(),self.lineno, repr(self.value))
+    def __json__(self):
+        return [ self.tag, self.lineno, self.value ]
+    def __info__(self):
+        info = super(PyValueLiteral, self).__info__()
+        info[self.tag]["lineno"] = self.lineno
+        info[self.tag]["value"] = self.value
+        return info
+    def analyse(self):
+        print "ANALYSING VALUE LITERAL", self.tag
+        # Don't go into containers, because there aren't any
+        self.ntype = self.get_type()
+    def get_type(self):
+        raise NotImplementedError("PyValueLiteral does not have any implicit type - its subtypes do")
+
+# All non-number value literals first
+class PyString(PyValueLiteral):
+    tag = "string"
+    def get_type(self):
+        return "string"
+
+class PyCharacter(PyValueLiteral):
+    tag = "character"
+    def get_type(self):
+        return "char"
+
+class PyBoolean(PyValueLiteral):
+    tag = "boolean"
+    def get_type(self):
+        return "bool"
+
+# Resist the urge to put PyIdentifiers into a LUT immediately.
+class PyIdentifier(PyValueLiteral):
+    tag = "identifier"
+    def __init__(self, *args):
+        super(PyIdentifier, self).__init__(*args)
+        self.context = None
+        self.types = []
+
+    def add_rvalue(self, expression):
+        self.context.store(self.value, expression)
+
+    def __info__(self):
+        info = super(PyIdentifier, self).__info__()
+        info[self.tag]["context "] = self.context
+        info[self.tag]["types"] = self.types
+        return info
+
+    def get_type(self):
+        return self.ntype
+
+    def analyse(self):
+        expression = self.context.lookup(self.value)
+        self.ntype = expression.get_type()
+
+# Base class for all numbers
 class PyNumber(PyValueLiteral):
     tag = "number"
     def negate(self):
@@ -223,62 +422,6 @@ class PyBinary(PyNumber):
     tag = "binary"
     def get_type(self):
         return "integer"
-
-class PyString(PyValueLiteral):
-    tag = "string"
-    def get_type(self):
-        return "string"
-
-class PyCharacter(PyValueLiteral):
-    tag = "character"
-    def get_type(self):
-        return "char"
-
-class PyBoolean(PyValueLiteral):
-    tag = "boolean"
-    def get_type(self):
-        return "bool"
-
-def warn(message):
-    if WARNINGS_ARE_FAILURES:
-        raise Exception(message)
-    else:
-        print message
-
-# Resist the urge to put PyIdentifiers into a LUT immediately.
-class PyIdentifier(PyValueLiteral):
-    tag = "identifier"
-    def __init__(self, context, *args):
-        super(PyIdentifier, self).__init__(*args)
-        self.context = context
-        self.types = []
-
-    def add_type(self, pytype):
-        if pytype not in self.types:
-            self.types.append(pytype)
-        if len(self.types)>1:
-            if MULTI_TYPES_WARN:
-                err = "Warning: Identifier %s at line %d can have conflicting types %s" %(self.value, self.lineno, repr(self.types))
-                warn(err)
-
-    def get_type(self):
-        try:
-            v_type = self.context.lookup(self.value)
-            return v_type
-        except: # FIXME: Contextleakage exception - badly named...
-            print "We failed and reached here >>" + str( self.value) +"<<"
-            pass
-
-        if len(self.types) == 0:
-            err = "GT Warning: Identifier %s at line %d has no identified type" %(self.value, self.lineno )
-            warn(err)
-        if self.context:
-            print "self.context", self.context.lookup(self.value)
-        if len(self.types) > 0:
-            self.context.store(self.value, self.types[0])
-            return self.types[0]
-        else:
-            return None
 
 if __name__ == "__main__":
     trees = [
