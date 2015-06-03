@@ -40,6 +40,8 @@ def parse_file(somefile):
     reset_parser()
     data = open(somefile).read()
     AST = parse(data, lexer)
+    AST.includes = lexer.includes
+    print "AST includes", AST.includes
     return AST
 
 def parse_testfile(testprogs_dir, testfile, debug=False):

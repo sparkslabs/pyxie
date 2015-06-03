@@ -193,8 +193,21 @@ def convert_arg(arg):
     if isinstance(arg, nodes.PyValueLiteral):
         print "CONVERTING LITERAL", arg
         return convert_value_literal(arg)
-    if isinstance(arg, nodes.PyOperator):
+    elif isinstance(arg, nodes.PyOperator):
         return convert_operator_function(arg)
+    elif isinstance(arg, nodes.PyFunctionCall):
+        print "NEED TO CONVERT FUNCTION CALL TO SOMETHING THE C CODE GENERATOR CAN HANDLE"
+        cargs = []
+        for expr in arg.expr_list:
+            #print arg
+            #print "We need to convert the arg", arg
+            crepr = convert_arg(expr)
+            carg = crepr
+            cargs.append(carg)
+
+        return ["function_call", convert_value_literal(arg.identifier),  cargs ]
+        return ["Nothing"]
+#        return convert_operator_function(arg)
     else:
         todo("Handle print for non-value-literals")
         raise CannotConvert("Cannot convert print for non-value-literals")
@@ -212,6 +225,7 @@ def convert_print(print_statement):
 
 def convert_expression_statement(statement):
     print "CONVERTING EXPRESSION STATEMENTS", statement.value
+    print "EXPRESSION STATEMENT", statement.value.tag
     crepr = convert_arg(statement.value)
     print "RECHED HERE"
     print "CONVERTED ", crepr
@@ -243,11 +257,14 @@ def convert_statements(AST):
 def ast_to_cst(program_name, AST):
     cst = {}
 
+    ast_includes = [ x.replace("#include ","") for x in AST.includes ]
+    print "AST.includes = ", ast_includes
     # Extract and handle variables
     pvariables = find_variables(AST)
     cvariables = []
     ctypes = {}
-    includes = []
+    # includes = []
+    includes = [ x.replace("#include ","") for x in AST.includes ]
     names = pvariables.keys()
     names.sort()
     for name in names:
@@ -267,6 +284,7 @@ def ast_to_cst(program_name, AST):
         if inc:
             includes.append(inc)
 
+    print "INCLUDES::", includes
     # Based on statements, update includes
     for cstatement in cstatements:
         inc = includes_for_cstatement(cstatement)

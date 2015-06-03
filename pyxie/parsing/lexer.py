@@ -171,6 +171,16 @@ def t_BLOCKS_EOL(t):
 
     return t
 
+def t_NORMAL_INCLUDELINE(t):
+    r'\#include.*'
+#    t.lexer.lineno += 1 # len(t.value)
+    print "WE SAW A #INCLUDE line! :-)"
+    print "It was this:", repr(t.value)
+    t.lexer.includes.append(t.value)
+    #
+
+#    return t
+
 def t_INITIAL_BLOCKS_WS(t):
     r'[ \t]+'
 
@@ -246,6 +256,7 @@ def t_ANY_error(t):
 def build_lexer():
     # Build the lexer
     lexer =  lex.lex(reflags=re.MULTILINE)
+    lexer.includes = []
     lexer.lineno = 1
     lexer.curr_indent = 0
     lexer.indents = [0]

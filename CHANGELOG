@@ -7,6 +7,27 @@ reason.
 ### In progress
 Core Expressions - function calls
 
+## [0.0.11] - 2015-06-06
+
+### New
+
+* Function call support:
+ * Extended Grammar, and pynodes to support function calls.
+ * Code generation for function calls
+ * Test cases for function calls added
+ * Creation of  "Print" built in for the moment- to be replaced by 'print'
+* C++ "bridge":
+ * Create simple C++ include bridging - #includes are copied straight through
+ * Document C++ bridging, and test case
+
+### Changed
+
+* Language Spec updates
+
+### Fixes
+
+* Support empty statements/empty lines
+
 ## [0.0.10] - 2015-06-03
 
 * Documentation added to pyxie/__init__.py, to allow project level help from "pydoc pyxie"

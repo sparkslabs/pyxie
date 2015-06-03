@@ -52,6 +52,11 @@ class Grammar(object):
         "statement : expression EOL"
         p[0] = PyExpressionStatement(p[1])
 
+    def p_statement_empty(self, p):
+        "statement : EOL"
+        p[0] = PyEmptyStatement()
+#        p[0] = PyExpressionStatement(p[1])
+
     def p_statement_2(self, p):
         "statement : print_statement EOL"
         p[0] = p[1]
@@ -106,6 +111,10 @@ class Grammar(object):
     def p_expression_atom_1(self, p):
         "expression_atom : value_literal"
         p[0] = p[1]
+
+    def p_expression_atom_2(self, p):
+        "expression_atom : IDENTIFIER PARENL expr_list PARENR"
+        p[0] = PyFunctionCall(PyIdentifier(p.lineno(1), p[1]), p[3])
 
     ### Core Literals
 

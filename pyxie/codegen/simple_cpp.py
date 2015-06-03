@@ -74,6 +74,14 @@ class C_Program(object):
 
         Print()
         Print("using namespace std;")
+        print_def = """
+#include <iostream>
+template<typename T>
+void Print(T x) {
+    std::cout << x;
+}
+"""
+        Print(print_def)
         Print()
         Print("int main(int argc, char *argv[])")
         Print("{")
@@ -199,20 +207,25 @@ class ArgumentList(object):
     def code_arg(self, arg):
         if arg[0] == "identifier":
             return arg[1]
-        if arg[0] == "integer":
+        elif arg[0] == "integer":
             r = repr(arg[1])
             if arg[1]<0:
                 r = "(" + r + ")"
             return r
-        if arg[0] == "string":
+        elif arg[0] == "string":
             carg = arg[1].replace('"', '\\"')
             return '"' + carg + '"' # Force double quotes
-        if arg[0] == "double":
+        elif arg[0] == "double":
             return repr(arg[1])
-        if arg[0] == "boolean":
+        elif arg[0] == "boolean":
             return arg[1]
-        if arg[0] == "op":
+        elif arg[0] == "op":
             return self.code_op(arg)
+        elif arg[0] == "function_call":
+            code_gen = FunctionCall(arg[1],arg[2])
+            return code_gen.code()
+            print "We don't know how to generate code for function calls yet", arg
+            return ""
         todo("Handle print value types that are more than the basic types")
         raise NotImplementedError("Handle print value types that are more than the basic types" + repr(arg))
 
@@ -225,6 +238,20 @@ class ArgumentList(object):
 
     def code(self):
         return ",".join(self.code_list())
+
+class FunctionCall(object):
+    def __init__(self, identifier, args):
+        self.args = args
+        self.identifier = identifier
+        self.arg_list = ArgumentList(*args)
+
+    def json(self):
+        return ["function_call", self.identifier ] + self.arg_list.json()
+
+    def code(self):
+        return self.identifier[1] + "(" + ", ".join(self.arg_list.code_list())+ ")"
+#         return "cout << " + " << \" \" << ".join(self.arg_list.code_list()) + " << endl"
+
 
 class PrintStatement(object):
     def __init__(self, *args):

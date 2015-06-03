@@ -81,6 +81,7 @@ class PyProgram(PyNode):
     def __init__(self, statements):
         super(PyProgram,self).__init__()
         self.statements = statements
+        self.includes = None
         self.add_children(statements)
     def __repr__(self):
         return "PyProgram(%s)" % (repr(self.statements), )
@@ -213,6 +214,42 @@ class PyExpressionStatement(PyStatement):
     def get_type(self):
         return self.value.get_type()
 
+
+class PyFunctionCall(PyStatement):
+    tag = "function_call"
+    def __init__(self, identifier, expr_list):
+        super(PyFunctionCall,self).__init__()
+        self.identifier = identifier
+        self.expr_list = expr_list
+        self.add_children(expr_list)
+    def __repr__(self):
+        return "PyFunctionCall(%s, %s)" % (repr(self.identifier), repr(self.expr_list), )
+    def __json__(self):
+        return [ self.tag, jdump(self.identifier), jdump(self.expr_list) ]
+    def __info__(self):
+        info = super(PyFunctionCall, self).__info__()
+        info[self.tag]["name"] = self.identifier.__info__()
+        info[self.tag]["args"] = [ x.__info__() for x in self.expr_list ]
+        return info
+    def analyse(self):
+        # We'll need to decorate the function call with information from somewhere
+        # For now though, we won't
+        print "ANALYSING FUNCTION CALL"
+        print "NOTE: WE DON'T ACTUALLY DO ANY ANALYSIS YET"
+        print "NOTE: ASIDE FROM SPECIAL CASING WE'LL JUST PASS THROUGH"
+        return
+    def get_type(self):
+        # function calls have no default value, so for now we'll return None
+        # This will be improved later on.
+        print "GETTING TYPE"
+        print "NOTE: WE CAN'T ACTUALLY GET THE TYPE YET"
+        print "NOTE: ASIDE FROM SPECIAL CASING WE'LL JUST CROSS FINGERS FOR NOW"
+        return None
+
+
+class PyEmptyStatement(PyStatement):
+    def analyse(self):
+        pass
 
 class PyPrintStatement(PyStatement):
     tag = "print_statement"

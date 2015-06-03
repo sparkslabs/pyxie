@@ -7,6 +7,23 @@ Little Python is a restricted subset of Python 3. (and 2.7)
 this spec. As a result, the grammar will be slightly bogus. You hopefully
 get the idea though.
 
+## C++ Interaction
+
+Pyxie is intended to interact with C++, in that it compiles to C++ targetting embedded
+systems. To that purpose it is useful to be able to pass through commands to C++. In
+particular the pass through ONLY supports #include pre-processor directives.
+
+The way this is done is through python comments, so for example this is legal:
+
+    #include <stdio.h>
+
+As is this:
+
+    #include <Arduino.h>
+
+By definition this does not support every aspect that might be needed, but it's a
+useful start.
+
 ## Semi-formal syntactic language features todo:
 
 ### Built in types to be supported
@@ -91,7 +108,7 @@ Harder
     statement            : EOL
                          | assignment_statement
                          | print_statement // This is really just a function call now
-                         | fullexpression  **[TBD]**  **[PARTIAL]**
+                         | fullexpression  **[PARTIAL]** // This means we have expression statements, but not full expressions
                          | while_statement  **[TBD]**
                          | if_statement  **[TBD]**
                          | for_statement  **[TBD]**
@@ -188,16 +205,16 @@ without having to implement general function calls is simpler.
 ### Core Expressions  **[WIP]**
 
     expression           : arith_expression  **[WIP]**
-                         | arith_expression PLUS expression  **[WIP]**
-                         | arith_expression MINUS expression  **[WIP]**
+                         | arith_expression PLUS expression
+                         | arith_expression MINUS expression
                          | arith_expression POWER expression  **[WIP]**
 
-    arith_expression     : expression_atom  **[WIP]**
-                         | expression_atom TIMES arith_expression  **[WIP]**
-                         | expression_atom DIVIDE arith_expression  **[WIP]**
+    arith_expression     : expression_atom
+                         | expression_atom TIMES arith_expression
+                         | expression_atom DIVIDE arith_expression
 
     expression_atom      : value_literal
-                         | func_call  **[TBD]**
+                         | func_call  **[WIP]**
                          | PARENL fullexpression PARENR  **[TBD]**
 
     value_literal        : number
@@ -205,6 +222,9 @@ without having to implement general function calls is simpler.
                          | string
                          | character
                          | boolean
+
+Note: These are done for ints, floats, and for some strings. ("hello"+"world"
+for example using std::string)
 
 ### Core Literals 
 
