@@ -4,3 +4,4 @@
 parser.out
 parsetab.py
 test-data/genprogs
+site/site/*html
