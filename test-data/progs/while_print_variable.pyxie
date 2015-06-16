@@ -1,0 +1,8 @@
+success = "while True working, as long as you see this lots"
+failure = "If you see this, while loops are not compiling correctly"
+condition = True
+
+while True:
+    print success
+
+print failure

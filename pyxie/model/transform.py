@@ -127,7 +127,8 @@ def convert_assignment(assignment):
         raise CannotConvert("Cannot convert assignment where the lvalue is not an identifier")
 
     if not ( isinstance(assignment.rvalue, nodes.PyOperator) or
-             isinstance(assignment.rvalue, nodes.PyValueLiteral) ) :
+             isinstance(assignment.rvalue, nodes.PyValueLiteral) or
+             isinstance(assignment.rvalue, nodes.PyComparisonOperator)) :
 
         todo("assignment where the rvalue is not a value_literal or operator")
         raise CannotConvert("Cannot convert assignment where the rvalue is not a value_literal")
@@ -139,6 +140,9 @@ def convert_assignment(assignment):
 
     if isinstance(assignment.rvalue, nodes.PyOperator):
         crvalue = convert_operator_function(rvalue)
+
+    if isinstance(assignment.rvalue, nodes.PyComparisonOperator):
+        crvalue = convert_comparison(rvalue)
 
     return ["assignment", clvalue, "=", crvalue ]
 
@@ -188,13 +192,43 @@ def convert_operator_function(opfunc):
     #todo("Cannot yet convert operator functions")
     #raise CannotConvert("Cannot convert operator function :" + repr(arg))
 
+def convert_comparison_operator(comparison):
+    # t_NORMAL_COMPARISON_OPERATOR = r'(in|not +in|is|is +not)'
+
+    if comparison in ["<", ">", "==", ">=", "<=", "<>", "!="]:
+        return comparison
+
+    raise NotImplementedError(repr(comparison))
+
+def convert_comparison(comparison_spec):
+    print "CONVERT - convert_comparison", repr(comparison_spec)
+    assert isinstance(comparison_spec, nodes.PyComparisonOperator)
+
+    comparison = comparison_spec.comparison
+    arg1 = comparison_spec.arg1
+    arg2 = comparison_spec.arg2
+
+    crepr_comparison = convert_comparison_operator(comparison)
+    crepr_arg1 = convert_arg(arg1)
+    crepr_arg2 = convert_arg(arg2)
+    print "crepr_arg1", repr(crepr_arg1)
+    print "crepr_arg2", repr(crepr_arg2)
+
+    result = ["op", crepr_comparison, crepr_arg1, crepr_arg2]
+    print repr(result)
+    return result
+
+
 
 def convert_arg(arg):
     if isinstance(arg, nodes.PyValueLiteral):
         print "CONVERTING LITERAL", arg
         return convert_value_literal(arg)
+    elif isinstance(arg, nodes.PyComparisonOperator):
+        return convert_comparison(arg)
     elif isinstance(arg, nodes.PyOperator):
         return convert_operator_function(arg)
+
     elif isinstance(arg, nodes.PyFunctionCall):
         print "NEED TO CONVERT FUNCTION CALL TO SOMETHING THE C CODE GENERATOR CAN HANDLE"
         cargs = []
@@ -207,7 +241,6 @@ def convert_arg(arg):
 
         return ["function_call", convert_value_literal(arg.identifier),  cargs ]
         return ["Nothing"]
-#        return convert_operator_function(arg)
     else:
         todo("Handle print for non-value-literals")
         raise CannotConvert("Cannot convert print for non-value-literals")
@@ -223,6 +256,17 @@ def convert_print(print_statement):
         cargs.append(carg)
     return ["print_statement"] + cargs
 
+def convert_while_statement(while_statement):
+    crepr_condition = convert_arg(while_statement.condition)
+    cstatements = convert_statements(while_statement.block)
+    return ["while_statement", crepr_condition] + cstatements
+
+def convert_break_statement(break_statement):
+    return ["break_statement"]
+
+def convert_continue_statement(continue_statement):
+    return ["continue_statement"]
+
 def convert_expression_statement(statement):
     print "CONVERTING EXPRESSION STATEMENTS", statement.value
     print "EXPRESSION STATEMENT", statement.value.tag
@@ -230,6 +274,7 @@ def convert_expression_statement(statement):
     print "RECHED HERE"
     print "CONVERTED ", crepr
     return ["expression_statement", crepr]
+
 
 def convert_statements(AST):
     cstatements = []
@@ -245,6 +290,15 @@ def convert_statements(AST):
                 cstatements.append(cstatement)
             elif statement.tag == "expression_statement":
                 cstatement = convert_expression_statement(statement)
+                cstatements.append(cstatement)
+            elif statement.tag == "while_statement":
+                cstatement = convert_while_statement(statement)
+                cstatements.append(cstatement)
+            elif statement.tag == "break_statement":
+                cstatement = convert_break_statement(statement)
+                cstatements.append(cstatement)
+            elif statement.tag == "continue_statement":
+                cstatement = convert_continue_statement(statement)
                 cstatements.append(cstatement)
             else:
                 print "SKIPPING STATEMENT", statement.tag

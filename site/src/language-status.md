@@ -7,7 +7,7 @@ title: Language Status for Pyxie
 ---
 ## Language Status
 
-Last updated for version: **0.0.11**
+Last updated for version: **0.0.12**
 
 Pyxie can now compile (directly) any file that matches pyxie's current subset of
 python. For example if the example program below was called demo.pyxie, you could
@@ -100,6 +100,16 @@ chosen to capture such #include lines, and pass them through to the C++ side.
 This naturally enables a wide selection of functionality to start making
 Pyxie useful.
 
+### Nearly Bare Minimum Support
+
+Supports variables, sequence, and assignment
+while loops controlled by expressions, possibly involving variables
+while loops can contain break/continue which allows "if" style functionality
+Also have basic conditional operators like "==", "!=", etc.
+
+This means we can almost start writing useful programs, but in particular
+can start creating simplistic benchmarks for measuring run speed.
+
 ## Grammar Currently Supported
 
 Clearly we're not going to implement the full language spec in one go, so this
@@ -111,18 +121,31 @@ necessarily imply code generation, differences will be noted below.
     statements : statement
                | statement statements
 
-    statement : assignment_statement EOL
-              | expression EOL
+    statement : assignment_statement
+              | general_expression
+              | while_statement
+              | break_statement
+              | continue_statement
               | EOL
-              | print_statement EOL
+              | print_statement
 
-    assignment_statement : IDENTIFIER ASSIGN expression # ASSIGN is currently limited to "="
+    assignment_statement : IDENTIFIER ASSIGN general_expression # ASSIGN is currently limited to "="
+
+    while_statement      : WHILE general_expression COLON EOL block  # Note: Expression, not full expression
+
+    break_statement      : BREAK
+
+    continue_statement   : CONTINUE
 
     print_statement -> 'print' expr_list # Temporary - to be replaced by python 3 style function
 
-    expr_list : expression
-              | expression ',' expr_list
+    expr_list : general_expression
+              | general_expression ',' expr_list
 
+    general_expression : relational_expression
+
+    relational_expression : expression
+                          | relational_expression COMPARISON_OPERATOR expression
 
     expression : arith_expression
                | expression '+' arith_expression

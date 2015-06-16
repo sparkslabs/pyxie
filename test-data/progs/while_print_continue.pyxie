@@ -1,0 +1,7 @@
+
+while True:
+    print "while True/continue working, as long as you see this lots, and only this"
+    continue
+    print "while True/continue NOT working, if you see this - from loop"
+
+print "while True/continue NOT working, if you see this -- from main"

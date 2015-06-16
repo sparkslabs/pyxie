@@ -22,6 +22,7 @@ It's pre-alpha at the moment.
 Currently:
 
 - Recognise simple sequential python programs with simple statements
+- Can handle basic conditionals and while loops
 - Parse those to an AST
 - Can represent equivalent C programs using a concrete C representation (CST)
 - Can translate the AST to the CST and then generate C++ code from the CST
@@ -84,6 +85,11 @@ int main(int argc, char *argv[])
 </div>
 </div>
 
+Additionally, while loops, and comparison operators are supported, allowing
+very basic programs to start being useful since you can have sequence, selection
+and iteration now. Additionally, function calls are supported from libraries
+that we link with.
+
 It's a starting point, not the end point. For that, take a look at the language spec.
 
 Pyxie is intended to be a simple Python to C++ compiler, with a target of
@@ -113,6 +119,14 @@ For the impatient: this probably does **NOT** do what you want, **yet**.
 Check back in a couple of months time :-)
 
 It IS getting there however, and feedback, usecases, devices very welcome.
+
+Specifically:
+
+* Supports variables, sequence, and assignment
+* while loops controlled by expressions, possibly involving variables
+* while loops can contain break/continue which allows "if" style functionality
+* Also have basic conditional operators like "==", "!=", etc.
+* This means we can almost start writing useful programs, but in particular can start creating simplistic benchmarks for measuring run speed.
 
 ## Influences
 
@@ -179,7 +193,7 @@ inspired heavily by python introspection) That's quite some time off.
 
 Release History: (and highlights)
 
-* 0.0.12 - UNRELEASED - WIP
+* 0.0.12 - 2015-06-16 - While loops, break/continue, Website, comparison operators, simple benchmark test
 * 0.0.11 - 2015-06-06 - Function calls; inclusion of custom  C++ headers; empty statements; language spec updates
 * 0.0.10 - 2015-06-03 - Analysis phase to make type inference work better. Lots of related changes. Implementation of expression statements.
 * 0.0.9 - 2015-05-23 - Grammar changed to be left, not right recursive. (Fixes precedence in un-bracketed expressions) Added standalone compilation mode - outputs binaries from python code.

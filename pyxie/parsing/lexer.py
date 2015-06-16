@@ -75,7 +75,7 @@ t_NORMAL_PARENR = r'\)'
 
 t_NORMAL_ASSIGN = r'='
 t_NORMAL_COMMA = r','
-t_NORMAL_COMPARISON_OPERATOR = r'(<|>|==|>=|<=|<>|!=|in|not +in|is|is +not)'
+t_NORMAL_COMPARISON_OPERATOR = r'(<>|==|>=|<=|!=|<|>|in|not +in|is|is +not)'
 
 # Things ignored inside various states
 t_NORMAL_ignore  = ' \t'
@@ -224,7 +224,8 @@ def t_INITIAL_BLOCKS_INDENT(t):
 
     # If it's a new one, add it to the "lexer.indents" stack
     if curr_indent > t.lexer.indents[-1]:
-        t.lexer.indents.append(lexer.curr_indent)
+        t.lexer.indents.append(t.lexer.curr_indent)
+        print "EMITTING INDENT", t
         return t
 
     t.lexer.begin('NORMAL')
@@ -245,6 +246,7 @@ def t_ENDBLOCKS_DEDENT(t):
     # This allows us to emit as many DEDENT tokens as necessary.
     if t.lexer.dedents_needed > 0:
         t.lexer.dedents_needed -= 1
+        print "EMITTING DEDENT", t
         return t
     t.lexer.begin('NORMAL')
 

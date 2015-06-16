@@ -1,0 +1,5 @@
+
+while 1+1*1/1-1:
+    print "while True with expression argument working, as long as you see this lots"
+
+print "If you see this, while True loops with expression argument are not compiling correctly"

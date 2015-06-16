@@ -1,0 +1,17 @@
+
+result = 1 == 1
+print result
+
+nresult = result == 1
+gresult = result > 0
+lresult = result < 2
+neqresult = result <> 2
+neqresult2 = result != 2
+lte_result1 = result <= 2
+lte_result2 = result <= 1
+
+gte_result1 = result >= 0
+gte_result2 = result >= 1
+
+print "RESULT", result, nresult, gresult, lresult, neqresult, neqresult2,lte_result1, lte_result2, gte_result1, gte_result2
+print "EXPECT", 1, 1, 1, 1, 1, 1, 1, 1, 1, 1

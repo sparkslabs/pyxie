@@ -37,6 +37,15 @@ def mkStatement(statement_spec):
     elif ss[0] == "expression_statement":
         return ExpressionStatement(*statement_spec[1:])
 
+    elif ss[0] == "while_statement":
+        return WhileStatement(*statement_spec[1:])
+
+    elif ss[0] == "break_statement":
+        return BreakStatement()
+
+    elif ss[0] == "continue_statement":
+        return ContinueStatement()
+
     else:
         print "Unknown statement type", ss[0], ss
 
@@ -118,6 +127,8 @@ class C_Frame(object):
         for statement in self.statements:
             if statement:
                 code = statement.code()
+                if code is None:
+                    print "STATEMENT IS None, WHY?", statement
                 block.append(code + ";")
         return block
 
@@ -152,6 +163,21 @@ class Assigment(object):
             crvalue = self.rvalue
         return self.lvalue + " "+self.assigntype+" " + crvalue
 
+
+class BreakStatement(object):
+    def json(self):
+        return ["break_statement"]
+
+    def code(self):
+        return "break"
+
+class ContinueStatement(object):
+    def json(self):
+        return ["continue_statement"]
+
+    def code(self):
+        return "continue"
+
 class ExpressionStatement(object):
     def __init__(self, expression):
         self.expression = expression
@@ -183,6 +209,12 @@ class ArgumentList(object):
         if arg[1] == "minus": return "-"
         if arg[1] == "times": return "*"
         if arg[1] == "divide": return "/"
+
+        if arg[1] in ["<", ">", "==", ">=", "<=", "!="]:
+            return arg[1]
+
+        if arg[1] == "<>": return "!="
+
         return None
 
     def code_op(self,arg):
@@ -263,6 +295,29 @@ class PrintStatement(object):
 
     def code(self):
         return "cout << " + " << \" \" << ".join(self.arg_list.code_list()) + " << endl"
+
+
+class WhileStatement(object):
+    def __init__(self, condition, *statements):
+        self.raw_condition = condition
+        self.raw_statements = list(statements)
+        self.block_cframe = C_Frame()
+
+        for statement in self.raw_statements:
+            conc_statement = mkStatement(statement)
+            self.block_cframe.statements.append(conc_statement)
+
+    def json(self):
+        return ["while_statement", self.raw_condition] + self.raw_statements
+
+    def code(self):
+        code = "while"
+        code += "("
+        code += ArgumentList(self.raw_condition).code()
+        code += ") {"
+        code += "\n".join( self.block_cframe.concrete() )
+        code += "}"
+        return code
 
 makefile_tmpl = """
 all :

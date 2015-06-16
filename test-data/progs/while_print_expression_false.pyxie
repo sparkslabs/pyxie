@@ -1,0 +1,5 @@
+
+while 0*0+0-0:
+    print "If you see this, while loops with expression arguments are not compiling correctly"
+
+print "while False working, with expression arguments as long as you see this ONCE"

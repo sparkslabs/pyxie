@@ -15,10 +15,11 @@
 # limitations under the License.
 #
 
+import sys
+import json
+
 from pyxie.parsing.context import Context
 from pyxie.model.tree import Tree
-
-import json
 
 MULTI_TYPES_WARN = False
 WARNINGS_ARE_FAILURES = False
@@ -39,14 +40,14 @@ def jdump(thing):
     try:
         return thing.__json__()
     except AttributeError:
-        print "WARNING", thing, "is not a pynode"
+        print "WARNING::", repr(thing), "is not a pynode"
+        print "       ::", type(thing)
 
 def warn(message):
     if WARNINGS_ARE_FAILURES:
         raise Exception(message)
     else:
         print message
-
 
 # Astract base nodes
 
@@ -114,15 +115,61 @@ class PyProgram(PyNode):
         return None
 
 
+class PyBlock(PyNode):
+    tag = "block"
+    def __init__(self, statements):
+        super(PyBlock,self).__init__()
+        self.statements = statements
+        self.add_children(statements)
+    def __repr__(self):
+        return "PyBlock(%s)" % (repr(self.statements), )
+    def __json__(self):
+        return [ self.tag, jdump(self.statements) ]
+
+    def __info__(self):
+        # Minimal change from "Program, since might be considered similar)
+        # That said, I suspect that's wrong since a BLOCK doesn't necessarily
+        # have a new context. Commenting that out for the moment.
+        info = super(PyBlock, self).__info__()
+        info[self.tag].update(self.statements.__info__())
+#        contexts = Context.contexts
+#        contexts_info = []
+#        for context in contexts:
+#            contexts_info.append(contexts[context].__json__())
+#        info[self.tag]["contexts"] = contexts_info
+        return info
+
+    def analyse(self):
+        print "ANALYSING BLOCK"
+
+#        global_context = Context()
+#        for node in self.depth_walk():
+#            if node.tag == "identifier":
+#                node.context = global_context
+
+        self.ntype = None
+        self.statements.analyse() # Descend through the tree
+
+    def get_type(self):
+        # Program has no value so no type
+        return None
+
+
+
+
 class PyStatements(PyNode):
     tag = "statements"
     def __init__(self, head, *tail):
         super(PyStatements,self).__init__()
-        self.statements = [ head ]
+        if not isinstance(head, PyEmptyStatement): #Filter out empty statements here.
+            self.statements = [ head ]
+        else:
+            self.statements = [ ]
         if tail:
             for node in tail:
                 self.statements = self.statements + node.statements
-        self.add_children(*(self.statements))
+        if len(self.statements) > 0:
+            self.add_children(*(self.statements))
 
     def __info__(self):
         info = super(PyStatements, self).__info__()
@@ -149,7 +196,6 @@ class PyStatements(PyNode):
         # Block of statements has no value, so no type
         return None
 
-import sys
 class PyAssignment(PyStatement):
     tag = "assignment_statement"
     def __init__(self, lvalue, rvalue, assign_type):
@@ -247,9 +293,63 @@ class PyFunctionCall(PyStatement):
         return None
 
 
+class PyWhileStatement(PyStatement):
+    tag = "while_statement"
+    def __init__(self, condition, block):
+        super(PyWhileStatement,self).__init__()
+        self.condition = condition
+        self.block = block
+        self.add_children(condition, block)
+    def __repr__(self):
+        return "PyWhileStatement(%s, %s)" % (repr(self.condition), repr(self.block) )
+    def __json__(self):
+        return [ self.tag, jdump(self.condition), jdump(self.block) ]
+    def __info__(self):
+        info = super(PyWhileStatement, self).__info__()
+        info[self.tag]["condition"] = self.condition.__info__()
+        # info[self.tag]["block"] = [ x.__info__() for x in self.expr_list ]
+        info[self.tag]["block"] = self.block.__info__()
+        return info
+    def analyse(self):
+        # We'll need to decorate the function call with information from somewhere
+        # For now though, we won't
+        print "ANALYSING BLOCK"
+        print "analyse expression, and analyse block"
+        self.condition.analyse()
+        self.block.analyse()
+        return
+    def get_type(self):
+        # function calls have no default value, so for now we'll return None
+        # This will be improved later on.
+        print "GETTING BLOCK TYPE - which should be None - for now"
+        return None
+
 class PyEmptyStatement(PyStatement):
+    tag = "empty_statement"
+    def __init__(self):
+        super(PyEmptyStatement,self).__init__()
     def analyse(self):
         pass
+    def __json__(self):
+        return [ self.tag ]
+
+class PyBreakStatement(PyStatement):
+    tag = "break_statement"
+    def __init__(self):
+        super(PyBreakStatement,self).__init__()
+    def analyse(self):
+        pass
+    def __json__(self):
+        return [ self.tag ]
+
+class PyContinueStatement(PyStatement):
+    tag = "continue_statement"
+    def __init__(self):
+        super(PyContinueStatement,self).__init__()
+    def analyse(self):
+        pass
+    def __json__(self):
+        return [ self.tag ]
 
 class PyPrintStatement(PyStatement):
     tag = "print_statement"
@@ -361,6 +461,43 @@ class PyPowerOperator(PyOperator):
 
 class PyPlusOperator(PyOperator):
     tag = "op_plus"
+
+class PyComparisonOperator(PyOperation):
+    tag = "comparison_operator"
+    def __init__(self, comparison, arg1, arg2):
+        super(PyComparisonOperator,self).__init__()
+        self.comparison = comparison
+        self.arg1 = arg1
+        self.arg2 = arg2
+        self.ntype = None
+        self.add_children(arg1,arg2)
+
+        print "CREATED COMPARISON OPERATOR", comparison, arg1, arg2
+
+    def __info__(self):
+        info = super(PyOperator, self).__info__()
+        info[self.tag]["comparison"] = self.comparison
+        info[self.tag]["arg1"] = self.arg1.__info__()
+        info[self.tag]["arg2"] = self.arg2.__info__()
+        return info
+
+    @property
+    def type(self):
+        return "bool"
+
+    def __repr__(self):
+        return "%s(%s, %s, %s)" % (self.classname(),self.comparison, repr(self.arg1),repr(self.arg1))
+    def __json__(self):
+        return [ self.tag, self.comparison, jdump(self.arg1), jdump(self.arg2) ]
+    def get_type(self):
+        return "bool"
+    def analyse(self):
+        print "ANALYSING", self.tag
+        self.arg1.analyse()
+        self.arg2.analyse()
+
+        self.ntype = self.get_type()
+
 
 class PyMinusOperator(PyOperator):
     tag = "op_minus"

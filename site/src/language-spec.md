@@ -117,7 +117,9 @@ Harder:
                          | assignment_statement
                          | print_statement // This is really just a function call now
                          | fullexpression  **[PARTIAL]**
-                         | while_statement  **[TBD]**
+                         | while_statement
+                         | break_statement
+                         | continue_statement
                          | if_statement  **[TBD]**
                          | for_statement  **[TBD]**
                          | import_statement  **[TBD]**
@@ -184,6 +186,9 @@ without having to implement general function calls is simpler.
 
     while_statement      : WHILE fullexpression COLON EOL block
 
+    break_statement      : BREAK
+    continue_statement   : CONTINUE
+
 #### Selection
 
     if_statement         : IF fullexpression COLON EOL block
@@ -197,20 +202,20 @@ without having to implement general function calls is simpler.
     else_clause          : ELSE COLON EOL block
 
 
-### Expressions involving sub-expressions  **[TBD]**
+### Expressions involving sub-expressions  **[WIP]**
 
-    fullexpression       : or_expression
+    fullexpression       : or_expression  *[TBD]**
 
-    or_expression        : and_expression 
+    or_expression        : and_expression   *[TBD]**
                          | and_expression OR or_expression
 
-    and_expression       : not_expression
+    and_expression       : not_expression  *[TBD]**
                          | not_expression AND not_expression
 
-    not_expression       : comparison
+    not_expression       : comparison  *[TBD]**
                          | NOT not_expression
 
-    comparison           : expression
+    comparison           : expression  *[DONE]**
                          | expression COMPARISON_OPERATOR expression
 
 ### Core Expressions  **[WIP]**
@@ -236,6 +241,8 @@ without having to implement general function calls is simpler.
 
 Note: These are done for ints, floats, and for some strings. ("hello"+"world"
 for example using std::string)
+
+The lack of strings is why it's not listed as done
 
 ### Core Literals 
 

@@ -26,7 +26,7 @@ indirectly.
 
 * What you've done/helped with
 
-### Indirectly
+### Indirectly / Projects used by Pyxie
 
 Indirectly means Pyxie probably uses something that's really useful and it's a
 way of saying thank you :-)

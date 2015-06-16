@@ -45,40 +45,92 @@ class Grammar(object):
         p[0] = PyStatements(p[1], p[2])
 
     def p_statement_1(self, p):
-        "statement : assignment_statement EOL"
+        "statement : assignment_statement"
+        p[0] = p[1]
+
+    def p_statement_2(self, p):
+        "statement : print_statement"
         p[0] = p[1]
 
     def p_statement_3(self, p):
-        "statement : expression EOL"
+        "statement : general_expression"
         p[0] = PyExpressionStatement(p[1])
 
-    def p_statement_empty(self, p):
+    def p_statement_4_empty(self, p):
         "statement : EOL"
         p[0] = PyEmptyStatement()
-#        p[0] = PyExpressionStatement(p[1])
 
-    def p_statement_2(self, p):
-        "statement : print_statement EOL"
+    def p_statement_5(self, p):
+        "statement : while_statement"
         p[0] = p[1]
+
+    def p_statement_6(self, p):
+        "statement : break_statement"
+        p[0] = p[1]
+
+    def p_statement_7(self, p):
+        "statement : continue_statement"
+        p[0] = p[1]
+
+    def p_break_statement_1(self, p):
+        "break_statement : BREAK"
+        p[0] = PyBreakStatement()
+
+    def p_continue_statement_1(self, p):
+        "continue_statement : CONTINUE"
+        p[0] = PyContinueStatement()
 
     def p_print_statement_1(self, p):
         "print_statement : PRINT expr_list"
         p[0] = PyPrintStatement(p[2])
 
+    def p_while_statement_1(self, p):
+        "while_statement : WHILE general_expression COLON EOL statement_block"
+        p[0] = PyWhileStatement(p[2], p[5]) # pass in expression and block
+        print
+        print "WARNING, expression used in a location requiring truthiness"                                     # TODO
+        print "This will generally be OK for bools and integers but need a function for anything else"          # TODO
+        print "In particular for strings, lists, dictionaries, tuples and so on"                                # TODO
+        print "That is a separate card in the backlog though"                                                   # TODO
+        print "SO WE REACHED WHILE"
+        print "------------------> COND  :", p[2]
+        print "------------------> BLOCK :", p[5]
+        print "------------------> RESULT :", p[0]
+
+    def p_block_1(self, p):
+        "statement_block : INDENT statements DEDENT"
+        p[0] = PyBlock(p[2])
+        print
+        print "SO WE REACHED BLOCK"
+        print "------------------> STATEMENTS :", p[2]
+        print "------------------> RESULT :", p[0]
+
     def p_expr_list_1(self,p):
-        "expr_list : expression"
+        "expr_list : general_expression"
         p[0] = PyExprList(p[1])
 
     def p_expr_list_2(self,p):
-        "expr_list : expression COMMA expr_list"
+        "expr_list : general_expression COMMA expr_list"
         p[0] = PyExprList(p[1],p[3])
 
 
     def p_assignment_statement(self, p):
-        "assignment_statement : IDENTIFIER ASSIGN expression"
+        "assignment_statement : IDENTIFIER ASSIGN general_expression"
         identifier = PyIdentifier(p.lineno(1), p[1])
 
         p[0] = PyAssignment(identifier, p[3], p[2])
+
+    def p_general_expression_1(self, p):
+        "general_expression : relational_expression"
+        p[0] = p[1]
+
+    def p_relational_expression_1(self, p):
+        "relational_expression : relational_expression COMPARISON_OPERATOR expression"
+        p[0] = PyComparisonOperator(p[2], p[1], p[3])
+
+    def p_relational_expression_2(self, p):
+        "relational_expression : expression"
+        p[0] = p[1]
 
     def p_expression_1(self, p):
         "expression : arith_expression"

@@ -5,13 +5,24 @@ This project adheres to [Semantic Versioning](http://semver.org/), within
 reason.
 
 ### In progress
-Core Expressions - function calls
 
-## [0.0.12] - UNRELEASED
+## [0.0.12] - UNRELEASED - WIP
 
 ## New
 
 * Initial iteration of website - hosted at www.sparkslabs.com/pyxie/ . Stored in repo
+* support for while statements:
+ * While works with While True
+ * Break works with With True
+ * 'Continue' works in a While loop
+ * While Loop conditional is a expression
+  * This allows things like loops that count towards zero and do things... :-)
+* Comparison Operators :  < > <= >= <> != ==
+
+Combination of these things allows things like countdown programs, basic
+benchmarking and so on. Creative use ( while + break) allows creation of "if" like
+constructs meaning the code at this point supports sequence, selection and iteration
+as well as very basic datatypes. That's almost useful... :-)
 
 ## [0.0.11] - 2015-06-06
 
@@ -200,6 +211,7 @@ Simple assignment
 
 ## [0.0.1] - Unreleased - rolled into 0.0.2
 ### Added
+
 - Initial structure, loosely based on SWP from a few years ago
  - http://www.slideshare.net/kamaelian/swp-a-generic-language-parser
 - Initial pyxie parsing/model/codegen modules

@@ -17,9 +17,9 @@ Overall standard ethos:
 * Make it correct
 * Make it fast
 
-### DEV VERSION: 0.0.12
+### DEV VERSION: 0.0.13
 
-### RELEASED: 0.0.11
+### RELEASED: 0.0.12
 
 ### LANGUAGE STATE: PRE-BARE
 

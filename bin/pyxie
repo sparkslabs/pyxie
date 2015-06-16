@@ -42,6 +42,9 @@ def parse_file(somefile):
     AST = parse(data, lexer)
     AST.includes = lexer.includes
     print "AST includes", AST.includes
+    print "PRINT AST ----------------------------------"
+    print AST
+    print "---------------------------------- PRINT AST"
     return AST
 
 def parse_testfile(testprogs_dir, testfile, debug=False):

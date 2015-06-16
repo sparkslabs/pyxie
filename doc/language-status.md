@@ -1,5 +1,7 @@
 # Language Status
 
+Last updated for version: **0.0.11**
+
 Pyxie can now compile (directly) any file that matches pyxie's current subset of
 python. For example if the example program below was called demo.pyxie, you could
 do this:
@@ -25,7 +27,7 @@ isn't a bad representation of current state:
 
     print 10-1-2,7
     print 1+2*3*4-5/7,25
-    print age, new_age, new_age_too, new_age_three 
+    print age, new_age, new_age_too
     print foo, bar, foobar
 
 It's worth noting that for this to compile, we need to be able to derive
@@ -33,28 +35,56 @@ the types of foobar and new_age_three. In the case of new_age_three, that
 needs to be derived in the context of another variable that has to be
 derived from abother one.
 
+Function **calls** are supported. At present they are treated
+as having a value type of "None", and should be treated as statements
+not as expressions. However the compiler passes through function calls
+to the backend, assuming the backend will understand the function call.
+
+Additionally, you can pull C++ libraries in standard locations by simply
+incuding them -- for example:
+
+    #include <Arduino.h>
+
+This is ignored by the python parsing because it's a comment, and so I've
+chosen to capture such #include lines, and pass them through to the C++ side.
+This naturally enables a wide selection of functionality to start making
+Pyxie useful.
+
 ## Grammar Currently Supported
 
 Clearly we're not going to implement the full language spec in one go, so this
 documents the current version of the grammar that is supported. Parsing does not
 necessarily imply code generation, differences will be noted below.
 
-
     program : statements
     statements : statement
                | statement statements
 
-    statement : assignment_statement EOL
-              | expression EOL
-              | print_statement EOL
+    statement : assignment_statement
+              | general_expression
+              | while_statement
+              | break_statement
+              | continue_statement
+              | EOL
+              | print_statement
 
-    assignment_statement : IDENTIFIER ASSIGN expression # ASSIGN is currently limited to "="
+    assignment_statement : IDENTIFIER ASSIGN general_expression # ASSIGN is currently limited to "="
+
+    while_statement      : WHILE general_expression COLON EOL block  # Note: Expression, not full expression
+
+    break_statement      : BREAK
+
+    continue_statement   : CONTINUE
 
     print_statement -> 'print' expr_list # Temporary - to be replaced by python 3 style function
 
-    expr_list : expression
-              | expression COMMA expr_list
+    expr_list : general_expression
+              | general_expression ',' expr_list
 
+    general_expression : relational_expression
+
+    relational_expression : expression
+                          | relational_expression COMPARISON_OPERATOR expression
 
     expression : arith_expression
                | expression '+' arith_expression
@@ -66,6 +96,8 @@ necessarily imply code generation, differences will be noted below.
                      | arith_expression '/' expression_atom
 
     expression_atom : value_literal
+          | IDENTIFIER '(' expr_list ')' # Function call
+
     value_literal : number
                   | STRING
                   | CHARACTER
