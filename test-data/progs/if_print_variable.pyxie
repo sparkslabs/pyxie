@@ -1,0 +1,19 @@
+success = "if $condition working, as long as you see this once"
+failure = "If you see this, *by itself*, 'if $condition' is not not compiling correctly"
+condition = True
+
+if condition:
+    print success
+
+print failure
+print "-----"
+
+failure = "if $condition NOT working, if you see this"
+success = "'if $condition' is working IF this is the only line referring to 'if $condition'"
+condition = False
+
+if condition:
+    print failure
+
+print success
+

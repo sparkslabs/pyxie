@@ -111,16 +111,16 @@ Harder:
     statements           : statement
                          | statement statements
 
-    block                : INDENT statements DEDENT
+    statement_block      : INDENT statements DEDENT
 
     statement            : EOL
                          | assignment_statement
                          | print_statement // This is really just a function call now
-                         | fullexpression  **[PARTIAL]**
+                         | general_expression  **[PARTIAL]**
                          | while_statement
                          | break_statement
                          | continue_statement
-                         | if_statement  **[TBD]**
+                         | if_statement
                          | for_statement  **[TBD]**
                          | import_statement  **[TBD]**
                          | class_statement  **[TBD]**
@@ -129,8 +129,8 @@ Harder:
                          | yield_statement  **[TBD]**
                          | pass_statement  **[TBD]**
 
-Note: fullexpression  **[PARTIAL]** means we have expression statements,
-but not full expressions
+Note: general_expression  **[PARTIAL]** means we have parsing of general
+expressions but not all types have appropriate functionality yet
 
 Open question:
 
@@ -146,7 +146,7 @@ NOTE: print is currently python 2 like, should be python 3 like.  Should be
 made that once function calls are integrated.  In the meantime, printing
 without having to implement general function calls is simpler.
 
-    print_statement      : PRINT fullexpression 
+    print_statement      : PRINT general_expression 
     pass_statement       : PASS  **[TBD]**
 
 ### Support for class definition  **[TBD]**
@@ -158,80 +158,82 @@ without having to implement general function calls is simpler.
 
 ### Support for function definition  **[TBD]**
 
-    def_statement        : DEF identifier PARENL PARENR COLON EOL block
-                         | DEF identifier PARENL ident_list PARENR COLON EOL block
+    def_statement        : DEF identifier PARENL PARENR COLON EOL statement_block
+                         | DEF identifier PARENL ident_list PARENR COLON EOL statement_block
 
-    yield_statement      : YIELD fullexpression
+    yield_statement      : YIELD general_expression
 
     return_statement     : RETURN
-                         | RETURN fullexpression
+                         | RETURN general_expression
 
     ident_list           : identifier
                          | identifier COMMA ident_list
 
 ### Assignment Statement
 
-    assignment_statement : identifier ASSIGN fullexpression
+    assignment_statement : identifier ASSIGN general_expression
 
 ### Namespace Functions  **[TBD]**
 
     import_statement     : FROM identifier IMPORT identifier
                          | IMPORT identifier
 
-### Block Statements  **[TBD]**
+### Block Statements  **[WIP]**
 
 #### Loops
 
-    for_statement        : FOR identifier IN fullexpression COLON EOL block
+    for_statement        : FOR identifier IN general_expression COLON EOL statement_block **[TBD]**
 
-    while_statement      : WHILE fullexpression COLON EOL block
+    while_statement      : WHILE general_expression COLON EOL statement_block
 
     break_statement      : BREAK
     continue_statement   : CONTINUE
 
 #### Selection
 
-    if_statement         : IF fullexpression COLON EOL block
-                         | IF fullexpression COLON EOL block if_trailer
+    if_statement : IF general_expression COLON EOL statement_block
+                 | IF general_expression COLON EOL statement_block extended_if_clauses
 
-    if_trailer           : elif_clauses
-                         | else_clause
-    elif_clauses         : elif_clause
-                         | elif_clause if_trailer
-    elif_clause          : ELIF fullexpression COLON EOL block
-    else_clause          : ELSE COLON EOL block
+    extended_if_clauses : else_clause
+                        | elif_clause
 
+    elif_clause : ELIF general_expression COLON EOL statement_block
+                | ELIF general_expression COLON EOL statement_block extended_if_clauses
 
-### Expressions involving sub-expressions  **[WIP]**
+    else_clause : ELSE COLON EOL statement_block
 
-    fullexpression       : or_expression  *[TBD]**
+### Expressions involving sub-expressions
 
-    or_expression        : and_expression   *[TBD]**
-                         | and_expression OR or_expression
+    general_expression : boolean_expression
 
-    and_expression       : not_expression  *[TBD]**
-                         | not_expression AND not_expression
+    boolean_expression : boolean_and_expression
+                       | boolean_expression OR boolean_and_expression
 
-    not_expression       : comparison  *[TBD]**
-                         | NOT not_expression
+    boolean_and_expression : boolean_not_expression
+                           | boolean_and_expression AND boolean_not_expression
 
-    comparison           : expression  *[DONE]**
-                         | expression COMPARISON_OPERATOR expression
+    boolean_not_expression : relational_expression
+                           | NOT boolean_not_expression
+
+    relational_expression : relational_expression COMPARISON_OPERATOR expression
+                          | expression
+
+NOTE: Not all **types** are valid yet, and truthiness needs implementing
 
 ### Core Expressions  **[WIP]**
 
     expression           : arith_expression  **[WIP]**
                          | arith_expression PLUS expression
                          | arith_expression MINUS expression
-                         | arith_expression POWER expression  **[WIP]**
+                         | arith_expression POWER expression  **[TBD]**
 
     arith_expression     : expression_atom
                          | expression_atom TIMES arith_expression
                          | expression_atom DIVIDE arith_expression
 
     expression_atom      : value_literal
-                         | func_call  **[WIP]**
-                         | PARENL fullexpression PARENR  **[TBD]**
+                         | func_call  **[PARTIAL]**
+                         | PARENL general_expression PARENR
 
     value_literal        : number
                          | identifier
@@ -263,11 +265,11 @@ The lack of strings is why it's not listed as done
 
 ### Function Calls   **[TBD]**
 
-    func_call            : IDENTIFIER PARENL PARENR
+    func_call            : IDENTIFIER PARENL PARENR  **[TBD]**
                          | IDENTIFIER PARENL expr_list PARENR
 
-    expr_list : expression
-              | expression COMMA expr_list
+    expr_list : general_expression
+              | general_expression COMMA expr_list
 
 
 

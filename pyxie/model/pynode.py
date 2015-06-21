@@ -313,7 +313,7 @@ class PyWhileStatement(PyStatement):
     def analyse(self):
         # We'll need to decorate the function call with information from somewhere
         # For now though, we won't
-        print "ANALYSING BLOCK"
+        print "ANALYSING WHILE BLOCK"
         print "analyse expression, and analyse block"
         self.condition.analyse()
         self.block.analyse()
@@ -321,8 +321,117 @@ class PyWhileStatement(PyStatement):
     def get_type(self):
         # function calls have no default value, so for now we'll return None
         # This will be improved later on.
-        print "GETTING BLOCK TYPE - which should be None - for now"
+        print "GETTING WHILE BLOCK TYPE - which should be None - for now"
         return None
+
+class PyIfStatement(PyStatement):
+    tag = "if_statement"
+    def __init__(self, condition, block, else_clause=None):
+        super(PyIfStatement,self).__init__()
+        self.condition = condition
+        self.block = block
+        self.else_clause = else_clause
+        self.add_children(condition, block)
+    def __repr__(self):
+        else_clause = ""
+        if self.else_clause:
+            else_clause = ", %s" % (repr(self.else_clause),)
+        return "PyIfStatement(%s, %s%s)" % (repr(self.condition), repr(self.block), else_clause)
+    def __json__(self):
+        else_clause = ""
+        if self.else_clause:
+            else_clause = jdump(self.else_clause)
+        return [ self.tag, jdump(self.condition), jdump(self.block), "", else_clause ] # Space left for elif chain...
+
+    def __info__(self):
+        info = super(PyIfStatement, self).__info__()
+        info[self.tag]["condition"] = self.condition.__info__()
+        info[self.tag]["block"] = self.block.__info__()
+        if self.else_clause:
+            info[self.tag]["else_clause"] = self.else_clause.__info__()
+        return info
+    def analyse(self):
+        print "ANALYSING IF BLOCK"
+        print "analyse expression, and analyse block"
+        self.condition.analyse()
+        self.block.analyse()
+        if self.else_clause:
+            self.else_clause.analyse()
+        return
+    def get_type(self):
+        # function calls have no default value, so for now we'll return None
+        # This will be improved later on.
+        print "GETTING IF BLOCK TYPE - which should be None - for now"
+        return None
+
+class PyElIfClause(PyStatement):
+    tag = "elif_clause"
+    def __init__(self, condition, block, else_clause=None):
+        super(PyElIfClause,self).__init__()
+        self.condition = condition
+        self.block = block
+        self.else_clause = else_clause
+        self.add_children(condition, block)
+    def __repr__(self):
+        else_clause = ""
+        if self.else_clause:
+            else_clause = ", %s" % (repr(self.else_clause),)
+        return "PyElIfClause(%s, %s%s)" % (repr(self.condition), repr(self.block), else_clause)
+    def __json__(self):
+        else_clause = ""
+        if self.else_clause:
+            else_clause = jdump(self.else_clause)
+        return [ self.tag, jdump(self.condition), jdump(self.block), "", else_clause ] # Space left for elif chain...
+
+    def __info__(self):
+        info = super(PyElIfClause, self).__info__()
+        info[self.tag]["condition"] = self.condition.__info__()
+        info[self.tag]["block"] = self.block.__info__()
+        if self.else_clause:
+            info[self.tag]["else_clause"] = self.else_clause.__info__()
+        return info
+    def analyse(self):
+        print "ANALYSING ELIF BLOCK"
+        print "analyse expression, and analyse block"
+        self.condition.analyse()
+        self.block.analyse()
+        if self.else_clause:
+            self.else_clause.analyse()
+        return
+    def get_type(self):
+        # function calls have no default value, so for now we'll return None
+        # This will be improved later on.
+        print "GETTING IF BLOCK TYPE - which should be None - for now"
+        return None
+
+
+
+class PyElseClause(PyStatement):
+    tag = "else_clause"
+    def __init__(self, block):
+        super(PyElseClause,self).__init__()
+        self.block = block
+        self.add_children(block)
+    def __repr__(self):
+        return "PyElseClause(%s)" % (repr(self.block), )
+    def __json__(self):
+        return [ self.tag, jdump(self.block) ]
+    def __info__(self):
+        info = super(PyElseClause, self).__info__()
+        info[self.tag]["block"] = self.block.__info__()
+        return info
+    def analyse(self):
+        print "ANALYSING ELSE CLAUSE"
+        print "analyse expression, and analyse block"
+        self.block.analyse()
+        return
+    def get_type(self):
+        # function calls have no default value, so for now we'll return None
+        # This will be improved later on.
+        print "GETTING ELSE CLAUSE TYPE - which should be None - for now"
+        return None
+
+
 
 class PyEmptyStatement(PyStatement):
     tag = "empty_statement"
@@ -437,7 +546,7 @@ class PyOperator(PyOperation):
             raise
 
     def __repr__(self):
-        return "%s(%s, %s)" % (self.classname(),repr(self.arg1),repr(self.arg1))
+        return "%s(%s, %s)" % (self.classname(),repr(self.arg1),repr(self.arg2))
     def __json__(self):
         return [ self.tag, jdump(self.arg1), jdump(self.arg2) ]
     def get_type(self):
@@ -448,6 +557,103 @@ class PyOperator(PyOperation):
         self.arg2.analyse()
 
         self.ntype = self.get_type()
+
+class PyBoolOperator(PyOperation):
+    pass
+
+class PyOrOperator(PyBoolOperator):
+    tag = "or_operator"
+    def __init__(self, arg1, arg2):
+        super(PyOrOperator,self).__init__()
+        self.arg1 = arg1
+        self.arg2 = arg2
+        self.ntype = None
+        self.add_children(arg1,arg2)
+
+    def __info__(self):
+        info = super(PyOrOperator, self).__info__()
+        info[self.tag]["arg1"] = self.arg1.__info__()
+        info[self.tag]["arg2"] = self.arg2.__info__()
+        return info
+
+    @property
+    def type(self):
+        return "bool"
+
+    def __repr__(self):
+        return "%s(%s, %s)" % (self.classname(),repr(self.arg1),repr(self.arg2))
+    def __json__(self):
+        return [ self.tag, jdump(self.arg1), jdump(self.arg2) ]
+    def get_type(self):
+        return "bool"
+    def analyse(self):
+        print "ANALYSING OPERATOR:", self.tag
+        self.arg1.analyse()
+        self.arg2.analyse()
+
+        self.ntype = self.get_type()
+
+
+class PyAndOperator(PyBoolOperator):
+    tag = "and_operator"
+    def __init__(self, arg1, arg2):
+        super(PyAndOperator,self).__init__()
+        self.arg1 = arg1
+        self.arg2 = arg2
+        self.ntype = None
+        self.add_children(arg1,arg2)
+
+    def __info__(self):
+        info = super(PyAndOperator, self).__info__()
+        info[self.tag]["arg1"] = self.arg1.__info__()
+        info[self.tag]["arg2"] = self.arg2.__info__()
+        return info
+
+    @property
+    def type(self):
+        return "bool"
+
+    def __repr__(self):
+        return "%s(%s, %s)" % (self.classname(),repr(self.arg1),repr(self.arg2))
+    def __json__(self):
+        return [ self.tag, jdump(self.arg1), jdump(self.arg2) ]
+    def get_type(self):
+        return "bool"
+    def analyse(self):
+        print "ANALYSING OPERATOR:", self.tag
+        self.arg1.analyse()
+        self.arg2.analyse()
+
+        self.ntype = self.get_type()
+
+class PyNotOperator(PyBoolOperator):
+    tag = "not_operator"
+    def __init__(self, arg1):
+        super(PyNotOperator,self).__init__()
+        self.arg1 = arg1
+        self.ntype = None
+        self.add_children(arg1)
+
+    def __info__(self):
+        info = super(PyNotOperator, self).__info__()
+        info[self.tag]["arg1"] = self.arg1.__info__()
+        return info
+
+    @property
+    def type(self):
+        return "bool"
+
+    def __repr__(self):
+        return "%s(%s)" % (self.classname(),repr(self.arg1),)
+    def __json__(self):
+        return [ self.tag, jdump(self.arg1) ]
+    def get_type(self):
+        return "bool"
+    def analyse(self):
+        print "ANALYSING OPERATOR:", self.tag
+        self.arg1.analyse()
+        self.ntype = self.get_type()
+
 
 
 class PyTimesOperator(PyOperator):
@@ -475,7 +681,7 @@ class PyComparisonOperator(PyOperation):
         print "CREATED COMPARISON OPERATOR", comparison, arg1, arg2
 
     def __info__(self):
-        info = super(PyOperator, self).__info__()
+        info = super(PyComparisonOperator, self).__info__()
         info[self.tag]["comparison"] = self.comparison
         info[self.tag]["arg1"] = self.arg1.__info__()
         info[self.tag]["arg2"] = self.arg2.__info__()
@@ -486,7 +692,7 @@ class PyComparisonOperator(PyOperation):
         return "bool"
 
     def __repr__(self):
-        return "%s(%s, %s, %s)" % (self.classname(),self.comparison, repr(self.arg1),repr(self.arg1))
+        return "%s(%s, %s, %s)" % (self.classname(),self.comparison, repr(self.arg1),repr(self.arg2))
     def __json__(self):
         return [ self.tag, self.comparison, jdump(self.arg1), jdump(self.arg2) ]
     def get_type(self):

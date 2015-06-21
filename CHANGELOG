@@ -6,9 +6,23 @@ reason.
 
 ### In progress
 
-## [0.0.12] - UNRELEASED - WIP
+## [0.0.13] - 2015-06-21
 
-## New
+This probably marks the first release that's potentially properly useful when combined with
+an appropriate included .h file... We support if/elif/else while/break/continue and arbitray
+expressions.
+
+### New
+
+* Support for if statements
+* Support for elif clauses (as many as desired)
+* Support for else clauses
+* Support for boolean operators - specifically and/or/not, including any mixture
+* Support for parenthesised expressions
+
+## [0.0.12] - 2015-06-17
+
+### New
 
 * Initial iteration of website - hosted at www.sparkslabs.com/pyxie/ . Stored in repo
 * support for while statements:

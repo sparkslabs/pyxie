@@ -1,2 +1,25 @@
 
-print (1 or 1)
+x = False or False
+print 0, x
+
+x = False or True
+print 1, x
+
+x = True or False
+print 1, x
+
+x = True or True
+print 1, x
+
+x = False and False
+print 0, x
+
+x = False and True 
+print 0, x
+
+x = True and False
+print 0, x
+
+x = True and True
+print 1, x
+

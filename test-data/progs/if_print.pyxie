@@ -1,0 +1,5 @@
+
+if True:
+    print "if True working, as long as you see this once"
+
+print "If you see this, *by itself*, 'if' is not not compiling correctly"

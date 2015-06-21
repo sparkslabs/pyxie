@@ -95,11 +95,10 @@ def crepr_literal(pyliteral):
         else:
             return "false"
 
-
     raise ValueError("Do not not know how to create crepr_literal for " + repr(pyliteral))
 
 def crepr_op(py_op):
-    assert isinstance(py_op, nodes.PyOperator)
+    assert ( isinstance(py_op, nodes.PyOperator) or isinstance(py_op, nodes.PyBoolOperator))
 #    assert py_op[0] == "operator_function"
     func = py_op.tag
 
@@ -111,6 +110,12 @@ def crepr_op(py_op):
         return ["op", "times"]
     if func == "op_divide":
         return ["op", "divide"]
+    if func == "or_operator":
+        return ["op", "boolean_or"]
+    if func == "and_operator":
+        return ["op", "boolean_and"]
+    if func == "not_operator":
+        return ["op", "boolean_not"]
     else:
         todo("Cannot yet convert operators functions other than plus...")
         raise CannotConvert("Cannot yet convert operators functions other than plus...:" + repr(py_op))
@@ -128,7 +133,8 @@ def convert_assignment(assignment):
 
     if not ( isinstance(assignment.rvalue, nodes.PyOperator) or
              isinstance(assignment.rvalue, nodes.PyValueLiteral) or
-             isinstance(assignment.rvalue, nodes.PyComparisonOperator)) :
+             isinstance(assignment.rvalue, nodes.PyComparisonOperator) or
+             isinstance(assignment.rvalue, nodes.PyBoolOperator)) :
 
         todo("assignment where the rvalue is not a value_literal or operator")
         raise CannotConvert("Cannot convert assignment where the rvalue is not a value_literal")
@@ -140,6 +146,9 @@ def convert_assignment(assignment):
 
     if isinstance(assignment.rvalue, nodes.PyOperator):
         crvalue = convert_operator_function(rvalue)
+
+    if isinstance(assignment.rvalue, nodes.PyBoolOperator):
+        crvalue = convert_bool_operator_function(rvalue)
 
     if isinstance(assignment.rvalue, nodes.PyComparisonOperator):
         crvalue = convert_comparison(rvalue)
@@ -169,6 +178,36 @@ def convert_value_literal(arg):
     todo("CONVERSION: Cannot handle other value literals %s" % repr(arg))
     todo("CONVERSION: %s %s %s %d" % (tag, repr(value), repr(vtype), line))
     raise CannotConvert("Cannot convert value-literal of type" + repr(arg))
+
+
+
+def convert_bool_operator_function(opfunc):
+    print "CONVERT - convert_bool_operator_function", repr(opfunc)
+    assert isinstance(opfunc, nodes.PyBoolOperator)
+
+    func = opfunc.tag
+    arg1 = opfunc.arg1
+
+    if not isinstance(opfunc, nodes.PyNotOperator):
+        arg2 = opfunc.arg2
+    else:
+        arg2 = None
+
+    crepr_arg1 = convert_arg(arg1)
+    if arg2:
+        crepr_arg2 = convert_arg(arg2)
+    else:
+        crepr_arg2 = None
+
+    print "crepr_arg1", repr(crepr_arg1)
+
+    if arg2:
+        print "crepr_arg2", repr(crepr_arg2)
+        result = crepr_op(opfunc) + [crepr_arg1, crepr_arg2]
+    else:
+        result = crepr_op(opfunc) + [crepr_arg1 ]
+    print repr(result)
+    return result
 
 
 def convert_operator_function(opfunc):
@@ -228,6 +267,8 @@ def convert_arg(arg):
         return convert_comparison(arg)
     elif isinstance(arg, nodes.PyOperator):
         return convert_operator_function(arg)
+    elif isinstance(arg, nodes.PyBoolOperator):
+        return  convert_bool_operator_function(arg)
 
     elif isinstance(arg, nodes.PyFunctionCall):
         print "NEED TO CONVERT FUNCTION CALL TO SOMETHING THE C CODE GENERATOR CAN HANDLE"
@@ -261,6 +302,36 @@ def convert_while_statement(while_statement):
     cstatements = convert_statements(while_statement.block)
     return ["while_statement", crepr_condition] + cstatements
 
+def convert_extended_clause(extended_clause):
+    if extended_clause.tag == "elif_clause":
+        print "WORKING THROUGH ELIF:", extended_clause
+        crepr_condition = convert_arg(extended_clause.condition)
+        cstatements = convert_statements(extended_clause.block)
+        if extended_clause.else_clause:
+            cextended_clause = convert_extended_clause(extended_clause.else_clause)
+            return["elif_clause", crepr_condition, cstatements, cextended_clause ]
+        return ["elif_clause", crepr_condition, cstatements ]
+
+    if extended_clause.tag == "else_clause":
+        print "WORKING THROUGH ELSE:", extended_clause
+        cstatements = convert_statements(extended_clause.block)
+        return ["else_clause", cstatements ]
+
+    print "NOT ELIF!"
+    print "NOT ELSE!"
+    print extended_clause
+    raise ValueError("Extended clause isn't a else or elif clause: %s" % repr(extended_clause))
+
+
+def convert_if_statement(if_statement):
+    print "WORKING THROUGH IF:", if_statement
+    crepr_condition = convert_arg(if_statement.condition)
+    cstatements = convert_statements(if_statement.block)
+    if if_statement.else_clause:
+        cextended_clause = convert_extended_clause(if_statement.else_clause)
+        return["if_statement", crepr_condition, cstatements, cextended_clause ]
+    return ["if_statement", crepr_condition, cstatements ]
+
 def convert_break_statement(break_statement):
     return ["break_statement"]
 
@@ -293,6 +364,9 @@ def convert_statements(AST):
                 cstatements.append(cstatement)
             elif statement.tag == "while_statement":
                 cstatement = convert_while_statement(statement)
+                cstatements.append(cstatement)
+            elif statement.tag == "if_statement":
+                cstatement = convert_if_statement(statement)
                 cstatements.append(cstatement)
             elif statement.tag == "break_statement":
                 cstatement = convert_break_statement(statement)

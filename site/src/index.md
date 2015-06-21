@@ -193,6 +193,7 @@ inspired heavily by python introspection) That's quite some time off.
 
 Release History: (and highlights)
 
+* 0.0.13 - UNRELEASED - if/elif/else,conditionals/boolean/parenthesised expressions.
 * 0.0.12 - 2015-06-16 - While loops, break/continue, Website, comparison operators, simple benchmark test
 * 0.0.11 - 2015-06-06 - Function calls; inclusion of custom  C++ headers; empty statements; language spec updates
 * 0.0.10 - 2015-06-03 - Analysis phase to make type inference work better. Lots of related changes. Implementation of expression statements.

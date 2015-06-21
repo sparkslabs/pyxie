@@ -2,7 +2,7 @@
 template: mainpage
 source_form: markdown
 name: Dev Status
-updated:  Wed Jun 2015
+updated:  Thu Jun 18 16:12:42 2015
 title: Detailed Dev status
 ---
 ## Trello dump for Pyxie
@@ -11,8 +11,8 @@ title: Detailed Dev status
 
 * HEADLINE: PRE-ALPHA
 * DEV STATE: MAKE IT WORK
-* DEV VERSION: 0.0.12
-* RELEASED: 0.0.11
+* DEV VERSION: 0.0.14
+* RELEASED: 0.0.13
 * LANGUAGE STATE: PRE-BARE
 * How to deploy the website
 * Release tasks
@@ -31,6 +31,7 @@ title: Detailed Dev status
 
 ###  TODO: Tasks
 
+* Link current test programs on the website, maybe
 * Pyxie compile harness is switched over to use a better system for determining runtime options
 * Review whether context should check types of ALL expressions, rather than just first, and whether we can should try to detect type mismatches
 * https://travis-ci.org/
@@ -42,73 +43,83 @@ title: Detailed Dev status
 
 ###  Arising and Internal
 
+* Truthiness for values that AND/OR/NOT arguments needs resolving properly in C. (deferred)
+* Truthiness of expressions is explicitly checked/valid - for us in if and while statements and boolean expressions
+* Website could do with some pictures :-)
+* Should we allow comments on website?
 * Can find_variables(AST) in pyxie.model.transform actually just look in the results of the analysis phase? It should be able to. Building the same structure after all
 * Code generation of C literals is muddled up a touch with structural representation
 * C Syntax Tree is a Tree
 * Currently have 2 shift/reduce conflicts. They're auto-resolved correctly, but could be worth seeing if they could be resolved better.
 * Consider using CppHeaderParser on the C++ side of things - to inform the code generation side of things
 * Block structure of generated C Code is pretty/human friednly/readable
-* Truthiness of expressions is explicitly checked/valid - for us in if and while statements and boolean expressions
-* Pyxie compile harness supports custom working directories
 * Operations and operators could be unified with a bit of tweaking - using "x.operation", not "x.tag/x.comparison" etc
 * Better Error messages for users
+* Duplication exists within code generation for operators. (cf convert_operator etc)
 
 
 ###  TODO: Features
 
+* Unify Boolean operator pynode implementations
+* Comments are implemented - would be useful for documented tests more appropriately
+* Arduino compatible compilation mode.
+* MBed compatible compilation mode?
+* MSP430 compatible compilation mode?
+* Add special case for function calls like print...
+* Generalise special casing of function calls.
+* Variables inside while loops are handled correctly
+* Function call code supports simplified type definition files.
+* Core expression code generation for strings
 * Implement container oriented comparison operators
 * Implement identity oriented comparison operators
-* Parsing bracketed full expressions
 * Support for for statements
-* Decide on Python Modulo operator?
-* Core expression code generation for strings
-* Code bracketed generation full expressions
-* Parsing of expressions involving sub expressions
-* Code generation for expressions involving sub expressions
 * Code generation for integer literals retains original representation where possible (Octal, hex, binary, etc)
 * Function call code supports C style function prototypes for type definitions
 * Function call code supports name C headers for type definitions
 * Pyxie caches results of C style header parsing
+* Modulo Operator for Strings
+* Modulo Operator for Integers
+* Modulo Operator for Floats
 
 
 ###  Next
 
-* Support for if statements
-* Support for if/elif/else statements
-* Comments are implemented - would be useful for documented tests more appropriately
-* Boolean expression support
-* Variables inside while loops are handled correctly
-* Link current test programs on the website, maybe
-* Arduino compatible compilation mode.
-* MBed compatible compilation mode?
-* Add special case for function calls like print...
-* Generalise special casing of function calls.
-* Function call code supports simplified type definition files.
-* For release: 0.0.13
-* For release: 0.0.14
+* Bump Versions
+* For Release: 0.0.14
+* Simple for...range loops
+* Pyxie compile harness supports custom working directories
 
 
 ###  Known Bugs / Anti-features
 
+* 5: Website should use responsive CSS
+* 5: Website side bar could be better implemented.
 
 
 ###  Tasks Next Release
 
-* 0.0.12 - - - - - (tasks)
 
 
 ###  Features Next Release
 
-* 0.0.12 = = = = = = = = = =
 
 
 ###  WIP
 
-* Release tasks: 0.0.12
 
 
 ###  Features Implemented
 
+* 0.0.13 = = = = = = = = = =
+* Parsing bracketed full expressions
+* Chained boolean expressions and chained mixtures of boolean expressions work as expected
+* Boolean expression support: NOT
+* Boolean expression support: AND
+* Boolean expression support: OR
+* Support for if/elif/else statements
+* Support for if statements
+* 0.0.12 = = = = = = = = = =
+* Release tasks: 0.0.12
 * Comparison operators
 * Can now handle loops that count towards zero and do something with them...
 * support for while statements
@@ -176,6 +187,11 @@ title: Detailed Dev status
 
 ###  Tasks Done
 
+* 0.0.13 - - - - - (tasks)
+* For Release: 0.0.13
+* Decide on Python Modulo operator?
+* Bump Versions
+* 0.0.12 - - - - - (tasks)
 * Update language status for 0.0.12
 * BUG: Parser generates far too many "empty statements"
 * Update language status for 0.0.11
@@ -222,13 +238,14 @@ title: Detailed Dev status
 
 * Things to feed into Pyxie
 * Licensing links
+* .p files are parsing tests. If they compile, they should be renamed .pyxie which are compilation tests.
 
 
 ###  Rejected
 
-* Operators.p does not generate code for the expression statements. Not sure if this is intentional at the moment
-* identifiers.p does not build at the moment. Again, cannot remember if this is intentional. Probably.
-* value_literals.p does not generate code for the expression statements. Not sure if this is intentional at the moment
-* run tests is compiling tests that are parse only tests
+
+
+###  Inbound
+
 
 

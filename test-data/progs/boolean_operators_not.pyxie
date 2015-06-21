@@ -1,0 +1,12 @@
+
+x = not False
+print "not False", 1, x, 1 == x
+
+x = not not False
+print "not not False", 0, x, 0 == x
+
+x = not not not False
+print "not not not False", 1, x, 1 == x
+
+x = not not not not False
+print "not not not not False", 0, x, 0 == x

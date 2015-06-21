@@ -40,6 +40,12 @@ def mkStatement(statement_spec):
     elif ss[0] == "while_statement":
         return WhileStatement(*statement_spec[1:])
 
+    elif ss[0] == "if_statement":
+        if len(ss) == 3:
+            return IfStatement(ss[1], ss[2])
+        if len(ss) == 4:
+            return IfStatement(ss[1], ss[2], ss[3])
+        raise NotImplementedError("Have not yet implemented else clauses...")
     elif ss[0] == "break_statement":
         return BreakStatement()
 
@@ -209,6 +215,9 @@ class ArgumentList(object):
         if arg[1] == "minus": return "-"
         if arg[1] == "times": return "*"
         if arg[1] == "divide": return "/"
+        if arg[1] == "boolean_or": return " || "
+        if arg[1] == "boolean_and": return " && "
+        if arg[1] == "boolean_not": return " ! "
 
         if arg[1] in ["<", ">", "==", ">=", "<=", "!="]:
             return arg[1]
@@ -221,17 +230,29 @@ class ArgumentList(object):
         c_op = self.code_op_F(arg)
         if c_op:
 
-            arg1 = arg[2]
-            arg2 = arg[3]
-            # We would like to try to assert here that the values on both sides
-            # are integers, but at present we cannot do that, since we use too simplistic
-            # a structure. If I remove that constraint, we can generate more code.
-            # But we will need to revisit this.
-            lit_arg1 = self.code_arg(arg1)
-            lit_arg2 = self.code_arg(arg2)
+            if len(arg) == 4:
+                arg1 = arg[2]
+                arg2 = arg[3]
+                # We would like to try to assert here that the values on both sides
+                # are integers, but at present we cannot do that, since we use too simplistic
+                # a structure. If I remove that constraint, we can generate more code.
+                # But we will need to revisit this.
+                lit_arg1 = self.code_arg(arg1)
+                lit_arg2 = self.code_arg(arg2)
 
-            result = "(" + lit_arg1 + c_op + lit_arg2 + ")"
-            return result
+                result = "(" + lit_arg1 + c_op + lit_arg2 + ")"
+                return result
+            if len(arg) == 3:
+                arg1 = arg[2]
+                # We would like to try to assert here that the values on both sides
+                # are integers, but at present we cannot do that, since we use too simplistic
+                # a structure. If I remove that constraint, we can generate more code.
+                # But we will need to revisit this.
+                lit_arg1 = self.code_arg(arg1)
+
+                result = "(" + c_op + lit_arg1 + ")"
+                return result
+
         todo("Handle code ops for anything other than plus/int,int")
         raise NotImplementedError("Handle code ops for anything other than plus/int,int" + repr(arg))
 
@@ -318,6 +339,117 @@ class WhileStatement(object):
         code += "\n".join( self.block_cframe.concrete() )
         code += "}"
         return code
+
+class IfStatement(object):
+    def __init__(self, condition, statements, extended_clause=None):
+        self.raw_condition = condition
+        self.raw_statements = list(statements)
+        self.extended_clause = extended_clause
+
+        self.block_cframe = C_Frame()
+        for statement in self.raw_statements:
+            conc_statement = mkStatement(statement)
+            self.block_cframe.statements.append(conc_statement)
+
+    def json(self):
+        result = ["if_statement", self.raw_condition, self.raw_statements ]
+        if self.extended_clause is not None:
+            result.append(extended_clauses.json())
+
+    def code(self):
+        extended_clauses_code = None
+        condition_code = ArgumentList(self.raw_condition).code()
+        block_code = "\n".join( self.block_cframe.concrete() )
+        if self.extended_clause:
+            if self.extended_clause[0] == "elif_clause":
+                print self.extended_clause[0]
+                condition = self.extended_clause[1]
+                statements =  self.extended_clause[2]
+                if len(self.extended_clause) == 4:
+                    extended_sub_clause =  self.extended_clause[3]
+                    extended_clauses_code = ElIfClause( condition, statements, extended_sub_clause ).code()
+                else:
+                    extended_clauses_code = ElIfClause( condition, statements ).code()
+
+            if self.extended_clause[0] == "else_clause":
+                print "***************************************************"
+                print self.extended_clause[0]
+                statements =  self.extended_clause[1]
+                extended_clauses_code = ElseClause( statements ).code()
+
+        code = "if ( %s ) { %s } " % (condition_code, block_code )
+        if extended_clauses_code:
+            code = code + extended_clauses_code
+        return code
+
+class ElIfClause(object):
+    def __init__(self, condition, statements, extended_clause=None):
+        self.raw_condition = condition
+        self.raw_statements = list(statements)
+        self.extended_clause = extended_clause
+
+        self.block_cframe = C_Frame()
+        for statement in self.raw_statements:
+            conc_statement = mkStatement(statement)
+            self.block_cframe.statements.append(conc_statement)
+
+    def json(self):
+        result = ["elif_clause", self.raw_condition, self.raw_statements ]
+        if self.extended_clause is not None:
+            result.append(extended_clause.json())
+
+    def code(self):
+        extended_clauses_code = None
+        condition_code = ArgumentList(self.raw_condition).code()
+        block_code = "\n".join( self.block_cframe.concrete() )
+        if self.extended_clause:
+            if self.extended_clause[0] == "elif_clause":
+                print "***************************************************"
+                print self.extended_clause[0]
+                condition = self.extended_clause[1]
+                statements =  self.extended_clause[2]
+
+                if len(self.extended_clause) == 4:
+                    extended_sub_clause =  self.extended_clause[3]
+                    extended_clauses_code = ElIfClause( condition, statements, extended_sub_clause ).code()
+                else:
+                    extended_clauses_code = ElIfClause( condition, statements ).code()
+
+
+            if self.extended_clause[0] == "else_clause":
+                print "***************************************************"
+                print self.extended_clause[0]
+                statements =  self.extended_clause[1]
+                extended_clauses_code = ElseClause( statements ).code()
+
+        code = "else if ( %s ) { %s } " % (condition_code, block_code )
+        if extended_clauses_code:
+            code = code + extended_clauses_code
+        return code
+
+
+class ElseClause(object):
+    def __init__(self, statements):
+        self.raw_statements = list(statements)
+
+        self.block_cframe = C_Frame()
+        for statement in self.raw_statements:
+            conc_statement = mkStatement(statement)
+            self.block_cframe.statements.append(conc_statement)
+
+    def json(self):
+        result = ["elif_clause", self.raw_statements ]
+
+    def code(self):
+        extended_clauses_code = None
+        block_code = "\n".join( self.block_cframe.concrete() )
+
+        code = "else { %s } " % (block_code, )
+
+        return code
+
+
+
 
 makefile_tmpl = """
 all :

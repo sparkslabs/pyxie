@@ -1,0 +1,7 @@
+
+if True:
+    print "if/else working, as long as you see this once, and don't see an error"
+else:
+    print "ERROR: if/else should not print this with a True value"
+
+print "If you see this, *by itself*, 'if/else' is not not compiling correctly"

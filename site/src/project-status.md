@@ -2,7 +2,7 @@
 template: mainpage
 source_form: markdown
 name: Project Status
-updated: June 2015 (with release 0.0.12)
+updated: June 2015 (with release 0.0.13)
 title: Project Status (overview)
 ---
 ## Project Status
@@ -17,9 +17,9 @@ Overall standard ethos:
 * Make it correct
 * Make it fast
 
-### DEV VERSION: 0.0.13
+### DEV VERSION: 0.0.14
 
-### RELEASED: 0.0.12
+### RELEASED: 0.0.13
 
 ### LANGUAGE STATE: PRE-BARE
 

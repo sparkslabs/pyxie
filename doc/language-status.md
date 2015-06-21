@@ -15,7 +15,8 @@ result "demo" and clean up after itself.
 ## Example program that lexes, parses, analyses & compiles
 
 Clearly a single example doesn't tell you everything. However this program
-isn't a bad representation of current state:
+isn't a bad representation of current state, though misses off the major control
+structures - while,if/elif/else,conditionals/boolean/parenthesised expressions.
 
     age = 10
     new_age = 10 +1
@@ -35,10 +36,14 @@ the types of foobar and new_age_three. In the case of new_age_three, that
 needs to be derived in the context of another variable that has to be
 derived from abother one.
 
+### Function Calls
+
 Function **calls** are supported. At present they are treated
 as having a value type of "None", and should be treated as statements
 not as expressions. However the compiler passes through function calls
 to the backend, assuming the backend will understand the function call.
+
+### C++ Libraries
 
 Additionally, you can pull C++ libraries in standard locations by simply
 incuding them -- for example:
@@ -50,6 +55,30 @@ chosen to capture such #include lines, and pass them through to the C++ side.
 This naturally enables a wide selection of functionality to start making
 Pyxie useful.
 
+### Very Nearly Bare Minimum Support
+
+
+Now supports control structures, key statements
+
+* while (arbitrary expression for control)
+* break/continue
+* if
+* elif
+* else
+* print
+* function calls
+* assignment
+
+Key expression support:
+
+* Variables have their types inferred for int, bool, char, float, string, hex, binary, octal
+* Parenthesised expressions
+* Comparisons (>,<,>=,<=, !=,<>, ==)
+* Boolean operators: and, or, not
+
+This means we can almost start writing useful programs, but in particular
+can start creating simplistic benchmarks for measuring run speed.
+
 ## Grammar Currently Supported
 
 Clearly we're not going to implement the full language spec in one go, so this
@@ -60,28 +89,52 @@ necessarily imply code generation, differences will be noted below.
     statements : statement
                | statement statements
 
+    statement_block : INDENT statements DEDENT
+
     statement : assignment_statement
+              | print_statement
               | general_expression
+              | EOL
               | while_statement
               | break_statement
               | continue_statement
-              | EOL
-              | print_statement
+              | if_statement
 
-    assignment_statement : IDENTIFIER ASSIGN general_expression # ASSIGN is currently limited to "="
+    assignment_statement -> IDENTIFIER ASSIGN general_expression # ASSIGN is currently limited to "="
 
-    while_statement      : WHILE general_expression COLON EOL block  # Note: Expression, not full expression
+    while_statement : WHILE general_expression COLON EOL statement_block
 
-    break_statement      : BREAK
+    break_statement : BREAK
 
-    continue_statement   : CONTINUE
+    continue_statement : CONTINUE
 
-    print_statement -> 'print' expr_list # Temporary - to be replaced by python 3 style function
+    if_statement : IF general_expression COLON EOL statement_block
+                 | IF general_expression COLON EOL statement_block extended_if_clauses
+
+    extended_if_clauses : else_clause
+                        | elif_clause
+
+    else_clause : ELSE COLON EOL statement_block
+
+    elif_clause : ELIF general_expression COLON EOL statement_block
+                | ELIF general_expression COLON EOL statement_block extended_if_clauses
+
+
+    print_statement : 'print' expr_list # Temporary - to be replaced by python 3 style function
 
     expr_list : general_expression
-              | general_expression ',' expr_list
+              | general_expression COMMA expr_list
 
-    general_expression : relational_expression
+    general_expression -> boolean_expression
+
+    boolean_expression : boolean_and_expression
+                       | boolean_expression OR boolean_and_expression
+
+    boolean_and_expression : boolean_not_expression
+                           | boolean_and_expression AND boolean_not_expression
+
+    boolean_not_expression : relational_expression
+                           | NOT boolean_not_expression
 
     relational_expression : expression
                           | relational_expression COMPARISON_OPERATOR expression
@@ -96,7 +149,8 @@ necessarily imply code generation, differences will be noted below.
                      | arith_expression '/' expression_atom
 
     expression_atom : value_literal
-          | IDENTIFIER '(' expr_list ')' # Function call
+                    | IDENTIFIER '(' expr_list ')' # Function call
+                    | '(' general_expression ')'
 
     value_literal : number
                   | STRING

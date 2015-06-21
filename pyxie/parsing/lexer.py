@@ -173,13 +173,9 @@ def t_BLOCKS_EOL(t):
 
 def t_NORMAL_INCLUDELINE(t):
     r'\#include.*'
-#    t.lexer.lineno += 1 # len(t.value)
     print "WE SAW A #INCLUDE line! :-)"
     print "It was this:", repr(t.value)
     t.lexer.includes.append(t.value)
-    #
-
-#    return t
 
 def t_INITIAL_BLOCKS_WS(t):
     r'[ \t]+'

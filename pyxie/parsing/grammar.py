@@ -72,6 +72,11 @@ class Grammar(object):
         "statement : continue_statement"
         p[0] = p[1]
 
+    def p_statement_8(self, p):
+        "statement : if_statement"
+        p[0] = p[1]
+
+
     def p_break_statement_1(self, p):
         "break_statement : BREAK"
         p[0] = PyBreakStatement()
@@ -93,6 +98,76 @@ class Grammar(object):
         print "In particular for strings, lists, dictionaries, tuples and so on"                                # TODO
         print "That is a separate card in the backlog though"                                                   # TODO
         print "SO WE REACHED WHILE"
+        print "------------------> COND  :", p[2]
+        print "------------------> BLOCK :", p[5]
+        print "------------------> RESULT :", p[0]
+
+    def p_if_statement_1(self, p):
+        "if_statement : IF general_expression COLON EOL statement_block"
+        print "PARSES IF"
+        p[0] = PyIfStatement(p[2], p[5]) # pass in expression and block
+        print
+        print "WARNING, expression used in a location requiring truthiness"                                     # TODO
+        print "This will generally be OK for bools and integers but need a function for anything else"          # TODO
+        print "In particular for strings, lists, dictionaries, tuples and so on"                                # TODO
+        print "That is a separate card in the backlog though"                                                   # TODO
+        print "SO WE REACHED IF STATEMENT"
+        print "------------------> COND  :", p[2]
+        print "------------------> BLOCK :", p[5]
+        print "------------------> RESULT :", p[0]
+
+    def p_if_statement_2(self, p):
+        "if_statement : IF general_expression COLON EOL statement_block extended_if_clauses"
+        print "PARSES IF"
+        p[0] = PyIfStatement(p[2], p[5],else_clause=p[6]) # pass in expression and block
+        print
+        print "WARNING, expression used in a location requiring truthiness"                                     # TODO
+        print "This will generally be OK for bools and integers but need a function for anything else"          # TODO
+        print "In particular for strings, lists, dictionaries, tuples and so on"                                # TODO
+        print "That is a separate card in the backlog though"                                                   # TODO
+        print "SO WE REACHED IF STATEMENT"
+        print "------------------> COND  :", p[2]
+        print "------------------> BLOCK :", p[5]
+        print "------------------> RESULT :", p[0]
+
+
+    def p_extended_if_clauses_1(self,p):
+        "extended_if_clauses : else_clause"
+        p[0] = p[1]
+
+    def p_extended_if_clauses_2(self,p):
+        "extended_if_clauses : elif_clause"
+        p[0] = p[1]
+
+    def p_else_clause_1(self,p):
+        "else_clause : ELSE COLON EOL statement_block "
+        p[0] = PyElseClause(p[4])
+
+
+    def p_elif_clause_1(self, p):
+        "elif_clause : ELIF general_expression COLON EOL statement_block"
+        print "PARSES IF"
+        p[0] = PyElIfClause(p[2], p[5]) # pass in expression and block
+        print
+        print "WARNING, expression used in a location requiring truthiness"                                     # TODO
+        print "This will generally be OK for bools and integers but need a function for anything else"          # TODO
+        print "In particular for strings, lists, dictionaries, tuples and so on"                                # TODO
+        print "That is a separate card in the backlog though"                                                   # TODO
+        print "SO WE REACHED IF STATEMENT"
+        print "------------------> COND  :", p[2]
+        print "------------------> BLOCK :", p[5]
+        print "------------------> RESULT :", p[0]
+
+    def p_elif_clause_2(self, p):
+        "elif_clause : ELIF general_expression COLON EOL statement_block extended_if_clauses"
+        print "PARSES IF"
+        p[0] = PyElIfClause(p[2], p[5],else_clause=p[6]) # pass in expression and block
+        print
+        print "WARNING, expression used in a location requiring truthiness"                                     # TODO
+        print "This will generally be OK for bools and integers but need a function for anything else"          # TODO
+        print "In particular for strings, lists, dictionaries, tuples and so on"                                # TODO
+        print "That is a separate card in the backlog though"                                                   # TODO
+        print "SO WE REACHED IF STATEMENT"
         print "------------------> COND  :", p[2]
         print "------------------> BLOCK :", p[5]
         print "------------------> RESULT :", p[0]
@@ -121,8 +196,59 @@ class Grammar(object):
         p[0] = PyAssignment(identifier, p[3], p[2])
 
     def p_general_expression_1(self, p):
-        "general_expression : relational_expression"
+        "general_expression : boolean_expression"
         p[0] = p[1]
+
+    def p_boolean_expression_1(self, p):
+        "boolean_expression : boolean_and_expression"
+        p[0] = p[1]
+
+    def p_boolean_expression_2(self, p):
+        "boolean_expression : boolean_expression OR boolean_and_expression"
+        p[0] = PyOrOperator(p[1],p[3])
+
+        print
+        print "WARNING, expression used in a location requiring truthiness"                                     # TODO
+        print "This will generally be OK for bools and integers but need a function for anything else"          # TODO
+        print "In particular for strings, lists, dictionaries, tuples and so on"                                # TODO
+        print "That is a separate card in the backlog though"                                                   # TODO
+        print "SO WE REACHED AN OR EXPRESSION"
+        print "------------------> LARG:", p[1]
+        print "------------------> RARG :", p[3]
+        print "------------------> RESULT :", p[0]
+
+    def p_boolean_and_expression_1(self, p):
+        "boolean_and_expression : boolean_not_expression"
+        p[0] = p[1]
+
+    def p_boolean_and_expression_2(self, p):
+        "boolean_and_expression  : boolean_and_expression AND boolean_not_expression"
+        p[0] = PyAndOperator(p[1],p[3])
+        print
+        print "WARNING, expression used in a location requiring truthiness"                                     # TODO
+        print "This will generally be OK for bools and integers but need a function for anything else"          # TODO
+        print "In particular for strings, lists, dictionaries, tuples and so on"                                # TODO
+        print "That is a separate card in the backlog though"                                                   # TODO
+        print "SO WE REACHED AN AND EXPRESSION"
+        print "------------------> LARG:", p[1]
+        print "------------------> RARG :", p[3]
+        print "------------------> RESULT :", p[0]
+
+    def p_boolean_not_expression_1(self, p):
+        "boolean_not_expression : relational_expression"
+        p[0] = p[1]
+
+    def p_boolean_not_expression_2(self, p):
+        "boolean_not_expression : NOT boolean_not_expression "
+        p[0] = PyNotOperator(p[2])
+        print
+        print "WARNING, expression used in a location requiring truthiness"                                     # TODO
+        print "This will generally be OK for bools and integers but need a function for anything else"          # TODO
+        print "In particular for strings, lists, dictionaries, tuples and so on"                                # TODO
+        print "That is a separate card in the backlog though"                                                   # TODO
+        print "SO WE REACHED AN AND EXPRESSION"
+        print "------------------> ARG:", p[2]
+        print "------------------> RESULT :", p[0]
 
     def p_relational_expression_1(self, p):
         "relational_expression : relational_expression COMPARISON_OPERATOR expression"
@@ -167,6 +293,10 @@ class Grammar(object):
     def p_expression_atom_2(self, p):
         "expression_atom : IDENTIFIER PARENL expr_list PARENR"
         p[0] = PyFunctionCall(PyIdentifier(p.lineno(1), p[1]), p[3])
+
+    def p_expression_atom_3(self, p):
+        "expression_atom : PARENL general_expression PARENR"
+        p[0] = p[2]
 
     ### Core Literals
 

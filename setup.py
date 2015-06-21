@@ -45,7 +45,7 @@ packages = find_packages(".")
 package_names = packages.keys()
 
 setup(name = "pyxie",
-      version = "0.0.12",
+      version = "0.0.13",
       description = "Little Python to C++ Compiler",
       url='http://www.sparkslabs.com/pyxie/',
       author='Michael Sparks (sparkslabs)',
@@ -63,7 +63,7 @@ setup(name = "pyxie",
 Pyxie -- A Little Python to C++ Compiler
 ========================================
 
-### What job <s>does</s> will this do?
+### What job will this do?
 
 The aim of this project is to allow a user to write code in a familiar high level
 language that can then be compiled to run on an arbitrary embedded system - that is
@@ -180,8 +180,8 @@ Specifically:
 Many moons ago, I made a generic language parser which I called SWP (semantic
  whitespace parser), or Gloop.
 
-* <https://github.com/sparkslabs/minisnips/tree/master/SWP>
-* <http://www.slideshare.net/kamaelian/swp-a-generic-language-parser>
+* https://github.com/sparkslabs/minisnips/tree/master/SWP
+* http://www.slideshare.net/kamaelian/swp-a-generic-language-parser
 
 It was an experiment to see if you could write a parser that had no keywords,
 or similar, in a completely test driven fashion. ie a bit like a parser for a
@@ -240,6 +240,7 @@ inspired heavily by python introspection) That's quite some time off.
 
 Release History: (and highlights)
 
+* 0.0.13 - 2015-06-21 - if/elif/else,conditionals/boolean/parenthesised expressions.
 * 0.0.12 - 2015-06-16 - While loops, break/continue, Website, comparison operators, simple benchmark test
 * 0.0.11 - 2015-06-06 - Function calls; inclusion of custom  C++ headers; empty statements; language spec updates
 * 0.0.10 - 2015-06-03 - Analysis phase to make type inference work better. Lots of related changes. Implementation of expression statements.
