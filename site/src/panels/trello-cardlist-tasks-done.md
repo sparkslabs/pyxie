@@ -7,9 +7,11 @@ title: Trello Cardlist Tasks Done
 ---
 ### Tasks Done
 
+* 0.0.15 - - - - - (tasks)
+* For Release: 0.0.15
+* Bump Versions
 * 0.0.14 - - - - - (tasks)
 * For Release: 0.0.14
-* Bump Versions
 * 0.0.13 - - - - - (tasks)
 * For Release: 0.0.13
 * Decide on Python Modulo operator?
@@ -55,3 +57,4 @@ title: Trello Cardlist Tasks Done
 * Pyxies 0.0.3 Released
 * Pyxie 0.0.4 Released
 * Pyxie 0.0.5 Released
+* Bump Versions

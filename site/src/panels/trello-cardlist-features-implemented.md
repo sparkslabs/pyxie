@@ -7,6 +7,8 @@ title: Trello Cardlist Features Implemented
 ---
 ### Features Implemented
 
+* 0.0.15 = = = = = = = = = =
+* BUG: clibs can only be used on development machine...
 * 0.0.14 = = = = = = = = = =
 * BUG: statement_block at EOF not emitting dedents correctly #fixed
 * Simple for...range loops

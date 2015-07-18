@@ -2,11 +2,11 @@
 template: mainpage
 source_form: markdown
 name: Dev Status
-updated: Sat Jul 18, 2015
+updated: Sat Jul 18 2015
 title: Detailed Dev status
 ---
 ## Trello dump for Pyxie
-(auto extracted from trello)
+(auto extracted)
 
 {% project_stage = panel("panels/trello-cardlist-project-stage.md") %}
 
