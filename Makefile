@@ -16,7 +16,7 @@
 PYTHON=`which python`
 DESTDIR=/
 PROJECT=pyxie
-VERSION=0.0.14
+VERSION=0.0.15
 
 all:
 	@echo "make source - Create source package"

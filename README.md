@@ -178,6 +178,7 @@ inspired heavily by python introspection) That's quite some time off.
 
 Release History: (and highlights)
 
+* 0.0.15 - 2015-07-18 - clib converted to py clib for adding to build directory
 * 0.0.14 - 2015-07-18 - For loops implemented. Added clib code, C++ generator implementation, FOR loop style test harness, parsing and basic analysis of of FOR loops using a range interator
 * 0.0.13 - 2015-06-21 - if/elif/else,conditionals/boolean/parenthesised expressions.
 * 0.0.12 - 2015-06-16 - While loops, break/continue, Website, comparison operators, simple benchmark test

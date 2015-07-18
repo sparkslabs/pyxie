@@ -21,10 +21,7 @@ from pyxie.model.pynode import jdump
 from pyxie.codegen.simple_cpp import C_Program, source, makefile_tmpl, reset_parser
 import pyxie.codegen.simple_cpp
 
-#
-# Need a much better way of dealing with this.
-#
-clib_dir = "/home/michael/Development/pyxie/clib"
+from pyxie.codegen.clib import files as clib_files
 
 import os
 import pprint
@@ -134,14 +131,10 @@ def build_program(source, work_dir, name):
     f.write(makefile)
     f.close()
 
-
-    import shutil
-    for libfilename in os.listdir(clib_dir):
-        if libfilename .endswith("_test.cpp"):
-            continue
-        if libfilename  == "Makefile":
-            continue
-        shutil.copy (os.path.join(clib_dir, libfilename ), os.path.join(work_dir,libfilename ))
+    for filename in clib_files:
+        f = open( os.path.join(work_dir,filename), "w")
+        f.write(clib_files[filename])
+        f.close()
 
     os.chdir(work_dir)
     os.system("make")

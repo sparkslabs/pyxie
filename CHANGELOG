@@ -6,7 +6,9 @@ reason.
 
 ### In progress
 
-For loop implementation, with limited iterator implementation for range()
+## [0.0.15] - 2015-07-18
+
+* clib converted to py clib for adding to build directory
 
 ## [0.0.14] - 2015-07-18
 
