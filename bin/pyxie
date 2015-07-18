@@ -21,6 +21,11 @@ from pyxie.model.pynode import jdump
 from pyxie.codegen.simple_cpp import C_Program, source, makefile_tmpl, reset_parser
 import pyxie.codegen.simple_cpp
 
+#
+# Need a much better way of dealing with this.
+#
+clib_dir = "/home/michael/Development/pyxie/clib"
+
 import os
 import pprint
 import time
@@ -30,6 +35,9 @@ import sys
 testdir = "test-data"
 testprogs_dir = os.path.join(testdir, "progs")
 
+class BadArguments(Exception):
+    pass
+
 def get_test_programs(program_suffix):
     testprogs = [x for x in os.listdir(testprogs_dir) ]
     testprogs = [x for x in testprogs if x.endswith(program_suffix) ]
@@ -38,7 +46,7 @@ def get_test_programs(program_suffix):
 def parse_file(somefile):
     lexer = build_lexer()
     reset_parser()
-    data = open(somefile).read()
+    data = open(somefile).read() + "\n#\n"
     AST = parse(data, lexer)
     AST.includes = lexer.includes
     print "AST includes", AST.includes
@@ -126,6 +134,15 @@ def build_program(source, work_dir, name):
     f.write(makefile)
     f.close()
 
+
+    import shutil
+    for libfilename in os.listdir(clib_dir):
+        if libfilename .endswith("_test.cpp"):
+            continue
+        if libfilename  == "Makefile":
+            continue
+        shutil.copy (os.path.join(clib_dir, libfilename ), os.path.join(work_dir,libfilename ))
+
     os.chdir(work_dir)
     os.system("make")
     print
@@ -175,6 +192,187 @@ def compilation_tests():
 
     print "COMPILING DONE", testprogs
 
+def get_build_environment(filename, result_filename):
+    rootdir = os.getcwd()
+
+    lastslash_pos = filename.rfind("/")
+    if lastslash_pos != -1:
+        base_dir = filename[:lastslash_pos]
+        base_filename = filename[lastslash_pos+1:]
+    else:
+        base_dir = "." # just a filename
+        base_filename = filename
+
+    cname = base_filename[:base_filename.rfind(".")]
+
+    if not result_filename:
+        result_filename = os.path.join(base_dir, cname)
+
+    return {
+            "rootdir" :rootdir,
+            "base_dir" : base_dir,
+            "base_filename":base_filename,
+            "cname" : cname,
+            "result_filename" : result_filename,
+           }
+
+# Next function is called by compile_file, but could be called independently
+# This is why both do "build_env", rather that expect the caller to
+
+def codegen_phase(filename, result_filename):
+    build_env = get_build_environment(filename, result_filename)
+
+    cname = build_env["cname"]
+
+    AST = parse_file(filename)
+    AST.analyse()
+    print "_______________________________________________________________"
+    print "GENERATING CODE"
+    print
+    c_code = generate_code(cname, AST, debug=True)  # Need the C NAME TO DO THIS
+    print "_______________________________________________________________"
+    print "Generated Program"
+    print "\n".join(c_code)
+    print "_______________________________________________________________"
+    return c_code
+
+
+def compile_file(filename, result_filename=None):
+
+    build_env = get_build_environment(filename, result_filename)
+
+    rootdir = build_env["rootdir"]
+    base_dir = build_env["base_dir"]
+    base_filename = build_env["base_filename"]
+    cname = build_env["cname"]
+    result_filename = build_env["result_filename"]
+
+    c_code  = codegen_phase(filename, result_filename)
+
+    print "COMPILING", filename
+    print "IN", base_dir
+    print "SOURCEFILE", base_filename
+    print "cname", cname
+    print "result_filename", result_filename
+
+    build_dir = os.path.join(base_dir, "build-"+str(int(time.time())))
+    try:
+        os.mkdir(build_dir)
+    except OSError as e:
+       if e.errno != 17: # Directory exists
+           raise
+
+    build_program(c_code, build_dir, cname)
+
+    os.chdir(rootdir)
+
+    print "BUILD DIR", build_dir
+    print "RESULT FILE", os.path.join(build_dir, cname)
+    print "DEST FILE", result_filename
+    print "CWD", os.getcwd()
+
+    os.rename(os.path.join(build_dir, cname),result_filename)
+    clean = True
+    if clean:
+        for filename in os.listdir(build_dir):
+            os.unlink(os.path.join(build_dir,filename))
+        os.removedirs(build_dir)
+        if base_dir == ".":
+            os.unlink("parsetab.py")
+            os.unlink("parser.out")
+    return
+
+
+def handle_tests(argv):
+    if argv[2] == "run-tests":
+        parsing_tests()
+        compilation_tests()
+        return
+
+    elif argv[2] == "parse-tests":
+        parsing_tests()
+        return
+
+    elif argv[2] == "compile-tests":
+        compilation_tests()
+        return
+
+    elif argv[2] == "parse" and len(argv) == 4:
+        filename = argv[3]
+        AST = parse_testfile(testprogs_dir, filename)
+        pprint.pprint(AST)
+        pprint.pprint(AST.__json__())
+        return
+
+    elif argv[2] == "compile" and len(sys.argv) == 4:
+        filename = argv[3]
+        compile_testfile(testprogs_dir, filename)
+        return
+    else:
+        raise BadArguments("Bad Arguments")
+
+
+def parse_option(argv):
+    filename = argv[2]
+    AST = parse_file(filename)
+    pprint.pprint(AST)
+    pprint.pprint(AST.__json__())
+
+
+def analyse_option(argv):
+    filename = argv[2]
+    try:
+        AST = parse_file(filename)
+        print "HERE 3------------"
+        pprint.pprint(AST.__json__())
+        print "HERE 4------------"
+        AST.analyse()
+        print "HERE 5------------"
+        pprint.pprint(AST.__info__())
+        print "HERE 6------------"
+    except:
+        from pyxie.parsing.context import Context
+        for cid in Context.contexts:
+            context = Context.contexts[cid]
+            print "CONTEXT",context.names
+        raise
+
+
+def codegen_option(argv):
+    filename = argv[2]
+    result_filename = argv[3] if len(argv) == 4 else None
+    codegen_phase(filename, result_filename)
+
+
+def compile_option(argv):
+    filename = argv[2]
+    result_filename = argv[3] if len(argv) == 4 else None
+    compile_file(filename, result_filename)
+
+
+def main():
+    if len(sys.argv) < 2:
+        raise BadArguments()
+
+    if sys.argv[1] == "--test":
+        handle_tests(sys.argv)
+
+    elif sys.argv[1] == "parse" and len(sys.argv) == 3:
+        parse_option(sys.argv)
+
+    elif sys.argv[1] == "analyse" and len(sys.argv) == 3:
+        analyse_option(sys.argv)
+
+    elif sys.argv[1] == "codegen" and len(sys.argv) == 3 or len(sys.argv) == 4:
+        codegen_option(sys.argv)
+
+    elif sys.argv[1] == "compile" and len(sys.argv) == 3 or len(sys.argv) == 4:
+        compile_option(sys.argv)
+
+    else:
+        raise BadArguments()
+
+
 def show_help():
     print """\npyxie -- A little python compiler\nUsage:\n
     pyxie -- show runtime arguments
@@ -183,123 +381,15 @@ def show_help():
     pyxie --test compile-tests -- Just run compile tests
     pyxie --test parse filename -- Parses a given test given a certain filename
     pyxie parse filename -- parses the given filename, outputs result to console
+    pyxie analyse filename -- parses and analyse the given filename, outputs result to console
+    pyxie codegen filename -- parses, analyse and generate code for the given filename, outputs result to console. Does not attempt compiling
     pyxie compile path/to/filename.suffix -- compiles the given file to path/to/filename
     pyxie compile path/to/filename.suffix  path/to/other/filename -- compiles the given file to the destination filename
 """
 
-def main():
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "--test":
-            if sys.argv[2] == "run-tests":
-                parsing_tests()
-                compilation_tests()
-                return
-
-            if sys.argv[2] == "parse-tests":
-                parsing_tests()
-                return
-
-            if sys.argv[2] == "compile-tests":
-                compilation_tests()
-                return
-
-            if sys.argv[2] == "parse" and len(sys.argv) == 4:
-                filename = sys.argv[3]
-                AST = parse_testfile(testprogs_dir, filename)
-                pprint.pprint(AST)
-                pprint.pprint(AST.__json__())
-                return
-
-            if sys.argv[2] == "compile" and len(sys.argv) == 4:
-                filename = sys.argv[3]
-                compile_testfile(testprogs_dir, filename)
-                return
-
-        if sys.argv[1] == "parse" and len(sys.argv) == 3:
-            filename = sys.argv[2]
-            AST = parse_file(filename)
-            pprint.pprint(AST)
-            pprint.pprint(AST.__json__())
-            return
-
-        if sys.argv[1] == "analyse" and len(sys.argv) == 3:
-            filename = sys.argv[2]
-            try:
-                AST = parse_file(filename)
-                print "HERE 3------------"
-                pprint.pprint(AST.__json__())
-                print "HERE 4------------"
-                AST.analyse()
-                print "HERE 5------------"
-                pprint.pprint(AST.__info__())
-                print "HERE 6------------"
-            except:
-                from pyxie.parsing.context import Context
-                for cid in Context.contexts:
-                    context = Context.contexts[cid]
-                    print "CONTEXT",context.names
-                raise
-            return
-
-        if sys.argv[1] == "compile" and len(sys.argv) == 3 or len(sys.argv) == 4:
-
-            rootdir = os.getcwd()
-            filename = sys.argv[2]
-            lastslash_pos = filename.rfind("/")
-            if lastslash_pos != -1:
-                base_dir = filename[:lastslash_pos]
-                base_filename = filename[lastslash_pos+1:]
-            else:
-                base_dir = "." # just a filename
-                base_filename = filename
-
-            cname = base_filename[:base_filename.rfind(".")]
-
-            if len(sys.argv) == 4:
-                result_filename = sys.argv[3]
-            else:
-                result_filename = os.path.join(base_dir, cname)
-
-            print "COMPILING", filename
-            print "IN", base_dir
-            print "SOURCEFILE", base_filename
-            print "cname", cname
-            print "result_filename", result_filename
-
-            AST = parse_file(filename)
-            AST.analyse()
-            c_code = generate_code(cname, AST, debug=True)
-
-            build_dir = os.path.join(base_dir, "build-"+str(int(time.time())))
-            try:
-                os.mkdir(build_dir)
-            except OSError as e:
-               if e.errno != 17: # Directory exists
-                   raise
-
-            build_program(c_code, build_dir, cname)
-
-            os.chdir(rootdir)
-
-            print "BUILD DIR", build_dir
-            print "RESULT FILE", os.path.join(build_dir, cname)
-            print "DEST FILE", result_filename
-            print "CWD", os.getcwd()
-
-            os.rename(os.path.join(build_dir, cname),result_filename)
-            clean = True
-            if clean:
-                for filename in os.listdir(build_dir):
-                    os.unlink(os.path.join(build_dir,filename))
-                os.removedirs(build_dir)
-                if base_dir == ".":
-                    os.unlink("parsetab.py")
-                    os.unlink("parser.out")
-            return
-
-    show_help()
-
-
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except BadArguments:
+        show_help()
 

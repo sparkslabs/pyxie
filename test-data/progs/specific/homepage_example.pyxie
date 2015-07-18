@@ -1,0 +1,19 @@
+age = 10
+new_age = 10 +1
+new_age_too = age + 1
+new_age_three = age + new_age_too
+foo = "Hello"
+bar = "World"
+foobar = foo + bar
+
+print 10-1-2,7
+print 1+2*3*4-5/7,25
+print age, new_age, new_age_too
+print foo, bar, foobar
+
+countdown = 2147483647
+print "COUNTING DOWN"
+while countdown:
+    countdown = countdown - 1
+
+print "BLASTOFF"

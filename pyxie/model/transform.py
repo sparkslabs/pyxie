@@ -20,14 +20,43 @@
 
 from pyxie.model.pynode import jdump
 import pyxie.model.pynode as nodes
+from pyxie.model.functions import builtins
+
+iterator_unique_base = 0
 
 def todo(*args):
     print "TODO", " ".join([repr(x) for x in args])
 
 # Assumes that the analysis phase has taken place
 def find_variables(AST):
+    global iterator_unique_base
     variables = {}
     for node in AST.depth_walk():
+        if node.tag == "for_statement":
+            lvalue = node.identifier
+            rvalue_source = node.expression
+            identifier = lvalue.value
+            v_type = lvalue.ntype
+            print "FOR LOOP, IDENTIFIER", identifier, "HAS TYPE", v_type
+            variables[identifier] = v_type
+            if node.expression.isiterator:
+                print "#####################################################"
+                print "Extracting generator intermediate variable"
+                print node.expression
+                if isinstance(node.expression, nodes.PyFunctionCall):
+                    identifier = node.expression.identifier
+                    print "Bibble", identifier
+                    print "Bibble", identifier.value
+                    iterator_type = identifier.value
+                    iterator_unique_base += 1
+                    iterator_name = identifier.value + "_iter_" + str(iterator_unique_base)
+                    print "iterator_type", iterator_type
+                    print "iterator_name", iterator_name
+                    variables[iterator_name] = iterator_type
+                    node.expression.ivalue_name = iterator_name
+
+                print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
         if node.tag == "assignment_statement":
             if node.assign_type != "=":
                 todo("find_variables - assignment where the assign_type is not '='")
@@ -37,13 +66,13 @@ def find_variables(AST):
                 continue # Skip
 
             lvalue, rvalue, assign_type = node.lvalue, node.rvalue, node.assign_type
-            identifer = lvalue.value
+            identifier = lvalue.value
             v_type = lvalue.ntype
 
-            if identifer in variables:
+            if identifier in variables:
                 todo("we could check that the identifier doesn't change type")
                 continue # Skip
-            variables[identifer] = v_type
+            variables[identifier] = v_type
 
     return variables
 
@@ -59,6 +88,9 @@ def python_type_to_c_type(ptype):
     if ptype == "bool": return "bool"
     if ptype == "float":   return "double"
     if ptype == "char": return "char"
+
+    if ptype in builtins: return ptype
+
     raise UnknownType("Cannot identify C Type for %s" % ptype)
 
 def includes_for_ctype(ctype):
@@ -213,7 +245,6 @@ def convert_bool_operator_function(opfunc):
 def convert_operator_function(opfunc):
     print "CONVERT - convert_operator_function", repr(opfunc)
     assert isinstance(opfunc, nodes.PyOperator)
-#    assert opfunc[0] == "operator_function"
 
     func = opfunc.tag
     arg1 = opfunc.arg1
@@ -302,6 +333,39 @@ def convert_while_statement(while_statement):
     cstatements = convert_statements(while_statement.block)
     return ["while_statement", crepr_condition] + cstatements
 
+import pprint
+def convert_for_statement(for_statement):
+
+    lvalue = for_statement.identifier
+    rvalue_source = for_statement.expression
+    step = for_statement.block
+
+    clvalue = lvalue.value # FIXME: This is only valid for identifiers
+    crvalue_source  = [ "iterator", convert_arg(rvalue_source) ]
+    cstep = convert_statements(step)
+
+
+    print "*******************"
+    print crvalue_source 
+    print "*******************"
+    print "FOR STATEMENT :", 
+    print "              : ", for_statement
+    print "              :", dir(for_statement)
+    print "     loop var :", for_statement.identifier
+    print "loop var type :", for_statement.identifier.get_type()
+    print "loop var ctype:", python_type_to_c_type(for_statement.identifier.get_type())
+    print "     iterator :", for_statement.expression
+    print "        block :", for_statement.block
+    print "        info :", for_statement.__info__()
+    print "*******************"
+    pprint.pprint( for_statement.__info__() )
+    print "*******************"
+    # crepr_condition = convert_arg(for_statement.condition)
+    # cstatements = convert_statements(while_statement.block)
+#    return ["while_statement", crepr_condition] + cstatements
+    return ["for_statement", clvalue, crvalue_source, cstep, for_statement ]
+
+
 def convert_extended_clause(extended_clause):
     if extended_clause.tag == "elif_clause":
         print "WORKING THROUGH ELIF:", extended_clause
@@ -364,6 +428,9 @@ def convert_statements(AST):
                 cstatements.append(cstatement)
             elif statement.tag == "while_statement":
                 cstatement = convert_while_statement(statement)
+                cstatements.append(cstatement)
+            elif statement.tag == "for_statement":
+                cstatement = convert_for_statement(statement)
                 cstatements.append(cstatement)
             elif statement.tag == "if_statement":
                 cstatement = convert_if_statement(statement)

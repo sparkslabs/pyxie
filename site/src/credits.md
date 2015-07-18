@@ -2,7 +2,7 @@
 template: mainpage
 source_form: markdown
 name: Credits
-updated: June 2015 (with release 0.0.12)
+updated: July 2015
 title: Credits
 ---
 ## Credits
@@ -12,23 +12,11 @@ indirectly.
 
 ### Directly
 
-**Michael Sparks** : <sparks.m@gmail.com>, [blog](http://www.sparkslabs.com/michael/), [twitter](http://twitter.com/sparks_rd), [Linked in](https://www.linkedin.com/pub/michael-sparks/0/1b9/a93)
+{% michael = panel("panels/credits-michael-sparks.md") %}
+{% contrib1 = panel("panels/credits-contributor.md") %}
 
-* Implementation of Lexer, parser, code generation, AST, transforms, code generation, packaging etc
-* Language spec
-* Website design and implementation
+### Projects used by Pyxie (etc)
 
-**Your name here**: contact details
+Listing key projects used here is a way of saying thank you :-)
 
-* What you've done/helped with
-
-**Your name here**: contact details
-
-* What you've done/helped with
-
-### Indirectly / Projects used by Pyxie
-
-Indirectly means Pyxie probably uses something that's really useful and it's a
-way of saying thank you :-)
-
-**David Beazley** : for PLY - the python lex/yacc implementation used.
+{% contrib2 = panel("panels/credits-ply.md") %}

@@ -20,6 +20,7 @@ import json
 
 from pyxie.parsing.context import Context
 from pyxie.model.tree import Tree
+from pyxie.model.functions import builtins
 
 MULTI_TYPES_WARN = False
 WARNINGS_ARE_FAILURES = False
@@ -106,6 +107,7 @@ class PyProgram(PyNode):
         for node in self.depth_walk():
             if node.tag == "identifier":
                 node.context = global_context
+                print "NODE", node
 
         self.ntype = self.get_type()
         self.statements.analyse() # Descend through the tree
@@ -113,7 +115,6 @@ class PyProgram(PyNode):
     def get_type(self):
         # Program has no value so no type
         return None
-
 
 class PyBlock(PyNode):
     tag = "block"
@@ -153,9 +154,6 @@ class PyBlock(PyNode):
     def get_type(self):
         # Program has no value so no type
         return None
-
-
-
 
 class PyStatements(PyNode):
     tag = "statements"
@@ -237,7 +235,6 @@ class PyAssignment(PyStatement):
         # rtype wins because it's being used to set the left
         return rtype
 
-
 class PyExpressionStatement(PyStatement):
     tag = "expression_statement"
     def __init__(self, value):
@@ -260,7 +257,6 @@ class PyExpressionStatement(PyStatement):
     def get_type(self):
         return self.value.get_type()
 
-
 class PyFunctionCall(PyStatement):
     tag = "function_call"
     def __init__(self, identifier, expr_list):
@@ -268,6 +264,8 @@ class PyFunctionCall(PyStatement):
         self.identifier = identifier
         self.expr_list = expr_list
         self.add_children(expr_list)
+        self.builtin = False
+        self.isiterator = False
     def __repr__(self):
         return "PyFunctionCall(%s, %s)" % (repr(self.identifier), repr(self.expr_list), )
     def __json__(self):
@@ -277,21 +275,76 @@ class PyFunctionCall(PyStatement):
         info[self.tag]["name"] = self.identifier.__info__()
         info[self.tag]["args"] = [ x.__info__() for x in self.expr_list ]
         return info
+
     def analyse(self):
         # We'll need to decorate the function call with information from somewhere
         # For now though, we won't
         print "ANALYSING FUNCTION CALL"
-        print "NOTE: WE DON'T ACTUALLY DO ANY ANALYSIS YET"
+        if self.identifier.value in builtins:
+            print "FUNCTION", self.identifier.value, "FOUND IN BUILTINS"
+            self.builtin = True
+            self.ntype = self.get_type()
+            print "WE CAN DO ANALYSIS FOR LIMITED BUILTINS"
+            print " IS AN ITERATOR:", self.isiterator
+            print "  VALUE(S) TYPE:", self.ntype
+            return
+        print "NOTE: WE DON'T ACTUALLY DO ANY ANALYSIS YET - GENERALLY"
         print "NOTE: ASIDE FROM SPECIAL CASING WE'LL JUST PASS THROUGH"
         return
+
     def get_type(self):
         # function calls have no default value, so for now we'll return None
         # This will be improved later on.
-        print "GETTING TYPE"
+        if self.builtin:
+            print "It's a built in function, we can get it's type in a bit..."
+            meta = builtins[self.identifier.value]
+            self.isiterator = meta.get("iterator", False)
+            if self.isiterator:
+                return meta.get("values_type", None)
+            return meta.get("return_type", None)
+        print "GETTING FUNCTION TYPE"
         print "NOTE: WE CAN'T ACTUALLY GET THE TYPE YET"
         print "NOTE: ASIDE FROM SPECIAL CASING WE'LL JUST CROSS FINGERS FOR NOW"
         return None
 
+class PyForLoop(PyStatement):
+    tag = "for_statement"
+    def __init__(self, identifier, expression, block):
+        super(PyForLoop,self).__init__()
+        self.identifier= identifier
+        self.expression = expression
+        self.block = block
+        self.add_children(identifier, expression, block)
+    def __repr__(self):
+        return "PyForLoop(%s, %s, %s)" % (repr(self.identifier), repr(self.expression), repr(self.block) )
+    def __json__(self):
+        return [ self.tag, jdump(self.identifier), jdump(self.expression), jdump(self.block) ]
+    def __info__(self):
+        info = super(PyForLoop, self).__info__()
+        info[self.tag]["identifier"] = self.identifier.__info__()
+        info[self.tag]["block"] = self.block.__info__()
+        info[self.tag]["expression"] = self.expression.__info__()
+        return info
+    def analyse(self):
+        # We'll need to decorate the function call with information from somewhere
+        # For now though, we won't
+        print "ANALYSING FOOR LOOP"
+        print"                ... Analyse expression"
+        expression = self.expression
+        expression.analyse()
+        print expression
+        if expression.isiterator:
+            print "Expression is an iterator"
+
+        self.identifier.add_rvalue(expression) # The result of the expression becomes a repeated rvalue for the identifier, so this sorta makes sense
+
+        print"                ... Update identifier"
+        print"                ... Analyse identifier"
+        self.identifier.analyse()
+
+        print"                ... Analyse block"
+        self.block.analyse()
+        return
 
 class PyWhileStatement(PyStatement):
     tag = "while_statement"
@@ -404,8 +457,6 @@ class PyElIfClause(PyStatement):
         print "GETTING IF BLOCK TYPE - which should be None - for now"
         return None
 
-
-
 class PyElseClause(PyStatement):
     tag = "else_clause"
     def __init__(self, block):
@@ -430,8 +481,6 @@ class PyElseClause(PyStatement):
         # This will be improved later on.
         print "GETTING ELSE CLAUSE TYPE - which should be None - for now"
         return None
-
-
 
 class PyEmptyStatement(PyStatement):
     tag = "empty_statement"
@@ -593,7 +642,6 @@ class PyOrOperator(PyBoolOperator):
 
         self.ntype = self.get_type()
 
-
 class PyAndOperator(PyBoolOperator):
     tag = "and_operator"
     def __init__(self, arg1, arg2):
@@ -654,8 +702,6 @@ class PyNotOperator(PyBoolOperator):
         self.arg1.analyse()
         self.ntype = self.get_type()
 
-
-
 class PyTimesOperator(PyOperator):
     tag = "op_times"
 
@@ -703,7 +749,6 @@ class PyComparisonOperator(PyOperation):
         self.arg2.analyse()
 
         self.ntype = self.get_type()
-
 
 class PyMinusOperator(PyOperator):
     tag = "op_minus"

@@ -15,8 +15,13 @@
 # limitations under the License.
 #
 
-blank_line = ""
+import pyxie.model.functions
+import pprint
+from pyxie.model.functions import builtins
 
+
+blank_line = ""
+unique_id = 0
 source = []
 def Print(*args):
     y = " ".join([str(x) for x in args])
@@ -40,12 +45,16 @@ def mkStatement(statement_spec):
     elif ss[0] == "while_statement":
         return WhileStatement(*statement_spec[1:])
 
+    elif ss[0] == "for_statement":
+        return ForStatement(*statement_spec[1:])
+
     elif ss[0] == "if_statement":
         if len(ss) == 3:
             return IfStatement(ss[1], ss[2])
         if len(ss) == 4:
             return IfStatement(ss[1], ss[2], ss[3])
         raise NotImplementedError("Have not yet implemented else clauses...")
+
     elif ss[0] == "break_statement":
         return BreakStatement()
 
@@ -91,6 +100,7 @@ class C_Program(object):
         Print("using namespace std;")
         print_def = """
 #include <iostream>
+#include "iterators.cpp"
 template<typename T>
 void Print(T x) {
     std::cout << x;
@@ -340,6 +350,101 @@ class WhileStatement(object):
         code += "}"
         return code
 
+class ForStatement(object):
+    def __init__(self, identifier, iterable, statements, for_statement_pynode):
+        self.raw_identifier = identifier
+        self.raw_iterable = iterable
+        self.raw_statements = list(statements)
+        self.block_cframe = C_Frame()
+        self.for_statement_pynode = for_statement_pynode
+
+        for statement in self.raw_statements:
+            conc_statement = mkStatement(statement)
+            self.block_cframe.statements.append(conc_statement)
+
+    def json(self):
+        return ["for_statement", self.raw_condition, self.raw_iterable, self.raw_statements ]
+
+    def code(self):
+        #
+        # The following is the sort of code we want to generate inline.
+        # This actually implements what we're after.
+        # However it requires some declarations to be in place really of the the find variables kind
+        # That said, C++ allows inline delcarations like this (for good or ill), so maybe just do
+        # this in the first instance, and leave improvements for refactoring???
+        #
+        # Actually this discussion is useful, but it turns out to allow nested generator usage
+        # ie for x in range(5): for y in range(x): print x,y
+        # It requires this to be done closer to what could be viewed as "properly"
+        #
+#            %(ITERATOR_TYPE)s %(ITERATOR_NAME)s = %(ITERATOR_EXPRESSION)s;
+        template = """
+            %(ITERATOR_NAME)s = %(ITERATOR_EXPRESSION)s;
+            while (true) {
+                try {
+                    %(IDENTIFIER)s = %(ITERATOR_NAME)s.next();
+                } catch (StopIteration s) {
+                    break;
+                }
+                %(BODY)s // Itself uses %(IDENTIFIER)s
+            }
+        """
+        global unique_id
+        unique_id = unique_id+1
+
+        iterator_ctype = "range"
+        iterator_expression = self.raw_iterable ## NOTE THIS RESULTS IN ['iterate_over', ['function_call', ['identifier', 'range'], [['integer', 5]]]]- so that needs work
+
+        print "OK, USE THIS THEN", self.for_statement_pynode.expression.ivalue_name
+        iterator_name = self.for_statement_pynode.expression.ivalue_name
+
+        if self.raw_iterable[0] == "iterator":
+            iterable = self.raw_iterable[1]
+            if iterable[0] == "function_call":
+                assert iterable[1][0] == "identifier"
+                identifier = iterable[1][1]
+                if identifier in builtins:
+                    print "YAY"
+                    pprint.pprint ( builtins[identifier] )
+                    iterator_ctype = builtins[identifier]["iterator_ctype"]
+                    print "iterator_name -- ", iterator_ctype
+                    print "YAY"
+
+                print iterable
+                fcall = FunctionCall(iterable[1],iterable[2])
+                fcall_code = fcall.code()
+                iterator_expression = fcall_code
+
+        template_args =  { "ITERATOR_TYPE": iterator_ctype,
+                           "ITERATOR_EXPRESSION": iterator_expression,
+                           "ITERATOR_NAME": iterator_name,
+                           "UNIQIFIER":repr(unique_id),
+                           "IDENTIFIER": self.raw_identifier,
+                           "BODY": "\n".join( self.block_cframe.concrete() )
+                         }
+
+
+
+        print "=== template args ================================================="
+        pprint.pprint (template_args )
+        print "--- template args -------------------------------------------------"
+        if self.for_statement_pynode.expression.isiterator:
+            identifier = self.for_statement_pynode.identifier
+            print identifier.get_type()
+        print "=== end extractable template args ================================="
+        print template % template_args
+
+        print "----------------------------------------------------------"
+        print dir(self.for_statement_pynode)
+        print repr(self.for_statement_pynode)
+        print "----------------------------------------------------------"
+#        raise NotImplementedError("Haven't finished implementing ForStatement yet...")
+        code = template % template_args
+
+        print "CODE", code
+
+        return code
+
 class IfStatement(object):
     def __init__(self, condition, statements, extended_clause=None):
         self.raw_condition = condition
@@ -447,9 +552,6 @@ class ElseClause(object):
         code = "else { %s } " % (block_code, )
 
         return code
-
-
-
 
 makefile_tmpl = """
 all :

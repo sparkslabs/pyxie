@@ -2,96 +2,44 @@
 template: mainpage
 source_form: markdown
 name: Language Status
-updated: June 2015 (with release 0.0.13)
+updated: July 2015
+reviewed: 18 July 2015
 title: Language Status for Pyxie
 ---
 ## Language Status
 
-Last updated for version: **0.0.13**
+Last updated for version: **0.0.14**
 
-Pyxie can now compile (directly) any file that matches pyxie's current subset of
-python. For example if the example program below was called demo.pyxie, you could
-do this:
-
-    $ pyxie compile demo.pyxie
-    $ ./demo
-
-The first line would compile "demo.pyxie" to C++, then compile the C++, rename the
-result "demo" and clean up after itself.
+{% compilation = panel("panels/direct-compilation.md") %}
 
 ## Example program that lexes, parses, analyses & compiles
 
-Clearly a single example doesn't tell you everything. However this program
-isn't a bad representation of current state, though misses off the major control
-structures - while,if/elif/else,conditionals/boolean/parenthesised expressions.
+Clearly a single example doesn't tell you everything. This gives you a flavour.
 
+{% exampleprogram = panel("panels/example-program.md") %}
 
-<div class="columnpanel">
-<div class="column col2_5">
-<b>Source:</b>
+Supported language features that are not in this example
 
-<pre>
-age = 10
-new_age = 10 +1
-new_age_too = age + 1
-new_age_three = age + new_age_too
-foo = "Hello"
-bar = "World"
-foobar = foo + bar
+* Major control structures - in addition to while loops, if/elif/else, conditionals,
+  boolean, parenthesised expressions and for statements/etc are all supported. Not
+  only that for loops actually support an iterator protocol, not just translation of
+  "range" into a simple C style for loop.
 
-print 10-1-2,7
-print 1+2*3*4-5/7,25
-print age, new_age, new_age_too
-print foo, bar, foobar
-</pre>
-</div>
+Note: for this to compile, this needs simple type inference. We need to be able to
+derive the types of foobar and new_age_three. In the case of new_age_three, that
+needs to be derived in the context of another variable that has to be derived from
+another one.
 
-<div class="column col3_5">
-<b>Generated:</b>
-<pre>
-#include &lt;iostream&gt;
-#include &lt;string&gt;
-
-using namespace std;
-
-int main(int argc, char *argv[])
-{
-    int age;
-    string bar;
-    string foo;
-    string foobar;
-    int new_age;
-    int new_age_three;
-    int new_age_too;
-
-    age = 10;
-    new_age = (10+1);
-    new_age_too = (age+1);
-    new_age_three = (age+new_age_too);
-    foo = "Hello";
-    bar = "World";
-    foobar = (foo+bar);
-    cout << ((10-1)-2) << " " << 7 << endl;
-    cout << ((1+((2*3)*4))-(5/7)) << " " << 25 << endl;
-    cout << age << " " << new_age << " " << new_age_too << endl;
-    cout << foo << " " << bar << " " << foobar << endl;
-    return 0;
-}
-</pre>
-</div>
-</div>
-
-It's worth noting that for this to compile, we need to be able to derive
-the types of foobar and new_age_three. In the case of new_age_three, that
-needs to be derived in the context of another variable that has to be
-derived from abother one.
+The same techniques are used to derive types in "for statement" loop iterators.
 
 ### Function Calls
 
 Function **calls** are supported. At present they are treated
-as having a value type of "None", and should be treated as statements
+as having a value type of "None".  They should be treated as statements
 not as expressions. However the compiler passes through function calls
 to the backend, assuming the backend will understand the function call.
+
+Grammar wise though, they're things in expressions.
 
 ### C++ Libraries
 
@@ -107,14 +55,13 @@ Pyxie useful.
 
 ### Very Nearly Bare Minimum Support
 
-
 Now supports control structures, key statements
 
 * while (arbitrary expression for control)
+* for loops, where the general expression must be an iterable.
+ * The only iterable at present is "range". This will get more expressive
 * break/continue
-* if
-* elif
-* else
+* if/ elif / else
 * print
 * function calls
 * assignment
@@ -135,118 +82,14 @@ Clearly we're not going to implement the full language spec in one go, so this
 documents the current version of the grammar that is supported. Parsing does not
 necessarily imply code generation, differences will be noted below.
 
-    program : statements
-    statements : statement
-               | statement statements
-
-    statement_block : INDENT statements DEDENT
-
-    statement : assignment_statement
-              | print_statement
-              | general_expression
-              | EOL
-              | while_statement
-              | break_statement
-              | continue_statement
-              | if_statement
-
-    assignment_statement -> IDENTIFIER ASSIGN general_expression # ASSIGN is currently limited to "="
-
-    while_statement : WHILE general_expression COLON EOL statement_block
-
-    break_statement : BREAK
-
-    continue_statement : CONTINUE
-
-    if_statement : IF general_expression COLON EOL statement_block
-                 | IF general_expression COLON EOL statement_block extended_if_clauses
-
-    extended_if_clauses : else_clause
-                        | elif_clause
-
-    else_clause : ELSE COLON EOL statement_block
-
-    elif_clause : ELIF general_expression COLON EOL statement_block
-                | ELIF general_expression COLON EOL statement_block extended_if_clauses
-
-
-    print_statement : 'print' expr_list # Temporary - to be replaced by python 3 style function
-
-    expr_list : general_expression
-              | general_expression COMMA expr_list
-
-    general_expression -> boolean_expression
-
-    boolean_expression : boolean_and_expression
-                       | boolean_expression OR boolean_and_expression
-
-    boolean_and_expression : boolean_not_expression
-                           | boolean_and_expression AND boolean_not_expression
-
-    boolean_not_expression : relational_expression
-                           | NOT boolean_not_expression
-
-    relational_expression : expression
-                          | relational_expression COMPARISON_OPERATOR expression
-
-    expression : arith_expression
-               | expression '+' arith_expression
-               | expression '-' arith_expression
-               | expression '**' arith_expression
-
-    arith_expression : expression_atom
-                     | arith_expression '*' expression_atom
-                     | arith_expression '/' expression_atom
-
-    expression_atom : value_literal
-                    | IDENTIFIER '(' expr_list ')' # Function call
-                    | '(' general_expression ')'
-
-    value_literal : number
-                  | STRING
-                  | CHARACTER
-                  | BOOLEAN
-                  | IDENTIFIER
-
-    number : NUMBER
-           | FLOAT
-           | HEX
-           | OCTAL
-           | BINARY
-           | '-' number
-
-Current Lexing rules used by the grammar:
-
-    NUMBER : \d+
-    FLOAT : \d+.\d+ # different from normal python, which allows .1 and 1.
-    HEX : 0x([abcdef]|\d)+
-    OCTAL : 0o\d+
-    BINARY : 0b\d+
-    STRING - "([^\"]|\.)*" or '([^\']|\.)*' # single/double quote strings, with escaped values
-    CHARACTER : c'.' /  c"." # Simplification - can be an escaped character
-    BOOLEAN : True|False
-    IDENTIFIER : [a-zA-Z_][a-zA-Z0-9_]*
+{% grammar = panel("panels/current-grammar.md") %}
 
 The lexing supports most aspects of python - much more than this, but the grammar
 does not as yet use them, so this summary does not list them.
 
-## Limitations
+{% grammar = panel("panels/limitations.md") %}
 
-Most expressions currently rely on the C++ counterparts. As a result not all
-combinations which are valid are directly supported yet. Notable ones:
-
-* Combinations of strings with other strings (outlawing /*, etc)
-* Combinations of strings with numbers 
-
-## Why a python 2 print statement?
-
-Python 2 has print statement with special notation; python 3's version is
-a function call. The reason why this grammar currently has a python-2 style
-print statement with special notation is to specifically avoid implementing
-general function calls yet. Once those are implemented, special cases - like
-implementing print - can be implemented, and this python 2 style print
-statement WILL be removed. I expect this will occur around version 0.0.15,
-based on current rate of progress.
+{% grammar = panel("panels/why-python-2-print.md") %}
 
 ## Compilation process strategy
 

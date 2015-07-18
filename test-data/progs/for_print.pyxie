@@ -1,0 +1,14 @@
+
+for outer in range(5):
+    for middle in range(5):
+        for inner in range(5):
+            print outer, middle, inner
+
+for outer in range(5):
+    for inner in range(5):
+        print outer, inner
+
+for count in range(5):
+    print count
+
+print "You should have seen 0 1 2 3 4 on separate lines"

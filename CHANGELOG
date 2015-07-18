@@ -6,6 +6,26 @@ reason.
 
 ### In progress
 
+For loop implementation, with limited iterator implementation for range()
+
+## [0.0.14] - 2015-07-18
+
+### New
+
+* clib - this will be a collection of C++ code that can be directly or indirectly used in  generated programs. Current focus is iterators
+* C++ generator support - to support C++ iterators
+* C++ generator implemention of python's range iterator + acceptance test harness
+* Lex/Parsing of For
+* Type inference/analysis for special cased iterator functions
+* Pynode representation of for loops
+* Code generation for for loops using iterators
+
+### Other
+
+* Extra test case for while - testing 3 way logical expressions
+* Test case for for loops
+* Massive website revamp
+
 ## [0.0.13] - 2015-06-21
 
 This probably marks the first release that's potentially properly useful when combined with

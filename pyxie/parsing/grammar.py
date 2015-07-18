@@ -76,6 +76,9 @@ class Grammar(object):
         "statement : if_statement"
         p[0] = p[1]
 
+    def p_statement_9(self, p):
+        "statement : for_statement"
+        p[0] = p[1]
 
     def p_break_statement_1(self, p):
         "break_statement : BREAK"
@@ -88,6 +91,7 @@ class Grammar(object):
     def p_print_statement_1(self, p):
         "print_statement : PRINT expr_list"
         p[0] = PyPrintStatement(p[2])
+
 
     def p_while_statement_1(self, p):
         "while_statement : WHILE general_expression COLON EOL statement_block"
@@ -130,7 +134,6 @@ class Grammar(object):
         print "------------------> BLOCK :", p[5]
         print "------------------> RESULT :", p[0]
 
-
     def p_extended_if_clauses_1(self,p):
         "extended_if_clauses : else_clause"
         p[0] = p[1]
@@ -171,6 +174,14 @@ class Grammar(object):
         print "------------------> COND  :", p[2]
         print "------------------> BLOCK :", p[5]
         print "------------------> RESULT :", p[0]
+
+
+    def p_for_statement_1(self, p):
+        "for_statement : FOR IDENTIFIER IN general_expression COLON EOL statement_block"
+        identifier = PyIdentifier(p.lineno(1), p[2])
+        expression = p[4]
+        statement_block = p[7]
+        p[0] = PyForLoop(identifier, expression, statement_block)
 
     def p_block_1(self, p):
         "statement_block : INDENT statements DEDENT"
