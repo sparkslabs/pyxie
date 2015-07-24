@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import os
+import time
 
 __init__py_source = """\
 ## Pyxie -- A Little Python to C++ Compiler
@@ -44,7 +46,7 @@ Release History:
 
 {% grammar = panel("panels/why-python-2-print.md") %}
 
-Michael Sparks, June 2015
+Michael Sparks, MONTH 2015
 
 """
 
@@ -59,6 +61,23 @@ def run_local(site_meta, process_directives_callback):  # FIXME: I don't like th
     meta, source_data = site_meta["index.md"],site_meta["index.md"]["_source_data"]
 
     new_init_py_text = process_directives_callback(__init__py_source)
+
+    new_init_py_text = new_init_py_text.replace("MONTH", time.strftime("%B", time.localtime()) )
+
+    print "new_init_py_text", new_init_py_text
+    f = open("/tmp/t.tmp", "w")
+    f.write(new_init_py_text)
+    f.close()
+
+    os.system("pandoc -r markdown /tmp/t.tmp -w rst >/tmp/readme.rst")
+    f = open("/tmp/readme.rst")
+    rst = f.read()
+    f.close()
+    if len(rst) > 1000:
+        print "_____________________________________"
+        print "YAY"
+        print "_____________________________________"
+    os.rename("/tmp/readme.rst", "../README.rst")
 
     contents = open("../pyxie/__init__.py").read()
 
