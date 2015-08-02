@@ -8,4 +8,5 @@ title: Trello Cardlist Backlog: Proposed Next
 ### Backlog: Proposed Next
 
 * 11\. MBed compatible compilation profile?
+* 1\. Number Cards in backlog.
 * 12\. MSP430 compatible compilation profile?

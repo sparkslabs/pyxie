@@ -307,7 +307,8 @@ Release History
 
 Release History:
 
--  0.0.16 - UNRELEASED - TBD
+-  0.0.16 - 2015-08-02 - Adds initial Arduino LEONARDO support, improved
+   function call, release build scripts
 -  0.0.15 - 2015-07-18 - clib converted to py clib for adding to build
    directory
 -  0.0.14 - 2015-07-18 - For loops implemented. Added clib code, C++

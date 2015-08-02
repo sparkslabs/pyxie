@@ -18,7 +18,6 @@ commits. _(This is exported from trello)_
 
 ### WIP
 
-* 3\.8 Arduino compiled programs can use values returned from functions.
 
 
 ### Paused
@@ -27,18 +26,20 @@ commits. _(This is exported from trello)_
 
 ### Release Backlog: Features
 
-* 0\.0.16 = = = = = = = = = =
+* 0\.0.17 = = = = = = = = = =
+* 3\.8 Arduino compiled programs can use values returned from functions.
 * 3\.5 Analysis code looks for an arduino profile file describing c-types appropriately.
 * 3\.6 arduino profile file is propogated with something relating to core functions that read values, to avoid forcing types "manually"
 * 4\. Compilation profiles are pluggable
 * 6\. Functionality of bin/pyxie is in core, not a script
 * 3\.7 Arduino platform has alternative generator/exception implementation due to lack of exceptions
+* Update website to include the changes for 0.0.16 #docs
+* Docs on pyxie-dev usage
 
 
 ### Release Backlog: Tasks
 
-* 0\.0.16 - - - - - (tasks)
-* 7\. For Release: 0.0.16
+* 0\.0.17 - - - - - (tasks)
 * 8\. Add updating man page to the makefile #docs
 * 9\. Add the manpage to the distributed files, into the right places #docs
 * 10\. Decide whether to add functionality of bin/pyxie-dev is in core
@@ -51,6 +52,7 @@ commits. _(This is exported from trello)_
 ### Backlog: Proposed Next
 
 * 11\. MBed compatible compilation profile?
+* 1\. Number Cards in backlog.
 * 12\. MSP430 compatible compilation profile?
 
 
@@ -120,6 +122,7 @@ commits. _(This is exported from trello)_
 
 ### Features Implemented
 
+* 0\.0.16 = = = = = = = = = =
 * 3\. Arduino LEONARDO compatible compilation profile.
 * 3\.3 Code generation outputs code targetting "setup" instead of "main"
 * 3\.4 Makefile uses the arduino makefile #arduino leonardo
@@ -221,8 +224,9 @@ commits. _(This is exported from trello)_
 
 ### Tasks Done
 
+* 0\.0.16 - - - - - (tasks)
+* 7\. For Release: 0.0.16
 * 192\. Trello snapshot generation escapes task numbers.
-* 1\. Number Cards in backlog.
 * 68\. Write Bump Versions Script.
 * 69\. Re-prioritise backlog for 0.0.16
 * 70\. Breakdown features needed for a release script

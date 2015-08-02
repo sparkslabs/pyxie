@@ -7,6 +7,7 @@ title: Trello Cardlist Features Implemented
 ---
 ### Features Implemented
 
+* 0\.0.16 = = = = = = = = = =
 * 3\. Arduino LEONARDO compatible compilation profile.
 * 3\.3 Code generation outputs code targetting "setup" instead of "main"
 * 3\.4 Makefile uses the arduino makefile #arduino leonardo

@@ -7,4 +7,3 @@ title: Trello Cardlist WIP
 ---
 ### WIP
 
-* 3\.8 Arduino compiled programs can use values returned from functions.

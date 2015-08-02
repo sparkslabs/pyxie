@@ -7,8 +7,9 @@ title: Trello Cardlist Tasks Done
 ---
 ### Tasks Done
 
+* 0\.0.16 - - - - - (tasks)
+* 7\. For Release: 0.0.16
 * 192\. Trello snapshot generation escapes task numbers.
-* 1\. Number Cards in backlog.
 * 68\. Write Bump Versions Script.
 * 69\. Re-prioritise backlog for 0.0.16
 * 70\. Breakdown features needed for a release script

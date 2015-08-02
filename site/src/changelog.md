@@ -13,7 +13,7 @@ reason.
 
 ### In progress
 
-## [0.0.16] - UNRELEASED
+## [0.0.16] - 2015-08-02
 
 Summary: Adds initial Arduino LEONARDO support, improved function call, release build scripts
 
