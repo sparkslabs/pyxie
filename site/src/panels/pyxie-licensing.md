@@ -9,6 +9,9 @@ updated: June 2015
 
 Pyxie is &copy; Copyright 2015, Michael Sparks
 
+* Note, this was written from scratch, entire on my own time, using my own
+  resources and hosted on a server I pay for.
+
 It is released as open source, under the Apache 2 License.
 
 The short summary of this is that you can:

@@ -116,7 +116,10 @@ def run_local(site_meta, process_directives_callback):  # FIXME: I don't like th
     rst = f.read()
     f.close()
 
-    os.rename("/tmp/readme.rst", "../README.rst")
+    f = open("../README.rst", "wb")
+    f.write(rst)
+    f.close()
+    os.unlink("/tmp/readme.rst")
 
     contents = open("../pyxie/__init__.py").read()
 
