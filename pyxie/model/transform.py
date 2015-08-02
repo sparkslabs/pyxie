@@ -304,12 +304,13 @@ def convert_arg(arg):
     elif isinstance(arg, nodes.PyFunctionCall):
         print "NEED TO CONVERT FUNCTION CALL TO SOMETHING THE C CODE GENERATOR CAN HANDLE"
         cargs = []
-        for expr in arg.expr_list:
-            #print arg
-            #print "We need to convert the arg", arg
-            crepr = convert_arg(expr)
-            carg = crepr
-            cargs.append(carg)
+        if arg.expr_list:
+            for expr in arg.expr_list:
+                #print arg
+                #print "We need to convert the arg", arg
+                crepr = convert_arg(expr)
+                carg = crepr
+                cargs.append(carg)
 
         return ["function_call", convert_value_literal(arg.identifier),  cargs ]
         return ["Nothing"]

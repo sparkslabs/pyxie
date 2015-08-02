@@ -2,6 +2,8 @@
 
 import os
 import time
+import sys
+sys.path[:0] = [".."]
 
 __init__py_source = """\
 ## Pyxie -- A Little Python to C++ Compiler
@@ -56,6 +58,47 @@ __init__py_comment_template = '''\
 """
 '''
 
+changelog_header = """\
+---
+template: mainpage
+source_form: markdown
+name: Changelog
+title: Changelog
+updated: %s
+---
+"""
+
+
+def pre_run():
+    f = open("../CHANGELOG")
+    c = f.read()
+    f.close()
+    now = time.strftime("%B %Y", time.localtime())
+    r = changelog_header % now
+    f = open("src/changelog.md", "w")
+    f.write(r)
+
+    f.write("#")  # Make first heading an h2 not an h1 - due to site related things
+    f.write(c)
+    f.close()
+
+
+def get_shortlog_version():
+    import pyxie
+    doc = pyxie.__doc__
+    lines = doc.split("\n")
+    while not( lines[0].startswith("Release History:") ):
+        lines = lines[1:]
+
+    while not( lines[0].startswith("* ") ):
+        lines = lines[1:]
+
+    last_shortlog = lines[0]
+    x = last_shortlog.split()
+    ver= x[1]
+
+    return ver
+
 def run_local(site_meta, process_directives_callback):  # FIXME: I don't like this callbacks approach
 
     meta, source_data = site_meta["index.md"],site_meta["index.md"]["_source_data"]
@@ -64,7 +107,6 @@ def run_local(site_meta, process_directives_callback):  # FIXME: I don't like th
 
     new_init_py_text = new_init_py_text.replace("MONTH", time.strftime("%B", time.localtime()) )
 
-    print "new_init_py_text", new_init_py_text
     f = open("/tmp/t.tmp", "w")
     f.write(new_init_py_text)
     f.close()
@@ -73,10 +115,7 @@ def run_local(site_meta, process_directives_callback):  # FIXME: I don't like th
     f = open("/tmp/readme.rst")
     rst = f.read()
     f.close()
-    if len(rst) > 1000:
-        print "_____________________________________"
-        print "YAY"
-        print "_____________________________________"
+
     os.rename("/tmp/readme.rst", "../README.rst")
 
     contents = open("../pyxie/__init__.py").read()
@@ -92,3 +131,18 @@ def run_local(site_meta, process_directives_callback):  # FIXME: I don't like th
     f = open("../pyxie/__init__.py", "w")   # Wellformed
     f.write( start + new_body + end)        # Wellformed
     f.close()                               # Wellformed
+
+    f = open("setup.tmpl")
+    setup_tmpl = f.read()
+    f.close()
+
+    ver = get_shortlog_version()
+
+    RST_readme = open("../README.rst").read()
+    RST_readme = RST_readme.replace('"""', '\"\"\"')
+    setup_py = setup_tmpl.replace("%(VERSION)s", ver)
+    setup_py = setup_py.replace("%(REST_PACKAGE_LONG_DESCRIPTION)s", RST_readme)
+
+    f = open("../setup.py","w")
+    f.write( setup_py )
+    f.close()

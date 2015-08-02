@@ -108,6 +108,19 @@ def process_directives(source_data):
             result.append(page_part)
     return "".join(result)
 
+try:
+    import build_site_local
+    from build_site_local import pre_run
+    
+    pre_run()
+    print "LOCAL PRE RUN"
+
+except ImportError:
+    print "NO PRE RUN"
+    pass
+
+
+
 site_meta = {}
 for filename in files("src"):
     print filename
@@ -138,6 +151,7 @@ for filename in files("src"):
     tmpl_name = meta.get("template", "None")
     source_form = meta.get("source_form", "None")
     source_data = process_directives(source_data)
+
     processed = render_markup(source_data, source_form)
 
     tmpl = open("templates/%s.tmpl" % tmpl_name, "rb").read()
@@ -154,12 +168,19 @@ for filename in files("src"):
     out = open("site/"+ result_file,"w")
     out.write(result_html)
     out.close()
+    
+    result_filemd = result_file.replace(".html", ".md")
+    
+    out2 = open("../doc/" + result_filemd, "w")
+    out2.write(source_data)
+    out2.close()
+
     count += 1
+
 
 try:
     import build_site_local
     from build_site_local import run_local
-
     run_local(site_meta, process_directives)
     print "LOCAL RUN"
 

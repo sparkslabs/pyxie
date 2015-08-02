@@ -263,17 +263,28 @@ class PyFunctionCall(PyStatement):
         super(PyFunctionCall,self).__init__()
         self.identifier = identifier
         self.expr_list = expr_list
-        self.add_children(expr_list)
+        if expr_list:
+            self.add_children(expr_list)
         self.builtin = False
         self.isiterator = False
     def __repr__(self):
-        return "PyFunctionCall(%s, %s)" % (repr(self.identifier), repr(self.expr_list), )
+        if self.expr_list:
+            return "PyFunctionCall(%s, %s)" % (repr(self.identifier), repr(self.expr_list), )
+        else:
+            return "PyFunctionCall(%s)" % (repr(self.identifier), )
+
     def __json__(self):
-        return [ self.tag, jdump(self.identifier), jdump(self.expr_list) ]
+        if self.expr_list:
+            return [ self.tag, jdump(self.identifier), jdump(self.expr_list) ]
+        else:
+            return [ self.tag, jdump(self.identifier) ]
     def __info__(self):
         info = super(PyFunctionCall, self).__info__()
         info[self.tag]["name"] = self.identifier.__info__()
-        info[self.tag]["args"] = [ x.__info__() for x in self.expr_list ]
+        if self.expr_list:
+            info[self.tag]["args"] = [ x.__info__() for x in self.expr_list ]
+        else:
+            info[self.tag]["args"] = []
         return info
 
     def analyse(self):

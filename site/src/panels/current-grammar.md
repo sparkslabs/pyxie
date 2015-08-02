@@ -2,8 +2,8 @@
 template: mainpanel
 source_form: markdown
 name: Pyxie Grammar
-updated: July 2015
-reviewed: 18 July 2015
+updated: Aug 2015
+reviewed: 2 Aug 2015
 title: Current Grammar support by Pyxie
 ---
     program : statements
@@ -72,6 +72,7 @@ title: Current Grammar support by Pyxie
                      | arith_expression '/' expression_atom
 
     expression_atom : value_literal
+                    | IDENTIFIER '(' ')' # Function call, with no arguments
                     | IDENTIFIER '(' expr_list ')' # Function call
                     | '(' general_expression ')'
 

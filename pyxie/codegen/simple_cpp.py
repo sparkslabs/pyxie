@@ -15,9 +15,10 @@
 # limitations under the License.
 #
 
-import pyxie.model.functions
 import pprint
+import pyxie.model.functions
 from pyxie.model.functions import builtins
+from pyxie.codegen.profiles import cpp_templates
 
 
 blank_line = ""
@@ -64,6 +65,7 @@ def mkStatement(statement_spec):
     else:
         print "Unknown statement type", ss[0], ss
 
+
 class C_Program(object):
     def __init__(self):
         self.includes = []
@@ -84,10 +86,10 @@ class C_Program(object):
             conc_statement = mkStatement(statement)
             program.main_cframe.statements.append(conc_statement)
 
-
         return program
 
-    def generate(self):
+    def generate(self, profile = "default"):
+        print "BUILDING FOR PROFILE", profile
         frame_lines = self.main_cframe.concrete()
         seen = {}
         for include in self.includes:
@@ -96,24 +98,10 @@ class C_Program(object):
                 Print( "#include "+ include )
                 seen[include] = True
 
-        Print()
-        Print("using namespace std;")
-        print_def = """
-#include <iostream>
-#include "iterators.cpp"
-template<typename T>
-void Print(T x) {
-    std::cout << x;
-}
-"""
-        Print(print_def)
-        Print()
-        Print("int main(int argc, char *argv[])")
-        Print("{")
-        for line in frame_lines:
-            Print("    "+ line)
-        Print("    "+ "return 0;")
-        Print("}")
+        print_def = cpp_templates.get(profile, cpp_templates.get("default"))
+        frame_text = "\n".join(["   "+line for line in frame_lines])
+
+        Print(print_def % { "FRAME_TEXT": frame_text } )
 
     def json(self):
         return { "PROGRAM": {"name": self.name,
@@ -553,11 +541,6 @@ class ElseClause(object):
 
         return code
 
-makefile_tmpl = """
-all :
-	g++ %(filename)s.c -o %(filename)s
-"""
-
 def build_program(json):
     json = C_Program.fromjson(json)
 
@@ -595,6 +578,8 @@ if __name__ == "__main__":
             f.write("\n")
         f.close()
 
+        from profiles import makefile_templates
+        makefile_tmpl = makefile_templates.get("default")
         makefile = makefile_tmpl % {"filename": program.name }
         f = open(os.path.join(dirname,"Makefile"), "w")
         f.write(makefile)
@@ -650,6 +635,9 @@ if __name__ == "__main__":
             f.write(line)
             f.write("\n")
         f.close()
+
+        from profiles import makefile_templates
+        makefile_tmpl = makefile_templates.get("default")
 
         makefile = makefile_tmpl % {"filename": program.name }
         f = open(os.path.join(dirname,"Makefile"), "w")

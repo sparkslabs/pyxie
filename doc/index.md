@@ -1,20 +1,3 @@
-#
-# Copyright 2015 Michael Sparks
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-#START
-"""
 ## Pyxie -- A Little Python to C++ Compiler
 
 ### What job does / will this do?
@@ -35,65 +18,73 @@ Maker" badge. That's a fair way off though.
 Currently it can compile very very simple types of python program
 that looks like this into an equivalent (simple) C++ program.
 
-Example program:
+<div class="columnpanel">
+<div class="column col2_5">
+<b>Source:</b>
 
-    age = 10
-    new_age = 10 +1
-    new_age_too = age + 1
-    new_age_three = age + new_age_too
-    foo = "Hello"
-    bar = "World"
-    foobar = foo + bar
+<pre>
+age = 10
+new_age = 10 +1
+new_age_too = age + 1
+new_age_three = age + new_age_too
+foo = "Hello"
+bar = "World"
+foobar = foo + bar
 
-    print 10-1-2,7
-    print 1+2*3*4-5/7,25
-    print age, new_age, new_age_too
-    print foo, bar, foobar
+print 10-1-2,7
+print 1+2*3*4-5/7,25
+print age, new_age, new_age_too
+print foo, bar, foobar
 
-    countdown = 2147483647
-    print "COUNTING DOWN"
-    while countdown:
-        countdown = countdown - 1
+countdown = 2147483647
+print "COUNTING DOWN"
+while countdown:
+    countdown = countdown - 1
 
-    print "BLASTOFF"
+print "BLASTOFF"
+</pre>
+</div>
+<div class="column col3_5">
+<b>Generated:</b>
+<pre>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
 
-Example results:
+using namespace std;
 
-    #include <iostream>
-    #include <string>
+int main(int argc, char *argv[])
+{
+    int age;
+    string bar;
+    int countdown;
+    string foo;
+    string foobar;
+    int new_age;
+    int new_age_three;
+    int new_age_too;
 
-    using namespace std;
-
-    int main(int argc, char *argv[])
-    {
-        int age;
-        string bar;
-        int countdown;
-        string foo;
-        string foobar;
-        int new_age;
-        int new_age_three;
-        int new_age_too;
-
-        age = 10;
-        new_age = (10+1);
-        new_age_too = (age+1);
-        new_age_three = (age+new_age_too);
-        foo = "Hello";
-        bar = "World";
-        foobar = (foo+bar);
-        cout << ((10-1)-2) << " " << 7 << endl;
-        cout << ((1+((2*3)*4))-(5/7)) << " " << 25 << endl;
-        cout << age << " " << new_age << " " << new_age_too << endl;
-        cout << foo << " " << bar << " " << foobar << endl;
-        countdown = 2147483647;
-        cout << "COUNTING DOWN" << endl;
-        while(countdown) {
-            countdown = (countdown-1);
-        };
-        cout << "BLASTOFF" << endl;
-        return 0;
-    }
+    age = 10;
+    new_age = (10+1);
+    new_age_too = (age+1);
+    new_age_three = (age+new_age_too);
+    foo = "Hello";
+    bar = "World";
+    foobar = (foo+bar);
+    cout &lt;&lt; ((10-1)-2) &lt;&lt; " " &lt;&lt; 7 &lt;&lt; endl;
+    cout &lt;&lt; ((1+((2*3)*4))-(5/7)) &lt;&lt; " " &lt;&lt; 25 &lt;&lt; endl;
+    cout &lt;&lt; age &lt;&lt; " " &lt;&lt; new_age &lt;&lt; " " &lt;&lt; new_age_too &lt;&lt; endl;
+    cout &lt;&lt; foo &lt;&lt; " " &lt;&lt; bar &lt;&lt; " " &lt;&lt; foobar &lt;&lt; endl;
+    countdown = 2147483647;
+    cout &lt;&lt; "COUNTING DOWN" &lt;&lt; endl;
+    while(countdown) {
+        countdown = (countdown-1);
+    };
+    cout &lt;&lt; "BLASTOFF" &lt;&lt; endl;
+    return 0;
+}
+</pre>
+</div>
+</div>
 
 
 ### What does it do?
@@ -144,15 +135,16 @@ the same approach here.  It did consider actually making Pyxie use that as a
 frontend, but for the moment, I'd like python compatibility.
 
 
+
 Why not micropython? Micropython is **ace** . If your device is large enough to
 support the micropython runtime, use it! The aim of this is on the really small
 microcontrollers- the ones too small to even support micropython - like
 an MSP430, or an Atmega 8A or similarly tiny MCU.
 
+
 In the past I've written a test driven compiler suite, so I'll be following
 the same approach here.  It did consider actually making Pyxie use that as a
 frontend, but for the moment, I'd like python compatibility.
-
 
 ## Status Overview
 
@@ -257,128 +249,3 @@ Release History:
 * 0.0.2 - 2015-03-30 - supports basic assignment
 * 0.0.1 - Unreleased - rolled into 0.0.2 - Initial structure
 
-
-## Language Status
-
-    program : statements
-    statements : statement
-               | statement statements
-
-    statement_block : INDENT statements DEDENT
-
-    statement : assignment_statement
-              | print_statement
-              | general_expression
-              | EOL
-              | while_statement
-              | break_statement
-              | continue_statement
-              | if_statement
-              | for_statement
-
-    assignment_statement -> IDENTIFIER ASSIGN general_expression # ASSIGN is currently limited to "="
-
-    while_statement : WHILE general_expression COLON EOL statement_block
-
-    break_statement : BREAK
-
-    continue_statement : CONTINUE
-
-    if_statement : IF general_expression COLON EOL statement_block
-                 | IF general_expression COLON EOL statement_block extended_if_clauses
-
-    extended_if_clauses : else_clause
-                        | elif_clause
-
-    else_clause : ELSE COLON EOL statement_block
-
-    elif_clause : ELIF general_expression COLON EOL statement_block
-                | ELIF general_expression COLON EOL statement_block extended_if_clauses
-
-    print_statement : 'print' expr_list # Temporary - to be replaced by python 3 style function
-
-    for_statement | FOR IDENTIFIER IN general_expression COLON EOL statement_block
-
-    expr_list : general_expression
-              | general_expression COMMA expr_list
-
-    general_expression : boolean_expression
-
-    boolean_expression : boolean_and_expression
-                       | boolean_expression OR boolean_and_expression
-
-    boolean_and_expression : boolean_not_expression
-                           | boolean_and_expression AND boolean_not_expression
-
-    boolean_not_expression : relational_expression
-                           | NOT boolean_not_expression
-
-    relational_expression : expression
-                          | relational_expression COMPARISON_OPERATOR expression
-
-    expression : arith_expression
-               | expression '+' arith_expression
-               | expression '-' arith_expression
-               | expression '**' arith_expression
-
-    arith_expression : expression_atom
-                     | arith_expression '*' expression_atom
-                     | arith_expression '/' expression_atom
-
-    expression_atom : value_literal
-                    | IDENTIFIER '(' ')' # Function call, with no arguments
-                    | IDENTIFIER '(' expr_list ')' # Function call
-                    | '(' general_expression ')'
-
-    value_literal : number
-                  | STRING
-                  | CHARACTER
-                  | BOOLEAN
-                  | IDENTIFIER
-
-    number : NUMBER
-           | FLOAT
-           | HEX
-           | OCTAL
-           | BINARY
-           | '-' number
-
-Current Lexing rules used by the grammar:
-
-    NUMBER : \d+
-    FLOAT : \d+.\d+ # different from normal python, which allows .1 and 1.
-    HEX : 0x([abcdef]|\d)+
-    OCTAL : 0o\d+
-    BINARY : 0b\d+
-    STRING - "([^\"]|\.)*" or '([^\']|\.)*' # single/double quote strings, with escaped values
-    CHARACTER : c'.' /  c"." # Simplification - can be an escaped character
-    BOOLEAN : True|False
-    IDENTIFIER : [a-zA-Z_][a-zA-Z0-9_]*
-
-
-## Limitations
-
-Most expressions currently rely on the C++ counterparts. As a result not all
-combinations which are valid are directly supported yet. Notable ones:
-
-* Combinations of strings with other strings (outlawing /*, etc)
-* Combinations of strings with numbers 
-
-
-## Why a python 2 print statement?
-
-Python 2 has print statement with special notation; python 3's version is
-a function call. The reason why this grammar currently has a python-2 style
-print statement with special notation is to specifically avoid implementing
-general function calls yet. Once those are implemented, special cases - like
-implementing print - can be implemented, and this python 2 style print
-statement WILL be removed. I expect this will occur around version 0.0.15,
-based on current rate of progress.
-
-Keeping it for now also simplifies "yield" later
-
-Michael Sparks, August 2015
-
-
-"""
-#END

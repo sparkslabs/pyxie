@@ -18,8 +18,11 @@ from pyxie.parsing.lexer import build_lexer
 from pyxie.parsing.grammar import parse
 from pyxie.model.transform import ast_to_cst
 from pyxie.model.pynode import jdump
-from pyxie.codegen.simple_cpp import C_Program, source, makefile_tmpl, reset_parser
+from pyxie.codegen.simple_cpp import C_Program, source, reset_parser
+import pyxie.codegen.profiles as profiles
 import pyxie.codegen.simple_cpp
+
+# profiles.makefile_templates
 
 from pyxie.codegen.clib import files as clib_files
 
@@ -29,11 +32,24 @@ import time
 
 import sys
 
+# This is to support compilation profiles. This may or may not turn out to
+# be a good approach.  (#3/#3.x)
+profile = "default"
 testdir = "test-data"
 testprogs_dir = os.path.join(testdir, "progs")
 
+
 class BadArguments(Exception):
     pass
+
+def remove_directory(build_dir):
+    for filename in os.listdir(build_dir):
+        try:
+            os.unlink(os.path.join(build_dir, filename))
+        except OSError, e:
+            if e.errno == 21:
+                remove_directory(os.path.join(build_dir, filename))
+    os.rmdir(build_dir)
 
 def get_test_programs(program_suffix):
     testprogs = [x for x in os.listdir(testprogs_dir) ]
@@ -71,7 +87,7 @@ def generate_code(cname, AST, debug=False):
         print pprint.pformat(CST)
         print "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
     program = C_Program.fromjson(CST)
-    program.generate()
+    program.generate(profile)
     return pyxie.codegen.simple_cpp.source[:]
 
 def compile_testfile(testprogs_dir, testfile):
@@ -120,18 +136,34 @@ def build_program(source, work_dir, name):
     pprint.pprint(source, width=200)
     print
 
-    f = open(os.path.join(work_dir,name+".c"), "w")
+    extension = profiles.mainfile_extensions.get(profile,"c")
+
+    f = open(os.path.join(work_dir,name+"." +extension), "w")
     for line in source:
         f.write(line)
         f.write("\n")
     f.close()
+
+
+    try:
+        makefile_tmpl = profiles.makefile_templates[profile]
+    except KeyError:
+        makefile_tmpl = profiles.makefile_templates["default"]
 
     makefile = makefile_tmpl % {"filename": name }
     f = open(os.path.join(work_dir,"Makefile"), "w")
     f.write(makefile)
     f.close()
 
+    exclusions = profiles.clib_exclusions.get(profile, [])
     for filename in clib_files:
+        if filename.endswith("_test.cpp"):
+            # Skip main programs to avoid confusing profiles
+            continue
+        if filename in exclusions:
+            print "Skipping", filename, "for profile", profile
+            continue
+
         f = open( os.path.join(work_dir,filename), "w")
         f.write(clib_files[filename])
         f.close()
@@ -230,6 +262,7 @@ def codegen_phase(filename, result_filename):
     return c_code
 
 
+
 def compile_file(filename, result_filename=None):
 
     build_env = get_build_environment(filename, result_filename)
@@ -259,17 +292,19 @@ def compile_file(filename, result_filename=None):
 
     os.chdir(rootdir)
 
+    actual_result_file = (profiles.result_file[profile])(build_dir, cname)
+
+    result_filename = (profiles.modify_result_file[profile])(result_filename)
+
     print "BUILD DIR", build_dir
-    print "RESULT FILE", os.path.join(build_dir, cname)
+    print "RESULT FILE", actual_result_file
     print "DEST FILE", result_filename
     print "CWD", os.getcwd()
 
-    os.rename(os.path.join(build_dir, cname),result_filename)
+    os.rename(actual_result_file,result_filename)
     clean = True
     if clean:
-        for filename in os.listdir(build_dir):
-            os.unlink(os.path.join(build_dir,filename))
-        os.removedirs(build_dir)
+        remove_directory(build_dir)
         if base_dir == ".":
             os.unlink("parsetab.py")
             os.unlink("parser.out")
@@ -297,7 +332,7 @@ def handle_tests(argv):
         pprint.pprint(AST.__json__())
         return
 
-    elif argv[2] == "compile" and len(sys.argv) == 4:
+    elif argv[2] == "compile" and len(argv) == 4:
         filename = argv[3]
         compile_testfile(testprogs_dir, filename)
         return
@@ -343,24 +378,30 @@ def compile_option(argv):
     compile_file(filename, result_filename)
 
 
-def main():
-    if len(sys.argv) < 2:
+def main(argv):
+    global profile
+    if len(argv) < 2:
         raise BadArguments()
 
-    if sys.argv[1] == "--test":
-        handle_tests(sys.argv)
+    # If a profile is pulled defined, use that
+    if argv[1] == "--profile" and len(argv)> 2:
+        profile = argv[2]
+        argv[1:3] = []
 
-    elif sys.argv[1] == "parse" and len(sys.argv) == 3:
-        parse_option(sys.argv)
+    if argv[1] == "--test":
+        handle_tests(argv)
 
-    elif sys.argv[1] == "analyse" and len(sys.argv) == 3:
-        analyse_option(sys.argv)
+    elif argv[1] == "parse" and len(argv) == 3:
+        parse_option(argv)
 
-    elif sys.argv[1] == "codegen" and len(sys.argv) == 3 or len(sys.argv) == 4:
-        codegen_option(sys.argv)
+    elif argv[1] == "analyse" and len(argv) == 3:
+        analyse_option(argv)
 
-    elif sys.argv[1] == "compile" and len(sys.argv) == 3 or len(sys.argv) == 4:
-        compile_option(sys.argv)
+    elif argv[1] == "codegen" and len(argv) == 3 or len(argv) == 4:
+        codegen_option(argv)
+
+    elif argv[1] == "compile" and len(argv) == 3 or len(argv) == 4:
+        compile_option(argv)
 
     else:
         raise BadArguments()
@@ -382,7 +423,7 @@ def show_help():
 
 if __name__ == "__main__":
     try:
-        main()
+        main(argv = sys.argv[:])
     except BadArguments:
         show_help()
 

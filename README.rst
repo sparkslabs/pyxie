@@ -242,6 +242,7 @@ Release History
 
 Release History:
 
+-  0.0.16 - UNRELEASED - TBD
 -  0.0.15 - 2015-07-18 - clib converted to py clib for adding to build
    directory
 -  0.0.14 - 2015-07-18 - For loops implemented. Added clib code, C++
@@ -345,6 +346,7 @@ Language Status
                      | arith_expression '/' expression_atom
 
     expression_atom : value_literal
+                    | IDENTIFIER '(' ')' # Function call, with no arguments
                     | IDENTIFIER '(' expr_list ')' # Function call
                     | '(' general_expression ')'
 
@@ -398,4 +400,4 @@ around version 0.0.15, based on current rate of progress.
 
 Keeping it for now also simplifies "yield" later
 
-Michael Sparks, July 2015
+Michael Sparks, August 2015

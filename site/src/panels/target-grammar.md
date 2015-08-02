@@ -145,7 +145,7 @@ NOTE: Not all **types** are valid yet, and truthiness needs implementing
                          | expression_atom DIVIDE arith_expression
 
     expression_atom      : value_literal
-                         | func_call  **[PARTIAL]**
+                         | func_call
                          | PARENL general_expression PARENR
 
     value_literal        : number
@@ -176,9 +176,9 @@ The lack of strings is why it's not listed as done
 
     identifier : IDENTIFIER
 
-### Function Calls   **[TBD]**
+### Function Calls
 
-    func_call            : IDENTIFIER PARENL PARENR  **[TBD]**
+    func_call            : IDENTIFIER PARENL PARENR
                          | IDENTIFIER PARENL expr_list PARENR
 
     expr_list : general_expression

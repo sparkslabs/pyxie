@@ -309,6 +309,10 @@ class Grammar(object):
         "expression_atom : PARENL general_expression PARENR"
         p[0] = p[2]
 
+    def p_expression_atom_4(self, p):
+        "expression_atom : IDENTIFIER PARENL PARENR"
+        p[0] = PyFunctionCall(PyIdentifier(p.lineno(1), p[1]), None)
+
     ### Core Literals
 
     def p_value_literal_0(self, p):

@@ -1,5 +1,4 @@
-Little Python Language Spec
-===========================
+## Little Python Language Spec
 
 Little Python is a restricted subset of Python 3. (and 2.7)
 
@@ -7,39 +6,26 @@ Little Python is a restricted subset of Python 3. (and 2.7)
 this spec. As a result, the grammar will be slightly bogus. You hopefully
 get the idea though.
 
-## C++ Interaction
-
-Pyxie is intended to interact with C++, in that it compiles to C++ targetting embedded
-systems. To that purpose it is useful to be able to pass through commands to C++. In
-particular the pass through ONLY supports #include pre-processor directives.
-
-The way this is done is through python comments, so for example this is legal:
-
-    #include <stdio.h>
-
-As is this:
-
-    #include <Arduino.h>
-
-By definition this does not support every aspect that might be needed, but it's a
-useful start.
 
 ## Semi-formal syntactic language features todo:
 
 ### Built in types to be supported
 
-Simple
+Simple:
+
 * Numbers
 * Strings
 ** Characters - the only extension beyond standard python because we're working in a restricted environment
 * Booleans
 
-Harder
+Harder:
+
 * NULL - Probably constrained **[TBD]**
 * LISTS - Probably constrained **[TBD]**
 * TUPLES - Probably constrained **[TBD]**
 * DICTIONARIES - Probably constrained **[TBD]**
 * Objects - classes **[TBD]**
+
 
 ### Lexical Analysis TODO
 
@@ -113,7 +99,7 @@ Harder
                          | break_statement
                          | continue_statement
                          | if_statement
-                         | for_statement  **[TBD]**
+                         | for_statement
                          | import_statement  **[TBD]**
                          | class_statement  **[TBD]**
                          | def_statement  **[TBD]**
@@ -174,7 +160,16 @@ without having to implement general function calls is simpler.
 
 #### Loops
 
-    for_statement        : FOR identifier IN general_expression COLON EOL statement_block **[TBD]**
+All of these have been done - to a BARE level. That is:
+
+* In for_statement general_expression is required to be an iterator function listed
+  in pyxie.model.functions.builtins. This is currently just the function range with
+  an interator implementation in clib. This is however the "correct" structure, not a
+  sidestep.
+
+* In while_statement this is a general expression expected to evaluate to a bool.
+
+    for_statement        : FOR identifier IN general_expression COLON EOL statement_block
 
     while_statement      : WHILE general_expression COLON EOL statement_block
 
@@ -224,7 +219,7 @@ NOTE: Not all **types** are valid yet, and truthiness needs implementing
                          | expression_atom DIVIDE arith_expression
 
     expression_atom      : value_literal
-                         | func_call  **[PARTIAL]**
+                         | func_call
                          | PARENL general_expression PARENR
 
     value_literal        : number
@@ -255,15 +250,35 @@ The lack of strings is why it's not listed as done
 
     identifier : IDENTIFIER
 
-### Function Calls   **[TBD]**
+### Function Calls
 
-    func_call            : IDENTIFIER PARENL PARENR  **[TBD]**
+    func_call            : IDENTIFIER PARENL PARENR
                          | IDENTIFIER PARENL expr_list PARENR
 
     expr_list : general_expression
               | general_expression COMMA expr_list
 
+<hr>
+## Practical Details
 
+## C++ Interaction
+
+Pyxie is intended to interact with C++, in that it compiles to C++
+targetting embedded systems. To that purpose it is useful to be able
+to pass through commands to C++. In particular the pass through ONLY
+supports #include pre-processor directives.
+
+The way this is done is through python comments, so for example this is
+legal:
+
+    #include <stdio.h>
+
+As is this:
+
+    #include <Arduino.h>
+
+By definition this does not support every aspect that might be needed, but
+it's a useful start.
 
 ## Lexical Analysis Implementation
 
@@ -277,46 +292,58 @@ Lexical analyser has the following states:
   that either returns a dedent if needed or switches to CODE. Does not
   consume any tokens
 
-## Informal todo list
 
-* The parser is line oriented, should be logical lines   **[TBD]**
+<hr>
+
+## Informal done list
 * Statements are separated by NEWLINES
 * Block structure generates INDENT/DEDENT tokens
 * Value literals: Integers, String, Boolean
 * Identifiers
 * basic assignment statements - ie identifer equals expression
-* function calls with expressions as arguments  **[TBD]**
-* function definitions with an optional argument list  **[TBD]**
-* print statements  **[TBD]**
-* expression statements  **[TBD]**
-* expressions - specifically:  **[TBD]**
+* function calls with expressions as arguments 
+* print python 2 style statements
+* expression statements
+* expressions - specifically:
     * Those involving value literals, identifiers and function calls
     * Infix expressions involving * + / -
     * Parentheses ( ) for nested expressions.
-* Loops - while / for**[TBD]**
-    * forever_loop (while True)   **[TBD]**
-    * while takes an expression for the condition   **[TBD]**
-    * for takes an identifier for the iterator, and expression to be
-      iterated over. The expression is treated as indexable thing with
-      a length. A range() function call is detected and treated as a
-      special case.   **[TBD]**
-* If statements including elif and else clauses   **[TBD]**
+* Arithemtic expressions for strings "+", "*", etc
+* Loops - while / for
+* forever_loop (while True)
+* while takes an expression for the condition
+* for takes an identifier for the iterator, and expression to be
+   iterated over. The expression is treated as indexable thing with
+   a length. A range() function call is detected and treated as a
+   special case.
+* If statements including elif and else clauses
+* Can "import" C++ libraries - at least pre-processor directives work
+* break / continue statements
+* Partial comment support (check)
+* Internals of implementation for generators (for implementing builtins first)
+
+## Informal todo list
+
+* Comments are started with a # character [*]   **[TBD]**
+* function definitions with an optional argument list  **[TBD]**
+* print replace as python 3 style statements  **[WIP]**
+* Iterator version/expression of for_statement is tided up, and pluggable **[TBD]**
 * parsing of yield statements   **[TBD]**
 * parsing of import statements, parsing of from...import... statements   **[TBD]**
 * Expressions - bitwise operators, logical operators, boolean operators   **[TBD]**
-* break / continue statements   **[TBD]**
 * Lists, list literals   **[TBD]**
 * doc strings   **[TBD]**
 * comments   **[TBD]**
 * Dictionaries, dictionary literals   **[TBD]**
 * Objects / object attribute access   **[TBD]**
 * return statement   **[TBD]**
+* The parser is line oriented, should be logical lines   **[TBD]**
 * Lines are logical lines    **[TBD]**
  * ie Newlines are not yet suppressed.   **[TBD]**
  * Explicit line joining is not supported [2.1.5]    **[TBD]**
  * Implicitly line joining is not yet supported  [2.1.6]   **[TBD]**
-* Comments are started with a # character [*]   **[TBD]**
 * Generator implementation   **[TBD]**
+
 
 ## Language features NOT supported    **[TBC]**
 
@@ -369,5 +396,8 @@ Note: Operator precedence needs ironing out   **[TBD]**
  * import in is lambda nonlocal not or pass raise return try while with yield True False None 
 * Reserved classes of identifiers are not supported as yet [2.3.2]
 * There may be an additional syntax to assist with tweaking C compilation.
-* This may use the term "pragma"
+ - This is partially supported at present - specifically the "#include thing"
+ - This approach may be used further
+ - If it does, this may use the term "pragma"
 * How to handle/provide exceptions, if at all -- Seems odd not to
+
