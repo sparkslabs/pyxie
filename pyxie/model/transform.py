@@ -397,6 +397,9 @@ def convert_if_statement(if_statement):
         return["if_statement", crepr_condition, cstatements, cextended_clause ]
     return ["if_statement", crepr_condition, cstatements ]
 
+def convert_pass_statement(pass_statement):
+    return ["pass_statement"]
+
 def convert_break_statement(break_statement):
     return ["break_statement"]
 
@@ -436,6 +439,8 @@ def convert_statements(AST):
             elif statement.tag == "if_statement":
                 cstatement = convert_if_statement(statement)
                 cstatements.append(cstatement)
+            elif statement.tag == "pass_statement":
+                cstatement = convert_break_statement(statement)
             elif statement.tag == "break_statement":
                 cstatement = convert_break_statement(statement)
                 cstatements.append(cstatement)

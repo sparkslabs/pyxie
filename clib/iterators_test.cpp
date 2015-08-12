@@ -33,12 +33,11 @@ int main(int argc, char* argv[]) {
     // Code to be replaced with a range() style iterator
     int count;
     range range_gen = range(5);
+
     while (true) {
-        try {
-            count = range_gen.next();
-        } catch (StopIteration s) {
+        count = range_gen.next();
+        if (range_gen.completed())
             break;
-        }
         std::cout << count;
     }
     std::cout << "." << std::endl;

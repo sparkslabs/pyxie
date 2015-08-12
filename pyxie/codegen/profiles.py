@@ -44,6 +44,7 @@ return 0;
 """
 
 _arduino_template = """
+#include "iterators.cpp"
 
 void setup()
 {
@@ -85,7 +86,7 @@ def arduino_result_filename(build_dir, cname):
     if hexfile:
         return os.path.join(cbuild_dir, hexfile)
 
-    raise Exception("Not Finished")
+    # raise Exception("Not Finished")
 
 
 cpp_templates = {
@@ -105,7 +106,7 @@ mainfile_extensions = {
 
 clib_exclusions = {
     "default" : [],
-    "arduino" : ["iterators.cpp","iterators.hpp"],
+    "arduino" : [],
 }
 
 result_file = {

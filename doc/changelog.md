@@ -6,6 +6,20 @@ reason.
 
 ### In progress
 
+## [0.0.17] - UNRELEASED
+
+### New
+
+* Implemented "pass" statement
+* For loops now work on arduino profile (reimplemented C++ generators to use
+  generator state, not to use an exception)
+* Arduino test case using for loop
+
+### Other
+
+* Extracted core code for "pyxie" script into pyxie.core
+* Updated usage instructions to include covering using arduino profile
+
 ## [0.0.16] - 2015-08-02
 
 Summary: Adds initial Arduino LEONARDO support, improved function call, release build scripts

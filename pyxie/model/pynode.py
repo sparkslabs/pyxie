@@ -502,6 +502,15 @@ class PyEmptyStatement(PyStatement):
     def __json__(self):
         return [ self.tag ]
 
+class PyPassStatement(PyStatement):
+    tag = "pass_statement"
+    def __init__(self):
+        super(PyPassStatement,self).__init__()
+    def analyse(self):
+        pass
+    def __json__(self):
+        return [ self.tag ]
+
 class PyBreakStatement(PyStatement):
     tag = "break_statement"
     def __init__(self):

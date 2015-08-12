@@ -400,11 +400,13 @@ def main(argv):
             os.system("rm -rf dist")
             os.system("rm MANIFEST")
             os.system("make ppadeb")
+            os.system("make distclean")
 
             # Build PyPI release
             os.system("rm -rf dist")
             os.system("rm MANIFEST")
             os.system("python setup.py sdist upload")
+            os.system("make distclean")
 
             print ""
 

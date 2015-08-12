@@ -87,6 +87,62 @@ int main(int argc, char *argv[])
 </div>
 
 
+Example Arduino Program
+<div class="columnpanel">
+<div class="column col2_5">
+<b>Source:</b> arduino-for-blink.pyxie
+
+<pre>
+    led = 13;
+
+    pinMode(led, OUTPUT);
+
+    while True:
+        for i in range(6):
+            digitalWrite(led, HIGH)
+            delay(200)
+            digitalWrite(led, LOW)
+            delay(200)
+        delay(1000)
+</pre>
+</div>
+<div class="column col3_5">
+<b>Generated:</b> arduino-for-blink.ino
+<pre>
+\#include "iterators.cpp"
+&nbsp;
+void setup()
+{
+    int i;
+    int led;
+    range range_iter_1;
+    led = 13;
+    pinMode(led, OUTPUT);
+    while(true) {
+        range_iter_1 = range(6);
+        while (true) {
+            i = range_iter_1.next();
+            if (range_iter_1.completed())
+                break;
+             digitalWrite(led, HIGH);
+             delay(200);
+             digitalWrite(led, LOW);
+             delay(200);
+        };
+        delay(1000);
+    };
+}
+&nbsp;
+void loop()
+{
+}
+</pre>
+</div>
+</div>
+
+
+
+
 ### What does it do?
 
 Currently:
@@ -232,6 +288,7 @@ inspired heavily by python introspection) That's quite some time off.
 
 Release History:
 
+* 0.0.17 - UNRELEASED - TBD
 * 0.0.16 - 2015-08-02 - Adds initial Arduino LEONARDO support, improved function call, release build scripts
 * 0.0.15 - 2015-07-18 - clib converted to py clib for adding to build directory
 * 0.0.14 - 2015-07-18 - For loops implemented. Added clib code, C++ generator implementation, FOR loop style test harness, parsing and basic analysis of of FOR loops using a range interator

@@ -7,6 +7,13 @@ title: Trello Cardlist Features Implemented
 ---
 ### Features Implemented
 
+* 0\.0.17 = = = = = = = = = =
+* 193\. Update website to include the changes for 0.0.16/0.0.17 #docs
+* 56\. Blog post: Introducing Pyxie #docs #website
+* 3\.7.1 Integrate alternative generator/iterator protocol into compiler
+* 3\.7 Arduino platform has alternative generator/exception implementation due to lack of exceptions
+* pass statement
+* 6\. Functionality of bin/pyxie is in core, not a script
 * 0\.0.16 = = = = = = = = = =
 * 3\. Arduino LEONARDO compatible compilation profile.
 * 3\.3 Code generation outputs code targetting "setup" instead of "main"

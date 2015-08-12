@@ -80,6 +80,15 @@ class Grammar(object):
         "statement : for_statement"
         p[0] = p[1]
 
+    def p_statement_10(self, p):
+        "statement : pass_statement"
+        p[0] = p[1]
+
+    def p_pass_statement_1(self,p):
+        "pass_statement : PASS"
+        p[0] = PyPassStatement()
+
+
     def p_break_statement_1(self, p):
         "break_statement : BREAK"
         p[0] = PyBreakStatement()

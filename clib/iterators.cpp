@@ -8,11 +8,13 @@ struct range : public Generator<int> {
     ~range() {     };
 
     virtual int next() {
-    GENERATOR_CODE_START
-    while (index<maxCount) {
-         YIELD(index);
-         index += 1;
-    }
-    GENERATOR_CODE_END
+        GENERATOR_START
+
+        while (index<maxCount) {
+            YIELD(index);
+            index += 1;
+        }
+
+        GENERATOR_END
     }
 };

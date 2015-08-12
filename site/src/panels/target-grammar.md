@@ -31,7 +31,7 @@ title: Grammar support targetted by Pyxie
                          | def_statement  **[TBD]**
                          | return_statement  **[TBD]**
                          | yield_statement  **[TBD]**
-                         | pass_statement  **[TBD]**
+                         | pass_statement 
 
 Note: general_expression  **[PARTIAL]** means we have parsing of general
 expressions but not all types have appropriate functionality yet
@@ -51,7 +51,7 @@ made that once function calls are integrated.  In the meantime, printing
 without having to implement general function calls is simpler.
 
     print_statement      : PRINT general_expression 
-    pass_statement       : PASS  **[TBD]**
+    pass_statement       : PASS
 
 ### Support for class definition  **[TBD]**
 

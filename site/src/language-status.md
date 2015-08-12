@@ -2,13 +2,13 @@
 template: mainpage
 source_form: markdown
 name: Language Status
-updated: July 2015
-reviewed: 18 July 2015
+updated: August 2015
+reviewed: 12 August 2015
 title: Language Status for Pyxie
 ---
 ## Language Status
 
-Last updated for version: **0.0.14**
+Last updated for version: **0.0.17**
 
 {% compilation = panel("panels/direct-compilation.md") %}
 

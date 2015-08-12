@@ -48,7 +48,7 @@ packages = find_packages(".")
 package_names = packages.keys()
 
 setup(name = "pyxie",
-      version = "0.0.16",
+      version = "0.0.17",
       description = "Little Python to C++ Compiler",
       url='http://www.sparkslabs.com/pyxie/',
       author='Michael Sparks (sparkslabs)',
@@ -307,6 +307,7 @@ Release History
 
 Release History:
 
+-  0.0.17 - UNRELEASED - TBD
 -  0.0.16 - 2015-08-02 - Adds initial Arduino LEONARDO support, improved
    function call, release build scripts
 -  0.0.15 - 2015-07-18 - clib converted to py clib for adding to build

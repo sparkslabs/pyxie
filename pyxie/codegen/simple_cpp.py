@@ -56,6 +56,9 @@ def mkStatement(statement_spec):
             return IfStatement(ss[1], ss[2], ss[3])
         raise NotImplementedError("Have not yet implemented else clauses...")
 
+    elif ss[0] == "pass_statement":
+        return PassStatement()
+
     elif ss[0] == "break_statement":
         return BreakStatement()
 
@@ -166,6 +169,23 @@ class Assigment(object):
         else:
             crvalue = self.rvalue
         return self.lvalue + " "+self.assigntype+" " + crvalue
+
+# A pass statement is not a commented out statement.
+#
+# By that this:
+# while True: pass
+#
+# Is equivalent to while(true);
+# As opposed to while(true);
+#
+# So that's why this returns ";" not ""
+class PassStatement(object):
+    def json(self):
+        return ["pass_statement"]
+
+    def code(self):
+        return ";"
+
 
 
 class BreakStatement(object):
@@ -369,11 +389,10 @@ class ForStatement(object):
         template = """
             %(ITERATOR_NAME)s = %(ITERATOR_EXPRESSION)s;
             while (true) {
-                try {
-                    %(IDENTIFIER)s = %(ITERATOR_NAME)s.next();
-                } catch (StopIteration s) {
+                %(IDENTIFIER)s = %(ITERATOR_NAME)s.next();
+                if (%(ITERATOR_NAME)s.completed())
                     break;
-                }
+
                 %(BODY)s // Itself uses %(IDENTIFIER)s
             }
         """

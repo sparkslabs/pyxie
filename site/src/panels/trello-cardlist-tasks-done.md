@@ -7,7 +7,10 @@ title: Trello Cardlist Tasks Done
 ---
 ### Tasks Done
 
+* 0\.0.17 - - - - - (tasks)
+* 10\. Decide whether to add functionality of bin/pyxie-dev is in core
 * 0\.0.16 - - - - - (tasks)
+* 1\. Number Cards in backlog.
 * 7\. For Release: 0.0.16
 * 192\. Trello snapshot generation escapes task numbers.
 * 68\. Write Bump Versions Script.

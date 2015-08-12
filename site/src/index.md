@@ -3,7 +3,7 @@ template: mainpage
 source_form: markdown
 name: Overview
 title: Pyxie -- A Little Python to C++ Compiler
-updated: July 2015
+updated: August 2015
 ---
 ## Pyxie -- A Little Python to C++ Compiler
 
@@ -15,6 +15,8 @@ Currently it can compile very very simple types of python program
 that looks like this into an equivalent (simple) C++ program.
 
 {% exampleprogram = panel("panels/example-program.md") %}
+
+{% examplearduinoprogram = panel("panels/example-arduino-program.md") %}
 
 {% whatdoesthisdo = panel("panels/what-does-this-do.md") %}
 

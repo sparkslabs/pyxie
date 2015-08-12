@@ -1,7 +1,7 @@
 
-led = 13;
+led = 13
 
-pinMode(led, OUTPUT);     
+pinMode(led, OUTPUT)
 
 while True:
   digitalWrite(led, HIGH)

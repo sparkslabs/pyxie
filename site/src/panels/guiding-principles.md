@@ -23,6 +23,7 @@ For me the starting point on that list is:
 * Duck typing / lack of type declarations (but strong types)
 * Whitespace for indentation
 * Standard control structures (No else clauses on while/for :) )
+* Standard built in types
 * Lists and dictionaries
 * Easy import/use of external functionality
 * User functions (and associated scoping rules)

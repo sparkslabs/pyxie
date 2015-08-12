@@ -19,6 +19,7 @@ title: Current Grammar support by Pyxie
               | while_statement
               | break_statement
               | continue_statement
+              | pass_statement
               | if_statement
               | for_statement
 
@@ -27,6 +28,8 @@ title: Current Grammar support by Pyxie
     while_statement : WHILE general_expression COLON EOL statement_block
 
     break_statement : BREAK
+
+    pass_statement : PASS
 
     continue_statement : CONTINUE
 
