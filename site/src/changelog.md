@@ -13,7 +13,7 @@ reason.
 
 ### In progress
 
-## [0.0.17] - UNRELEASED
+## [0.0.17] - 2015-08-12
 
 ### New
 
@@ -26,6 +26,7 @@ reason.
 
 * Extracted core code for "pyxie" script into pyxie.core
 * Updated usage instructions to include covering using arduino profile
+* Documentation updated to current status (to a large extent)
 
 ## [0.0.16] - 2015-08-02
 

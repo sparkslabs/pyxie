@@ -9,10 +9,10 @@ commits. _(This is exported from trello)_
 ### Project Stage
 
 * HEADLINE: PRE-ALPHA
-* DEV STATE: WORKING (MVP)
-* DEV VERSION: 0.0.16
-* RELEASED: 0.0.15
-* LANGUAGE STATE: PRE-BARE
+* DEV STATE: WORKING (BARE)
+* DEV VERSION: 0.0.17
+* RELEASED: 0.0.16
+* LANGUAGE STATE: BARE*
 * FOCUS: Practicalities
 
 
@@ -26,23 +26,21 @@ commits. _(This is exported from trello)_
 
 ### Release Backlog: Features
 
-* 0\.0.17 = = = = = = = = = =
-* 3\.8 Arduino compiled programs can use values returned from functions.
+* 0\.0.18 = = = = = = = = = =
+* 195\. Functionality of bin/pyxie-dev is in core, not a script
+* 51\. Pyxie compile harness is switched over to use a better system for determining runtime options #internals
 * 3\.5 Analysis code looks for an arduino profile file describing c-types appropriately.
+* 3\.8 Arduino compiled programs can use values returned from functions.
 * 3\.6 arduino profile file is propogated with something relating to core functions that read values, to avoid forcing types "manually"
 * 4\. Compilation profiles are pluggable
-* 6\. Functionality of bin/pyxie is in core, not a script
-* 3\.7 Arduino platform has alternative generator/exception implementation due to lack of exceptions
-* Update website to include the changes for 0.0.16 #docs
-* Docs on pyxie-dev usage
+* 194\. Docs on pyxie-dev usage
 
 
 ### Release Backlog: Tasks
 
-* 0\.0.17 - - - - - (tasks)
+* 0\.0.18 - - - - - (tasks)
 * 8\. Add updating man page to the makefile #docs
 * 9\. Add the manpage to the distributed files, into the right places #docs
-* 10\. Decide whether to add functionality of bin/pyxie-dev is in core
 
 
 ### Known Bugs / Anti-features
@@ -51,8 +49,7 @@ commits. _(This is exported from trello)_
 
 ### Backlog: Proposed Next
 
-* 11\. MBed compatible compilation profile?
-* 1\. Number Cards in backlog.
+* 11\. MBed compatible compilation profile? (Seeedstudio Arch)
 * 12\. MSP430 compatible compilation profile?
 
 
@@ -82,7 +79,6 @@ commits. _(This is exported from trello)_
 ### Backlog: Tasks
 
 * 50\. Link current test programs on the website, maybe #website
-* 51\. Pyxie compile harness is switched over to use a better system for determining runtime options #internals
 * 52\. Review whether context should check types of ALL expressions, rather than just first, and whether we can should try to detect type mismatches #reflect
 * 53\. Use https://travis-ci.org/ ? #reflect
 * 54\. Review pypi packaging for things we should be doing #reflect #practicalities
@@ -113,7 +109,6 @@ commits. _(This is exported from trello)_
 
 ### Backlog: Website, docs, etc
 
-* 56\. Blog post: Introducing Pyxie #docs #website
 * 57\. Blog post: Pyxie structure #website
 * 58\. Blog Post: Pyxie Decisions #website
 * 59\. Start thoughts on pyxie-web #reflect #website
@@ -122,6 +117,13 @@ commits. _(This is exported from trello)_
 
 ### Features Implemented
 
+* 0\.0.17 = = = = = = = = = =
+* 193\. Update website to include the changes for 0.0.16/0.0.17 #docs
+* 56\. Blog post: Introducing Pyxie #docs #website
+* 3\.7.1 Integrate alternative generator/iterator protocol into compiler
+* 3\.7 Arduino platform has alternative generator/exception implementation due to lack of exceptions
+* pass statement
+* 6\. Functionality of bin/pyxie is in core, not a script
 * 0\.0.16 = = = = = = = = = =
 * 3\. Arduino LEONARDO compatible compilation profile.
 * 3\.3 Code generation outputs code targetting "setup" instead of "main"
@@ -224,7 +226,10 @@ commits. _(This is exported from trello)_
 
 ### Tasks Done
 
+* 0\.0.17 - - - - - (tasks)
+* 10\. Decide whether to add functionality of bin/pyxie-dev is in core
 * 0\.0.16 - - - - - (tasks)
+* 1\. Number Cards in backlog.
 * 7\. For Release: 0.0.16
 * 192\. Trello snapshot generation escapes task numbers.
 * 68\. Write Bump Versions Script.

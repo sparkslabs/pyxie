@@ -26,7 +26,6 @@ commandline tools, but the easiest way of doing this is to do this:
     sudo apt-get install arduino-mk
 
 
-
 ## Example program that lexes, parses, analyses & compiles
 
 Clearly a single example doesn't tell you everything. This gives you a flavour.
@@ -177,6 +176,7 @@ necessarily imply code generation, differences will be noted below.
               | while_statement
               | break_statement
               | continue_statement
+              | pass_statement
               | if_statement
               | for_statement
 
@@ -185,6 +185,8 @@ necessarily imply code generation, differences will be noted below.
     while_statement : WHILE general_expression COLON EOL statement_block
 
     break_statement : BREAK
+
+    pass_statement : PASS
 
     continue_statement : CONTINUE
 

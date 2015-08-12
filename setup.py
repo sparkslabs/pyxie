@@ -307,7 +307,8 @@ Release History
 
 Release History:
 
--  0.0.17 - UNRELEASED - TBD
+-  0.0.17 - 2015-08-12 - Add pass statement, enable "for" on arduino,
+   update documentation, refactor pyxie harness
 -  0.0.16 - 2015-08-02 - Adds initial Arduino LEONARDO support, improved
    function call, release build scripts
 -  0.0.15 - 2015-07-18 - clib converted to py clib for adding to build
@@ -360,6 +361,7 @@ Language Status
               | while_statement
               | break_statement
               | continue_statement
+              | pass_statement
               | if_statement
               | for_statement
 
@@ -368,6 +370,8 @@ Language Status
     while_statement : WHILE general_expression COLON EOL statement_block
 
     break_statement : BREAK
+
+    pass_statement : PASS
 
     continue_statement : CONTINUE
 
