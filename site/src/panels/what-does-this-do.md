@@ -42,8 +42,6 @@ you're after than look at Shed Skin, or things like Cython, Pyrex, and PyPy.
 those is that this project assumes a very small target device.  Something
 along the lines of an Atmega 8A, Atmega 328 or more capable.
 
-{% micropython_ref = panel("panels/why-not-micropython.md") %}
-
 In the past I've written a test driven compiler suite, so I'll be following
 the same approach here.  It did consider actually making Pyxie use that as a
 frontend, but for the moment, I'd like python compatibility.

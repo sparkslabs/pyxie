@@ -6,11 +6,21 @@ reason.
 
 ### In progress
 
+## [0.0.18] - UNRELEASED
+
+### New
+
+*
+
+### Other
+
+*
+
 ## [0.0.17] - 2015-08-12
 
 ### New
 
-* Implemented "pass" statement
+* Implemented "pass" statement.
 * For loops now work on arduino profile (reimplemented C++ generators to use
   generator state, not to use an exception)
 * Arduino test case using for loop

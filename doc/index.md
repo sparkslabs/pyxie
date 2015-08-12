@@ -180,12 +180,6 @@ you're after than look at Shed Skin, or things like Cython, Pyrex, and PyPy.
 those is that this project assumes a very small target device.  Something
 along the lines of an Atmega 8A, Atmega 328 or more capable.
 
-Why not micropython? Micropython is **ace** . If your device is large enough to
-support the micropython runtime, use it! The aim of this is on the really small
-microcontrollers- the ones too small to even support micropython - like
-an MSP430, or an Atmega 8A or similarly tiny MCU.
-
-
 In the past I've written a test driven compiler suite, so I'll be following
 the same approach here.  It did consider actually making Pyxie use that as a
 frontend, but for the moment, I'd like python compatibility.
@@ -288,6 +282,7 @@ inspired heavily by python introspection) That's quite some time off.
 
 Release History:
 
+* 0.0.18 - UNRELEASED - TBD
 * 0.0.17 - 2015-08-12 - Add pass statement, enable "for" on arduino, update documentation, refactor pyxie harness
 * 0.0.16 - 2015-08-02 - Adds initial Arduino LEONARDO support, improved function call, release build scripts
 * 0.0.15 - 2015-07-18 - clib converted to py clib for adding to build directory

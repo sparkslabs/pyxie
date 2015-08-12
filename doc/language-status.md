@@ -1,6 +1,6 @@
 ## Language Status
 
-Last updated for version: **0.0.14**
+Last updated for version: **0.0.17**
 
 ### Direct Compilation
 
