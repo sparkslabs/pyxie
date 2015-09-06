@@ -1,0 +1,369 @@
+#include <Servo.h>
+
+FLHpin = 6
+FRHpin = 11
+RLHpin = 5
+RRHpin = 4
+
+FLKpin = 12
+FRKpin = 13
+RLKpin = 2
+RRKpin = 3
+
+PANpin = 14
+TILpin = 15
+
+IRleft = 2
+IRright = 4
+IRup = 3
+IRdown = 5
+IRleds = 8
+
+Speed = 40
+Stepsize = 250
+Boredom = 6000
+
+LRscalefactor = 2
+UDscalefactor = 2
+distancemax = 200
+bestdistance = 500
+
+FLHcenter = 1500
+FRHcenter = 1500
+RLHcenter = 1500
+RRHcenter = 1500
+
+FLKcenter = 1500
+FRKcenter = 1500
+RLKcenter = 1500
+RRKcenter = 1500
+
+PANcenter = 1500
+TILcenter = 1500
+
+LRmax = 2300
+LRmin = 700
+UDmax = 2000
+UDmin = 700
+
+IRdelay = 200
+
+time = 0
+sit = 0
+trick = 0
+
+LShift = 0
+RShift = 0
+Raise = 0
+cycle = 0
+
+pan=PANcenter
+tilt=TILcenter
+
+distance = 0
+temp = 0
+
+leftIRvalue = 0
+rightIRvalue = 0
+upIRvalue = 0
+downIRvalue = 0
+
+FLHservo = Servo()
+FRHservo = Servo()
+RLHservo = Servo()
+RRHservo = Servo()
+
+FLKservo = Servo()
+FRKservo = Servo()
+RLKservo = Servo()
+RRKservo = Servo()
+
+PANservo = Servo()
+TILservo = Servo()
+
+
+FLHservo.attach(FLHpin)
+FRHservo.attach(FRHpin)
+RLHservo.attach(RLHpin)
+RRHservo.attach(RRHpin)
+
+FLKservo.attach(FLKpin)
+FRKservo.attach(FRKpin)
+RLKservo.attach(RLKpin)
+RRKservo.attach(RRKpin)
+
+PANservo.attach(PANpin)
+TILservo.attach(TILpin)
+
+FLHservo.writeMicroseconds(FLHcenter)
+FRHservo.writeMicroseconds(FRHcenter)
+RLHservo.writeMicroseconds(RLHcenter)
+RRHservo.writeMicroseconds(RRHcenter)
+FLKservo.writeMicroseconds(FLKcenter)
+FRKservo.writeMicroseconds(FRKcenter)
+RLKservo.writeMicroseconds(RLKcenter)
+RRKservo.writeMicroseconds(RRKcenter)
+PANservo.writeMicroseconds(PANcenter)
+TILservo.writeMicroseconds(TILcenter)
+
+pinMode(IRleds,OUTPUT)
+
+while True:
+    digitalWrite(IRleds,HIGH)
+    delayMicroseconds(IRdelay)
+    leftIRvalue  = analogRead(IRleft)
+    rightIRvalue = analogRead(IRright)
+    upIRvalue    = analogRead(IRup)
+    downIRvalue  = analogRead(IRdown)
+
+    digitalWrite(IRleds, LOW)
+    delayMicroseconds(IRdelay)
+    leftIRvalue  = leftIRvalue - analogRead(IRleft)
+    rightIRvalue = rightIRvalue - analogRead(IRright)
+    upIRvalue    = upIRvalue - analogRead(IRup)
+    downIRvalue  = downIRvalue - analogRead(IRdown)
+    distance = (leftIRvalue + rightIRvalue + upIRvalue + downIRvalue) / 4
+
+    if distance < distancemax:
+        if pan>PANcenter:
+            pan = pan - 5
+        if pan<PANcenter:
+            pan = pan + 5
+        if tilt>TILcenter:
+            tilt = tilt - 3
+        if tilt < TILcenter:
+            tilt = tilt + 3
+    else:
+        panscale = (leftIRvalue + rightIRvalue) / LRscalefactor
+        tiltscale = (upIRvalue + downIRvalue) / UDscalefactor
+        leftright = (rightIRvalue - leftIRvalue) * 5 / panscale
+        pan = pan + leftright
+        updown = (downIRvalue - upIRvalue) * 5 / tiltscale
+        tilt = tilt + updown
+        if pan < LRmin:
+            pan=LRmin
+        if pan > LRmax:
+            pan=LRmax
+        if tilt < UDmin:
+            tilt=UDmin
+        if tilt > UDmax:
+            tilt=UDmax
+
+    PANservo.writeMicroseconds(1500-(pan-1500))
+    TILservo.writeMicroseconds(1500-(tilt-1500))
+    if millis() - sit < Boredom:
+        LShift = 0
+        RShift = 0
+        if not (distance<distancemax):
+            temp = pan - PANcenter
+            if abs(temp) > 300:
+              LShift = temp/2
+              RShift = 0-temp/2
+            temp = (distance - bestdistance) * 15 / 10
+            LShift = LShift - temp
+            RShift = RShift - temp
+            if LShift > Stepsize:
+                LShift = Stepsize
+
+            if LShift < 0-Stepsize:
+                LShift = 0-Stepsize
+
+            if RShift > Stepsize:
+                RShift = Stepsize
+
+            if RShift < 0-Stepsize:
+                RShift = 0-Stepsize
+
+        Raise = 150 +((abs(LShift) + abs(RShift)) /2)
+        if Raise < 200:
+            LShift = 0
+            RShift = 0
+            Raise = 0
+        else:
+            sit = millis()
+            trick = millis()
+
+        if tilt < 980:
+            pan = PANcenter
+            tilt = 1700
+
+            PANservo.writeMicroseconds(1500-(pan-1500))
+            TILservo.writeMicroseconds(1500-(tilt-1500))
+            RLHservo.writeMicroseconds(RLHcenter-600)
+            RRHservo.writeMicroseconds(RRHcenter+600) 
+            FLKservo.writeMicroseconds(FLKcenter-600)
+            FRKservo.writeMicroseconds(FRKcenter-600)
+            delay(350)
+            FLHservo.writeMicroseconds(FLHcenter+600)
+            FRHservo.writeMicroseconds(FRHcenter-600)
+            RLHservo.writeMicroseconds(RLHcenter+600)
+            RRHservo.writeMicroseconds(RRHcenter-600)
+            FLKservo.writeMicroseconds(FLKcenter+300)
+            FRKservo.writeMicroseconds(FRKcenter+300)
+            RLKservo.writeMicroseconds(RLKcenter+100)
+            RRKservo.writeMicroseconds(RRKcenter+100)
+
+            trick = millis()
+
+            while millis()-trick<2000:
+                digitalWrite(IRleds,HIGH)
+                delayMicroseconds(IRdelay)
+                leftIRvalue  = analogRead(IRleft)
+                rightIRvalue = analogRead(IRright)
+                upIRvalue    = analogRead(IRup)
+                downIRvalue  = analogRead(IRdown)
+                digitalWrite(IRleds, LOW)
+                delayMicroseconds(IRdelay)
+                leftIRvalue  = leftIRvalue - analogRead(IRleft)
+                rightIRvalue = rightIRvalue - analogRead(IRright)
+                upIRvalue    = upIRvalue - analogRead(IRup)
+                downIRvalue  = downIRvalue - analogRead(IRdown)
+                distance = (leftIRvalue + rightIRvalue + upIRvalue + downIRvalue) / 4
+
+                if distance < distancemax:
+                    if pan>PANcenter:
+                        pan = pan - 5
+                    if pan<PANcenter:
+                        pan = pan + 5
+                    if tilt>TILcenter:
+                        tilt = tilt - 3
+                    if tilt < TILcenter:
+                        tilt = tilt + 3
+
+                else:
+                    panscale = (leftIRvalue + rightIRvalue) / LRscalefactor
+                    tiltscale = (upIRvalue + downIRvalue) / UDscalefactor
+                    leftright = (rightIRvalue - leftIRvalue) * 5 / panscale
+                    pan = pan + leftright
+                    updown = (downIRvalue - upIRvalue) * 5 / tiltscale
+                    tilt = tilt + updown
+
+                    if pan < LRmin:
+                        pan=LRmin
+
+                    if pan > LRmax:
+                        pan=LRmax
+
+                    if tilt < UDmin:
+                        tilt=UDmin
+
+                    if tilt > UDmax:
+                        tilt=UDmax
+
+                PANservo.writeMicroseconds(1500-(pan-1500))
+                TILservo.writeMicroseconds(1500-(tilt-1500))
+
+                if distance > distancemax :
+                    trick=millis()
+
+            RLKservo.writeMicroseconds(RLKcenter-300)
+            RRKservo.writeMicroseconds(RRKcenter-300)
+            FLKservo.writeMicroseconds(FLKcenter)
+            FRKservo.writeMicroseconds(FRKcenter)
+            delay(100)
+
+            RLHservo.writeMicroseconds(RLHcenter)
+            RRHservo.writeMicroseconds(RRHcenter)
+            delay(100)
+            RLKservo.writeMicroseconds(RLKcenter)
+            RRKservo.writeMicroseconds(RRKcenter)
+            delay(100)
+
+            RLKservo.writeMicroseconds(RLKcenter - 300)
+            RRKservo.writeMicroseconds(RRKcenter - 300)
+            delay(250)
+            sit = millis()
+
+        if millis() - time > Speed:
+            time = millis()
+            WalkingMotion()
+
+            cycle = cycle + 1
+            if cycle > 9:
+                cycle=0
+
+            if cycle == 0:
+                FRKservo.writeMicroseconds(FRKcenter - Raise)
+                RLKservo.writeMicroseconds(RLKcenter - Raise)
+                FLHservo.writeMicroseconds(FLHcenter - LShift)
+                RRHservo.writeMicroseconds(RRHcenter + RShift)
+
+            elif cycle == 1:
+                FRHservo.writeMicroseconds(FRHcenter - RShift)
+                RLHservo.writeMicroseconds(RLHcenter + LShift)
+
+            elif cycle == 3:
+                FRKservo.writeMicroseconds(FRKcenter)
+                RLKservo.writeMicroseconds(RLKcenter)
+
+            elif cycle == 5:
+                FLKservo.writeMicroseconds(FLKcenter - Raise)
+                RRKservo.writeMicroseconds(RRKcenter - Raise)
+                FRHservo.writeMicroseconds(FRHcenter + RShift)
+                RLHservo.writeMicroseconds(RLHcenter - LShift)
+
+            elif cycle == 6:
+                FLHservo.writeMicroseconds(FLHcenter+LShift)
+                RRHservo.writeMicroseconds(RRHcenter-RShift)
+
+            elif cycle == 8:
+                FLKservo.writeMicroseconds(FLKcenter)
+                RRKservo.writeMicroseconds(RRKcenter)
+
+    else:
+            temp = millis() - sit
+            if temp < Boredom + 800:
+                cycle = 9
+                temp = (temp - Boredom) * 4
+                if temp > 3000:
+                   temp = 3000
+
+                FLHservo.writeMicroseconds(FLHcenter)
+                FRHservo.writeMicroseconds(FRHcenter)
+
+                RLHservo.writeMicroseconds(RLHcenter + (temp/6))
+                RRHservo.writeMicroseconds(RRHcenter - (temp/6))
+
+                FLKservo.writeMicroseconds(FLKcenter)
+                FRKservo.writeMicroseconds(FRKcenter)
+
+                RLKservo.writeMicroseconds(RLKcenter - (temp/7))
+                RRKservo.writeMicroseconds(RRKcenter - (temp/7))
+
+            if tilt < 800:
+                sit=millis()
+                RLHservo.writeMicroseconds(RLHcenter)
+                RRHservo.writeMicroseconds(RRHcenter)
+                delay(150)
+
+            else:
+                if tilt < 1700:
+                    trick = millis()
+
+                temp = millis() - trick
+
+                if temp > 600:
+
+                    temp = (temp - 1000) * 4
+                    if temp > 3000:
+                        temp=3000
+
+                    if pan > PANcenter - 150:
+                        FRHservo.writeMicroseconds(FRHcenter - (temp/6))
+                        FRKservo.writeMicroseconds(FRKcenter - (temp/5))
+
+                    if pan < PANcenter + 150:
+                        FLHservo.writeMicroseconds(FLHcenter + (temp/6))
+                        FLKservo.writeMicroseconds(FLKcenter - (temp/5))
+
+
+
+
+
+
+
+
+
+
+
+
