@@ -18,6 +18,7 @@
 import pprint
 import sys
 
+from pyxie.core import parse_file
 from pyxie.core import analyse_file
 from pyxie.core import compile_file
 from pyxie.core import codegen_phase
