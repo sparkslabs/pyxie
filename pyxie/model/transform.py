@@ -21,6 +21,7 @@
 from pyxie.model.pynode import jdump
 import pyxie.model.pynode as nodes
 from pyxie.model.functions import builtins
+from pyxie.model.functions import arduino_profile_types as arduino
 
 iterator_unique_base = 0
 
@@ -85,11 +86,17 @@ class CannotConvert(Exception):
 def python_type_to_c_type(ptype):
     if ptype == "string":  return "string"
     if ptype == "integer":  return "int"
+
+    if ptype == "signedlong":  return "long"
+    if ptype == "unsignedlong":  return "unsigned long"
+
     if ptype == "bool": return "bool"
     if ptype == "float":   return "double"
     if ptype == "char": return "char"
 
     if ptype in builtins: return ptype
+
+    if ptype in arduino: return ptype
 
     raise UnknownType("Cannot identify C Type for %s" % ptype)
 
@@ -116,6 +123,12 @@ def crepr_literal(pyliteral):
         return "'" + char + "'"
 
     if ctype == "int":
+        return repr(pyliteral.value)
+
+    if ctype == "long":
+        return repr(pyliteral.value)
+
+    if ctype == "unsigned long":
         return repr(pyliteral.value)
 
     if ctype == "double":

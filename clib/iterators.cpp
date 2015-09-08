@@ -1,18 +1,24 @@
 #include "iterators.hpp"
 
 struct range : public Generator<int> {
-    int maxCount;
+    int start;
+    int end;
+    int step;
+
     int index;
-    range() :maxCount(0), index(0) {     };
-    range(int max) :maxCount(max), index(0) {     };
+
+    range() :                                start(0),     end(0),   step(1), index(0)            {     };
+    range(int end) :                         start(0),     end(end), step(1), index(0)            {     };
+    range(int start, int end)     :          start(start), end(end), step(1), index(start)        {     };
+    range(int start, int end, int stepsize): start(start), end(end), step(stepsize), index(start) {     };
     ~range() {     };
 
     virtual int next() {
         GENERATOR_START
 
-        while (index<maxCount) {
+        while ( step>0  ? index < end : index > end) {
             YIELD(index);
-            index += 1;
+            index = index + step;
         }
 
         GENERATOR_END

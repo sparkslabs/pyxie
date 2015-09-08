@@ -25,6 +25,7 @@ from pyxie.core import codegen_phase
 from pyxie.core import compilation_tests
 from pyxie.core import compile_testfile
 from pyxie.core import parsing_tests
+from pyxie.core import parse_testfile
 
 from pyxie.core import testprogs_dir
 
@@ -35,87 +36,100 @@ profile = "default"
 class BadArguments(Exception):
     pass
 
-def handle_tests(argv):
-    if argv[2] == "run-tests":
+# The purpose of this command line dispatcher is to simplify options handling at the
+# expense of being a bit pickier about it.
+
+class CommandLineDispatcher(object):
+    @classmethod
+    def handles(klass, command):
+        return  command.replace("-","_") in [ x for x in dir(klass) if not(x.startswith("_"))]
+    #
+    @classmethod
+    def handle(klass, command, *args):
+        f = getattr(klass, command.replace("-","_"))
+        f(*args)
+
+class TestsLauncher(CommandLineDispatcher):
+    @staticmethod
+    def run_tests():
+        """Run all tests"""
         parsing_tests()
         compilation_tests(profile)
-        return
 
-    elif argv[2] == "parse-tests":
+    @staticmethod
+    def parse_tests():
+        """Just run parse tests"""
         parsing_tests()
-        return
 
-    elif argv[2] == "compile-tests":
+    @staticmethod
+    def compile_tests():
+        """Just run compile tests"""
         compilation_tests(profile)
-        return
 
-    elif argv[2] == "parse" and len(argv) == 4:
-        filename = argv[3]
+    @staticmethod
+    def parse(filename):
+        """Parses a given test given a certain filename"""
         AST = parse_testfile(testprogs_dir, filename)
         pprint.pprint(AST)
         pprint.pprint(AST.__json__())
-        return
 
-    elif argv[2] == "compile" and len(argv) == 4:
-        filename = argv[3]
+    @staticmethod
+    def compile(filename):
+        """Parses a given test given a certain filename"""
         compile_testfile(testprogs_dir, filename, profile)
-        return
-    else:
-        raise BadArguments("Bad Arguments")
 
 
-def parse_option(argv):
-    filename = argv[2]
-    AST = parse_file(filename)
-    pprint.pprint(AST)
-    pprint.pprint(AST.__json__())
+class StandardOptions(CommandLineDispatcher):
+    @staticmethod
+    def parse(filename):
+        """parses the given filename, outputs result to console"""
+        AST = parse_file(filename)
+        pprint.pprint(AST)
+        pprint.pprint(AST.__json__())
+        if 0:
+            import json
+            print "Also writing a copy to ", filename+".json"
+            f = open(filename+".json", "w")
+            f.write(json.dumps(AST.__json__()))
+            f.close()
 
+    @staticmethod
+    def analyse(filename):
+        """parses and analyse the given filename, outputs result to console"""
+        analyse_file(filename)
 
-def analyse_option(argv):
-    filename = argv[2]
-    analyse_file(filename)
+    @staticmethod
+    def codegen(filename, result_filename=None):
+        """parses, analyse and generate code for the given filename, outputs result to console. Does not attempt compiling"""
+        codegen_phase(filename, result_filename, profile)
 
-
-def codegen_option(argv):
-    filename = argv[2]
-    result_filename = argv[3] if len(argv) == 4 else None
-    codegen_phase(filename, result_filename, profile)
-
-
-def compile_option(argv):
-    filename = argv[2]
-    result_filename = argv[3] if len(argv) == 4 else None
-    compile_file(filename, profile, result_filename)
-
+    @staticmethod
+    def compile(filename, result_filename=None):
+        """compiles the given file to path/to/filename -- result_filename can be provide an alternative output name"""
+        compile_file(filename, profile, result_filename)
 
 def main(argv):
     global profile
     if len(argv) < 2:
         raise BadArguments()
 
-    # If a profile is pulled defined, use that
+    # If a profile is pulled in/defined, use that
     if argv[1] == "--profile" and len(argv)> 2:
         profile = argv[2]
         argv[1:3] = []
 
     if argv[1] == "--test":
-        handle_tests(argv)
-
-    elif argv[1] == "parse" and len(argv) == 3:
-        parse_option(argv)
-
-    elif argv[1] == "analyse" and len(argv) == 3:
-        analyse_option(argv)
-
-    elif argv[1] == "codegen" and len(argv) == 3 or len(argv) == 4:
-        codegen_option(argv)
-
-    elif argv[1] == "compile" and len(argv) == 3 or len(argv) == 4:
-        compile_option(argv)
+        command = argv[2]
+        if TestsLauncher.handles(command):
+            return TestsLauncher.handle(command, *(argv[3:]))
 
     else:
-        raise BadArguments()
+        command = argv[1]
+        if StandardOptions.handles(command):
+            return StandardOptions.handle(command, *(argv[2:]))
 
+    # Not handled by anything
+    raise BadArguments("Bad Arguments")
 
 def show_help():
     print """\npyxie -- A little python compiler\nUsage:\n
@@ -124,6 +138,7 @@ def show_help():
     pyxie --test parse-tests -- Just run parse tests
     pyxie --test compile-tests -- Just run compile tests
     pyxie --test parse filename -- Parses a given test given a certain filename
+    pyxie --test compile filename -- Parses a given test given a certain filename
     pyxie parse filename -- parses the given filename, outputs result to console
     pyxie analyse filename -- parses and analyse the given filename, outputs result to console
     pyxie codegen filename -- parses, analyse and generate code for the given filename, outputs result to console. Does not attempt compiling
@@ -137,4 +152,8 @@ if __name__ == "__main__":
         main(argv = sys.argv[:])
     except BadArguments:
         show_help()
-
+    except TypeError as e:
+        print "USAGE ERROR: (see end)"
+        show_help()
+        print "USAGE ERROR:", e
+        print

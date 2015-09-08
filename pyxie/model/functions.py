@@ -92,6 +92,19 @@ builtins = {
                      }
             }
 
+# Inside <Servo.h>
+arduino_profile_function_calls = {
+             "Servo": {
+                         "iterator": False,
+                         "return_ctype": "Servo", # C type of the returned value
+                      }
+    }
+
+arduino_profile_types = {
+             "Servo": {
+                 }
+    }
+
 
 templates = { "iterator" : { "declarations" : iterated_code_variable_declarations_template,
                              "code" : iterated_code_actual_code_template,

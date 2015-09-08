@@ -12,3 +12,8 @@ for count in range(5):
     print count
 
 print "You should have seen 0 1 2 3 4 on separate lines"
+
+for count in range(5,20,5):
+    print count
+
+print "You should have seen more output"

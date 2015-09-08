@@ -70,9 +70,13 @@ title: Current Grammar support by Pyxie
                | expression '-' arith_expression
                | expression '**' arith_expression
 
-    arith_expression : expression_atom
-                     | arith_expression '*' expression_atom
-                     | arith_expression '/' expression_atom
+    arith_expression : negatable_expression_atom
+                     | arith_expression '*' negatable_expression_atom
+                     | arith_expression '/' negatable_expression_atom
+
+
+    negatable_expression_atom : "-" negatable_expression_atom 
+                              | expression_atom
 
     expression_atom : value_literal
                     | IDENTIFIER '(' ')' # Function call, with no arguments
@@ -90,6 +94,8 @@ title: Current Grammar support by Pyxie
            | HEX
            | OCTAL
            | BINARY
+           | LONG         (suffice is L)
+           | UNSIGNEDLONG (suffice is l)
            | '-' number
 
 Current Lexing rules used by the grammar:

@@ -223,7 +223,7 @@ def compile_file(filename, profile, result_filename=None):
     print "CWD", os.getcwd()
 
     os.rename(actual_result_file,result_filename)
-    clean = True
+    clean = False
     if clean:
         remove_directory(build_dir)
         if base_dir == ".":

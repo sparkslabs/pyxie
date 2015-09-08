@@ -295,32 +295,50 @@ class Grammar(object):
         p[0] = PyPowerOperator(p[1],p[3])
 
     def p_arith_expression_1(self, p):
-        "arith_expression     : expression_atom"
+        "arith_expression     : negatable_expression_atom"
         p[0] = p[1]
 
     def p_arith_expression_2(self, p):
-        "arith_expression     : arith_expression TIMES expression_atom"
+        "arith_expression     : arith_expression TIMES negatable_expression_atom"
         p[0] = PyTimesOperator(p[1],p[3])
 
     def p_arith_expression_3(self, p):
-        "arith_expression     : arith_expression DIVIDE expression_atom"
+        "arith_expression     : arith_expression DIVIDE negatable_expression_atom"
         p[0] = PyDivideOperator(p[1],p[3])
+
+    def p_negatable_expression_atom_1(self,p):
+        "negatable_expression_atom : MINUS negatable_expression_atom %prec UMINUS"
+        p[0] = PyMinusOperator(PyInteger(p.lineno(1), 0),p[2])
+
+    def p_negatable_expression_atom_2(self,p):
+        "negatable_expression_atom : expression_molecule %prec UMINUS"
+        p[0] = p[1]
+
+    def p_expression_molecule_1(self,p):
+        "expression_molecule : expression_atom"
+        p[0] = p[1]
+
+    def p_expression_molecule_2(self, p):
+        "expression_molecule : bracketed_expression"
+        p[0] = p[1]
+
 
     def p_expression_atom_1(self, p):
         "expression_atom : value_literal"
         p[0] = p[1]
 
     def p_expression_atom_2(self, p):
-        "expression_atom : IDENTIFIER PARENL expr_list PARENR"
-        p[0] = PyFunctionCall(PyIdentifier(p.lineno(1), p[1]), p[3])
-
-    def p_expression_atom_3(self, p):
-        "expression_atom : PARENL general_expression PARENR"
-        p[0] = p[2]
+        "expression_atom : expression_atom PARENL expr_list PARENR"
+        p[0] = PyFunctionCall(p[1], p[3])
 
     def p_expression_atom_4(self, p):
-        "expression_atom : IDENTIFIER PARENL PARENR"
-        p[0] = PyFunctionCall(PyIdentifier(p.lineno(1), p[1]), None)
+        "expression_atom : expression_atom PARENL PARENR"
+        p[0] = PyFunctionCall(p[1], None)
+
+    def p_expression_atom_5(self, p):
+        "bracketed_expression : PARENL general_expression PARENR"
+        p[0] = p[2]
+
 
     ### Core Literals
 
@@ -348,9 +366,14 @@ class Grammar(object):
         "number : BINARY"
         p[0] = PyBinary(p.lineno(1), p[1])
 
-    def p_value_literal_5a(self,p):
-        "number : MINUS number %prec UMINUS"
-        p[0] = p[2].negate()
+    def p_value_literal_5a(self, p):
+        "number : SIGNEDLONG"
+        p[0] = PySignedLong(p.lineno(1), p[1])
+
+    def p_value_literal_5b(self, p):
+        "number : UNSIGNEDLONG"
+        p[0] = PyUnSignedLong(p.lineno(1), p[1])
+
 
     def p_value_literal_6(self, p):
         "value_literal : STRING"
@@ -365,8 +388,21 @@ class Grammar(object):
         p[0] = PyBoolean(p.lineno(1), p[1])
 
     def p_value_literal_8(self, p):
-        "value_literal : IDENTIFIER"
+        "value_literal : identifiable"
+        p[0] = p[1]
+
+    def p_value_identifier_1(self, p):
+        "identifiable : IDENTIFIER"
         p[0] = PyIdentifier(p.lineno(1), p[1])
+
+    def p_value_identifier_2(self, p):
+        "identifiable : expression_molecule dotexpression"
+        p[0] = PyAttributeAccess(p[1], p[2])
+
+
+    def p_dotexpression_1(self,p):
+        "dotexpression : DOT IDENTIFIER"
+        p[0] = PyAttribute(p.lineno(1), PyIdentifier(p.lineno(2), p[2]))
 
 def parse(source,lexer):
 

@@ -1,0 +1,16 @@
+
+#include <Servo.h>
+
+myservo = Servo()
+pos = 0
+pin=11
+
+myservo.attach(pin)
+while True:
+    for pos in range(180):
+        myservo.write(pos)
+        delay(15)
+
+    for pos in range(180):
+        myservo.write(179-pos)
+        delay(15)

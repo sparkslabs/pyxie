@@ -3,16 +3,15 @@
 
 import os
 import sys
-
+import time
 
 if not os.environ.get("PYXIE_DEV","dev")=="global": #"unless"
     sys.path[:0] = ["."]
 
 import pyxie
-    
+
 verbose = False
 dryrun = False
-
 ver_updating = None
 
 
@@ -253,7 +252,7 @@ def bump_rebuildDocs():
     os.chdir("site")
     os.system("./build_site.py")
     os.chdir(here)
-    
+
 
 def do_bump(ver_type):
     global dryrun
@@ -278,7 +277,6 @@ def do_bump(ver_type):
         vPrint("Dryrun")
         return 1
 
-import time
 
 def update_changelog_release_date():
 
@@ -308,6 +306,67 @@ def update_changelog_release_date():
     else:
         print "------ END CHANGE"
 
+def rebase_release(dryrun):
+    release_branch = time.strftime("%Y%m%d")
+
+    if dryrun:
+        print "Do This"
+        print "git checkout -b "+release_branch
+        print "git checkout WIP"
+        print "git rebase -i master"
+    else:
+        os.system("git checkout -b "+release_branch)
+        os.system("git checkout WIP")
+        os.system("git rebase -i master")
+    return 0
+
+def make_release():
+    # Extract Shortlog
+    x = os.popen("git log|head -20").read()
+    lines = x.split("\n")
+    shortlog = lines[4].strip()
+
+    # Update shortlog
+    update_current_shortlog(shortlog)
+
+    # Update changelog date (assume rest is up to date)
+    print "UPDATE CHANGELOG"
+    update_changelog_release_date()
+
+    print "update all docs"
+    here = os.getcwd()
+    os.chdir("site")
+    os.system("./build_site.py")   
+    os.chdir(here)
+
+    os.system("rm -rf dist")
+    os.system("rm MANIFEST")
+    ver,release = get_shortlog_version()
+
+    os.system("git tag v"+ver)
+
+    # Update python version of the clib.
+    os.chdir("clib")
+    os.system("./mk_py_clib.py")
+    os.chdir(here)
+    return 0
+
+def do_upload():
+    # Build debian package - for actual release change "make deb" to "make ppadeb"
+    os.system("rm -rf dist")
+    os.system("rm MANIFEST")
+    os.system("make ppadeb")
+    os.system("make distclean")
+
+    # Build PyPI release
+    os.system("rm -rf dist")
+    os.system("rm MANIFEST")
+    os.system("python setup.py sdist upload")
+    os.system("make distclean")
+
+    print ""
+
+
 def main(argv):
     global verbose
     global dryrun
@@ -318,12 +377,11 @@ def main(argv):
     if "-d" in argv:
         dryrun = True
         argv = [x for x in argv if x != "-d" ]
-    
+
     if len(argv) == 2:
         if argv[1] == "get":
             return do_get()
 
-    if len(argv) == 2:
         if argv[1] == "released":
             return do_released()
 
@@ -335,7 +393,6 @@ def main(argv):
                 ver_type = "patch"
             return do_bump(ver_type)
 
-    if len(argv) >= 2:
         if argv[1] == "propose":
             if len(argv) == 3:
                 ver_type = argv[2] 
@@ -343,73 +400,16 @@ def main(argv):
                 ver_type = "patch"
             return do_propose(ver_type)
 
-    if len(argv) >=2:
         if argv[1] == "rebase-release":
-            release_branch = time.strftime("%Y%m%d")
-
-            if dryrun:
-                print "Do This"
-                print "git checkout -b "+release_branch
-                print "git checkout WIP"
-                print "git rebase -i master"
-            else:
-                os.system("git checkout -b "+release_branch)
-                os.system("git checkout WIP")
-                os.system("git rebase -i master")
+            rebase_release(dryrun)
             return 0
 
-
-
-    if len(argv) >=2:
         if argv[1] == "make-release":
-            # Extract Shortlog
-            x = os.popen("git log|head -20").read()
-            lines = x.split("\n")
-            shortlog = lines[4].strip()
-
-            # Update shortlog
-            update_current_shortlog(shortlog)
-
-            # Update changelog date (assume rest is up to date)
-            print "UPDATE CHANGELOG"
-            update_changelog_release_date()
-
-            print "update all docs"
-            here = os.getcwd()
-            os.chdir("site")
-            os.system("./build_site.py")   
-            os.chdir(here)
-
-            os.system("rm -rf dist")
-            os.system("rm MANIFEST")
-            ver,release = get_shortlog_version()
-
-            os.system("git tag v"+ver)
-
-            # Update python version of the clib.
-            os.chdir("clib")
-            os.system("./mk_py_clib.py")
-            os.chdir(here)
+            make_release()
             return 0
 
-
-    if len(argv) >=2:
         if argv[1] == "do-upload":
-
-            # Build debian package - for actual release change "make deb" to "make ppadeb"
-            os.system("rm -rf dist")
-            os.system("rm MANIFEST")
-            os.system("make ppadeb")
-            os.system("make distclean")
-
-            # Build PyPI release
-            os.system("rm -rf dist")
-            os.system("rm MANIFEST")
-            os.system("python setup.py sdist upload")
-            os.system("make distclean")
-
-            print ""
-
+            do_upload()
             return 0
 
     do_usage()

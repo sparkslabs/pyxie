@@ -48,10 +48,12 @@ tokens = [
    'STRING',
    'IDENTIFIER',
    'BOOLEAN',
-   'CHARACTER'
+   'CHARACTER',
+   'UNSIGNEDLONG',
+   'SIGNEDLONG'
    ]
 
-punctuation = [ "COMMA", "PARENL", "PARENR", "COLON", "TIMES", "DIVIDE", "PLUS", "MINUS", "POWER",
+punctuation = [ "COMMA", "PARENL", "PARENR", "COLON", "TIMES", "DIVIDE", "PLUS", "MINUS", "POWER", "DOT",
                 "COMPARISON_OPERATOR",
                 "ASSIGN"
               ]
@@ -98,6 +100,15 @@ def t_NORMAL_DCHARACTER(t):
     t.type = "CHARACTER"
     return t
 
+def t_NORMAL_UNSIGNEDLONG(t):
+    r'\d+l'
+    t.value = int(t.value[:-1])
+    return t
+
+def t_NORMAL_SIGNEDLONG(t):
+    r'\d+L'
+    t.value = int(t.value[:-1])
+    return t
 
 def t_NORMAL_IDENTIFIER(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
@@ -148,11 +159,12 @@ def t_NORMAL_FLOAT(t):
     t.value = float(t.value)
     return t
 
+t_NORMAL_DOT = r'\.'
+
 def t_NORMAL_NUMBER(t):
     r'\d+'
     t.value = int(t.value)
     return t
-
 
 # Define a rule so we can track line numbers
 def t_INITIAL_NORMAL_ENDBLOCKS_EOL(t):
@@ -248,7 +260,7 @@ def t_ENDBLOCKS_DEDENT(t):
 
 # Error handling rule
 def t_ANY_error(t):
-    print "Illegal character '%s'" % t.value[0]
+    print "Illegal character '%s'" % t.value[0], t
     t.lexer.skip(1)
 
 def build_lexer():

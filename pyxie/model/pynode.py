@@ -22,6 +22,8 @@ from pyxie.parsing.context import Context
 from pyxie.model.tree import Tree
 from pyxie.model.functions import builtins
 
+from pyxie.model.functions import arduino_profile_function_calls as arduino
+
 MULTI_TYPES_WARN = False
 WARNINGS_ARE_FAILURES = False
 
@@ -252,35 +254,42 @@ class PyExpressionStatement(PyStatement):
         return info
     def analyse(self):
         print "ANALYSING EXPRESSION STATEMENT"
-        self.value.analyse()
+        try:
+            self.value.analyse()
+        except AttributeError:
+            print "CANNOT ANALYSE VALUE"
+            print repr(self.value)
+            print jdump(self.value)
+            raise
         self.ntype = self.get_type()
     def get_type(self):
         return self.value.get_type()
 
 class PyFunctionCall(PyStatement):
     tag = "function_call"
-    def __init__(self, identifier, expr_list):
+    def __init__(self, callable_, expr_list):
         super(PyFunctionCall,self).__init__()
-        self.identifier = identifier
+        self.callable_ = callable_
         self.expr_list = expr_list
         if expr_list:
             self.add_children(expr_list)
         self.builtin = False
+        self.arduino = False
         self.isiterator = False
     def __repr__(self):
         if self.expr_list:
-            return "PyFunctionCall(%s, %s)" % (repr(self.identifier), repr(self.expr_list), )
+            return "PyFunctionCall(%s, %s)" % (repr(self.callable_), repr(self.expr_list), )
         else:
-            return "PyFunctionCall(%s)" % (repr(self.identifier), )
+            return "PyFunctionCall(%s)" % (repr(self.callable_), )
 
     def __json__(self):
         if self.expr_list:
-            return [ self.tag, jdump(self.identifier), jdump(self.expr_list) ]
+            return [ self.tag, jdump(self.callable_), jdump(self.expr_list) ]
         else:
-            return [ self.tag, jdump(self.identifier) ]
+            return [ self.tag, jdump(self.callable_) ]
     def __info__(self):
         info = super(PyFunctionCall, self).__info__()
-        info[self.tag]["name"] = self.identifier.__info__()
+        info[self.tag]["name"] = self.callable_.__info__()
         if self.expr_list:
             info[self.tag]["args"] = [ x.__info__() for x in self.expr_list ]
         else:
@@ -290,32 +299,46 @@ class PyFunctionCall(PyStatement):
     def analyse(self):
         # We'll need to decorate the function call with information from somewhere
         # For now though, we won't
-        print "ANALYSING FUNCTION CALL"
-        if self.identifier.value in builtins:
-            print "FUNCTION", self.identifier.value, "FOUND IN BUILTINS"
+        print "XXXX self.callable_", self.callable_
+        try:
+            print "XXXX self.callable_", self.callable_.value
+        except AttributeError as e:
+            print "XXXX self.callable_.value ERROR"
+            print e, dir(e), repr(e)
+            print self.callable_
+            print dir(self.callable_)
+            print "self.callable_.expression", self.callable_.expression
+            print "self.callable_.attribute", self.callable_.attribute
+
+            print "XXXX self.callable_.value ERROR"
+            raise
+        if self.callable_.value in builtins:
             self.builtin = True
             self.ntype = self.get_type()
-            print "WE CAN DO ANALYSIS FOR LIMITED BUILTINS"
-            print " IS AN ITERATOR:", self.isiterator
-            print "  VALUE(S) TYPE:", self.ntype
             return
-        print "NOTE: WE DON'T ACTUALLY DO ANY ANALYSIS YET - GENERALLY"
-        print "NOTE: ASIDE FROM SPECIAL CASING WE'LL JUST PASS THROUGH"
+        if self.callable_.value in arduino:
+            print "GOT HERE!"
+            self.arduino = True
+            self.ntype = self.get_type()
+            return
+
         return
 
     def get_type(self):
         # function calls have no default value, so for now we'll return None
         # This will be improved later on.
         if self.builtin:
-            print "It's a built in function, we can get it's type in a bit..."
-            meta = builtins[self.identifier.value]
+            meta = builtins[self.callable_.value]
             self.isiterator = meta.get("iterator", False)
             if self.isiterator:
                 return meta.get("values_type", None)
             return meta.get("return_type", None)
-        print "GETTING FUNCTION TYPE"
-        print "NOTE: WE CAN'T ACTUALLY GET THE TYPE YET"
-        print "NOTE: ASIDE FROM SPECIAL CASING WE'LL JUST CROSS FINGERS FOR NOW"
+        if self.arduino:
+            meta = arduino[self.callable_.value]
+            print "META META META", meta
+            print "META META META2", meta.get("return_ctype", None)
+            return meta.get("return_ctype", None)
+
         return None
 
 class PyForLoop(PyStatement):
@@ -773,6 +796,30 @@ class PyComparisonOperator(PyOperation):
 class PyMinusOperator(PyOperator):
     tag = "op_minus"
 
+class PyAttribute(PyNode):
+    tag = "attribute"
+    def __init__(self, lineno, value):
+        super(PyAttribute, self).__init__()
+        self.lineno = lineno
+        self.value = value
+    def __repr__(self):
+        return "%s(%d, %s)" % (self.classname(),self.lineno, repr(self.value))
+    def __json__(self):
+        return [ self.tag, self.lineno, jdump(self.value) ]
+
+class PyAttributeAccess(PyNode):
+    tag = "attributeaccess"
+    def __init__(self, expression, attribute):
+        super(PyAttributeAccess,self).__init__()
+        self.expression = expression
+        self.attribute = attribute
+    def __repr__(self):
+        return "%s(%s, %s)" % (self.classname(), repr(self.expression), repr(self.attribute))
+    def __json__(self):
+        return [ self.tag, jdump(self.expression), jdump(self.attribute) ]
+#    def value(self):
+#        return self.attribute
+
 # Base class for all Value Literals
 class PyValueLiteral(PyNode):
     tag = "value_literal"
@@ -852,6 +899,16 @@ class PyInteger(PyNumber):
     tag = "integer"
     def get_type(self):
         return "integer"
+
+class PySignedLong(PyNumber):
+    tag = "signedlong"
+    def get_type(self):
+        return "signedlong"
+
+class PyUnSignedLong(PyNumber):
+    tag = "unsignedlong"
+    def get_type(self):
+        return "unsignedlong"
 
 class PyHex(PyNumber):
     tag = "hex"

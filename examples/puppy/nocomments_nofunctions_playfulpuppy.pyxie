@@ -48,9 +48,9 @@ UDmin = 700
 
 IRdelay = 200
 
-time = 0
-sit = 0
-trick = 0
+time = 0l
+sit = 0l
+trick = 0l
 
 LShift = 0
 RShift = 0
@@ -61,7 +61,7 @@ pan=PANcenter
 tilt=TILcenter
 
 distance = 0
-temp = 0
+temp = 0L
 
 leftIRvalue = 0
 rightIRvalue = 0
@@ -158,21 +158,21 @@ while True:
             temp = pan - PANcenter
             if abs(temp) > 300:
               LShift = temp/2
-              RShift = 0-temp/2
+              RShift = -temp/2
             temp = (distance - bestdistance) * 15 / 10
             LShift = LShift - temp
             RShift = RShift - temp
             if LShift > Stepsize:
                 LShift = Stepsize
 
-            if LShift < 0-Stepsize:
-                LShift = 0-Stepsize
+            if LShift < -Stepsize:
+                LShift = -Stepsize
 
             if RShift > Stepsize:
                 RShift = Stepsize
 
-            if RShift < 0-Stepsize:
-                RShift = 0-Stepsize
+            if RShift < -Stepsize:
+                RShift = -Stepsize
 
         Raise = 150 +((abs(LShift) + abs(RShift)) /2)
         if Raise < 200:
@@ -355,15 +355,3 @@ while True:
                     if pan < PANcenter + 150:
                         FLHservo.writeMicroseconds(FLHcenter + (temp/6))
                         FLKservo.writeMicroseconds(FLKcenter - (temp/5))
-
-
-
-
-
-
-
-
-
-
-
-
