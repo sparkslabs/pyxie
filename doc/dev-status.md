@@ -10,37 +10,46 @@ commits. _(This is exported from trello)_
 
 * HEADLINE: PRE-ALPHA
 * DEV STATE: WORKING (BARE)
-* DEV VERSION: 0.0.17
-* RELEASED: 0.0.16
+* DEV VERSION: 0.0.19
+* RELEASED: 0.0.18 (10 Jan 2016)
 * LANGUAGE STATE: BARE*
-* FOCUS: Practicalities
+* FOCUS: Practicalities (Arduino Profile real example)
 
 
 ### WIP
 
+* 227\. .get_type() should be delegated, not rely on internal pynode details.
+* 226\. Implementation can analyse a simple call to arduino Servo() from Servo.h
 
 
 ### Paused
 
+* 225\. Implementation of attribute access is sufficient for arduino profile.
+* 201\. Arduino profile supports Servos
+* 221\. Initial spike support for function definitions. (no args, no return values)
+* 222\. Spike support for functions which use local variables
+* 223\. Spike support for functions with basic arguments.
 
 
 ### Release Backlog: Features
 
 * 0\.0.18 = = = = = = = = = =
-* 195\. Functionality of bin/pyxie-dev is in core, not a script
-* 51\. Pyxie compile harness is switched over to use a better system for determining runtime options #internals
-* 3\.5 Analysis code looks for an arduino profile file describing c-types appropriately.
-* 3\.8 Arduino compiled programs can use values returned from functions.
-* 3\.6 arduino profile file is propogated with something relating to core functions that read values, to avoid forcing types "manually"
-* 4\. Compilation profiles are pluggable
-* 194\. Docs on pyxie-dev usage
+* 207\. Arduino profile supports constants "HIGH", "LOW", "OUTPUT"
+* 202\. Arduino profile supports digitalWrite
+* 203\. Arduino profile supports delayMicroseconds
+* 204\. Arduino profile supports pinMode
+* 205\. Arduino profile supports analogRead
+* 206\. Arduino profile supports millis()
+* 209\. Parsing of Servo.attach() method call works as you'd expect
+* 210\. Parsing of Servo.writeMicroseconds() method call works as you'd expect
+* 213\. v0 Playful Puppy code analyses
+* 214\. v0 Playful Puppy code generates code
+* 215\. v0 Playful Puppy code compiles, and runs on device correctly
 
 
 ### Release Backlog: Tasks
 
 * 0\.0.18 - - - - - (tasks)
-* 8\. Add updating man page to the makefile #docs
-* 9\. Add the manpage to the distributed files, into the right places #docs
 
 
 ### Known Bugs / Anti-features
@@ -49,6 +58,16 @@ commits. _(This is exported from trello)_
 
 ### Backlog: Proposed Next
 
+* 9\. Add the manpage to the distributed files, into the right places #docs
+* 8\. Add updating man page to the makefile #docs
+* 196\. Batch Compiler
+* 197\. Web Editor
+* 195\. Functionality of bin/pyxie-dev is in core, not a script
+* 3\.5 Analysis code looks for an arduino profile file describing c-types appropriately.
+* 3\.8 Arduino compiled programs can use values returned from functions.
+* 3\.6 arduino profile file is propogated with something relating to core functions that read values, to avoid forcing types "manually"
+* 4\. Compilation profiles are pluggable
+* 194\. Docs on pyxie-dev usage
 * 11\. MBed compatible compilation profile? (Seeedstudio Arch)
 * 12\. MSP430 compatible compilation profile?
 
@@ -117,6 +136,20 @@ commits. _(This is exported from trello)_
 
 ### Features Implemented
 
+* 0\.0.18 = = = = = = = = = =
+* 224\. Parsing of attribute access is implemented
+* 51\. Pyxie compile harness is switched over to use a better system for determining runtime options #internals
+* 220\. range(start,end,step) is supported
+* 218\. Method calls for objects can be parsed.
+* 219\. Support for dumping the parse tree results as a json file.
+* 200\. Pyxie can generate signed long values
+* 199\. Pyxie can generate unsigned long values
+* 217\. Code Generation understands what to do with LONG/UNSIGNED LONG values
+* 216\. Pynodes exist for LONG/UNSIGNED LONG
+* 211\. Negated expression like "-temp/2" are parsed and work
+* 208\. Parsing of 0l and 0L works for unsigned and signed longs
+* 198\. Pyxie Code for Playful Puppy Exists basic version
+* 212\. Basic version of Playful Puppy code parses
 * 0\.0.17 = = = = = = = = = =
 * 193\. Update website to include the changes for 0.0.16/0.0.17 #docs
 * 56\. Blog post: Introducing Pyxie #docs #website
@@ -226,6 +259,9 @@ commits. _(This is exported from trello)_
 
 ### Tasks Done
 
+* Package for release
+* Cleanup clib packaging
+* 0\.0.18 - - - - - (tasks)
 * 0\.0.17 - - - - - (tasks)
 * 10\. Decide whether to add functionality of bin/pyxie-dev is in core
 * 0\.0.16 - - - - - (tasks)

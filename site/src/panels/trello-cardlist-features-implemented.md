@@ -2,11 +2,25 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Features Implemented
-updated: August 2015
+updated: January 2016
 title: Trello Cardlist Features Implemented
 ---
 ### Features Implemented
 
+* 0\.0.18 = = = = = = = = = =
+* 224\. Parsing of attribute access is implemented
+* 51\. Pyxie compile harness is switched over to use a better system for determining runtime options #internals
+* 220\. range(start,end,step) is supported
+* 218\. Method calls for objects can be parsed.
+* 219\. Support for dumping the parse tree results as a json file.
+* 200\. Pyxie can generate signed long values
+* 199\. Pyxie can generate unsigned long values
+* 217\. Code Generation understands what to do with LONG/UNSIGNED LONG values
+* 216\. Pynodes exist for LONG/UNSIGNED LONG
+* 211\. Negated expression like "-temp/2" are parsed and work
+* 208\. Parsing of 0l and 0L works for unsigned and signed longs
+* 198\. Pyxie Code for Playful Puppy Exists basic version
+* 212\. Basic version of Playful Puppy code parses
 * 0\.0.17 = = = = = = = = = =
 * 193\. Update website to include the changes for 0.0.16/0.0.17 #docs
 * 56\. Blog post: Introducing Pyxie #docs #website

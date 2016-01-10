@@ -4,10 +4,10 @@
 
 * HEADLINE: PRE-ALPHA
 * DEV STATE: WORKING (BARE)
-* DEV VERSION: 0.0.17
-* RELEASED: 0.0.16
+* DEV VERSION: 0.0.19
+* RELEASED: 0.0.18 (10 Jan 2016)
 * LANGUAGE STATE: BARE*
-* FOCUS: Practicalities
+* FOCUS: Practicalities (Arduino Profile real example)
 
 
 ### Dev states:
