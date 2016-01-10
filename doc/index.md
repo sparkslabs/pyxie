@@ -1,5 +1,7 @@
 ## Pyxie -- A Little Python to C++ Compiler
 
+**Latest Release:** [0.0.18](changelog.html) (10/Jan/2016)
+
 ### What job does / will this do?
 
 The aim of this project is to allow a adults and children to write code in a

@@ -7,6 +7,8 @@ updated: August 2015
 ---
 ## Pyxie -- A Little Python to C++ Compiler
 
+**Latest Release:** [0.0.18](changelog.html) (10/Jan/2016)
+
 {% whatjobdoesthisdo = panel("panels/what-job-does-this-do.md") %}
 
 ### Show me something you CAN compile
