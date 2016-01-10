@@ -157,6 +157,45 @@ Key expression support:
 This means we can almost start writing useful programs, but in particular
 can start creating simplistic benchmarks for measuring run speed.
 
+## High Level things missing
+
+### Language related
+
+From a high level the key things I view as missing are support for:
+
+* def - function definitions - and therefore implementation of scope
+* What happens with mixed types in expressions
+* Modulo operator support
+* import statements
+* yield - generator definitions
+* class - class definitions
+* object usage - method access, and attribute access
+
+There is obviously more missing, but these are the high level issues with pyxie's
+implementation of language at present.
+
+### Profile related
+
+* Linux host profile:
+ * Support for output (print) needs to be matched by (raw_)input support
+ * Needs to support input/output from files
+
+* Arduino profile:
+ * Need to support the following things at minimum:
+ * Constants:
+  * OUTPUT, INPUT (pinModes)
+  * HIGH, LOW (general pin values)
+ * functions/etc
+  * digitalWrite
+  * delayMicroseconds
+  * pinMode
+  * analogRead
+  * millis
+ * Hardware devices/libraries etc
+  * Servo
+  * IOToy
+  * prototype microbit
+
 ## Grammar Currently Supported
 
 Clearly we're not going to implement the full language spec in one go, so this
@@ -227,9 +266,13 @@ necessarily imply code generation, differences will be noted below.
                | expression '-' arith_expression
                | expression '**' arith_expression
 
-    arith_expression : expression_atom
-                     | arith_expression '*' expression_atom
-                     | arith_expression '/' expression_atom
+    arith_expression : negatable_expression_atom
+                     | arith_expression '*' negatable_expression_atom
+                     | arith_expression '/' negatable_expression_atom
+
+
+    negatable_expression_atom : "-" negatable_expression_atom 
+                              | expression_atom
 
     expression_atom : value_literal
                     | IDENTIFIER '(' ')' # Function call, with no arguments
@@ -247,6 +290,8 @@ necessarily imply code generation, differences will be noted below.
            | HEX
            | OCTAL
            | BINARY
+           | LONG         (suffice is L)
+           | UNSIGNEDLONG (suffice is l)
            | '-' number
 
 Current Lexing rules used by the grammar:

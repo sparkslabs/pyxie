@@ -5,7 +5,7 @@ name: Shortlog
 updated: July 2015
 title: Shortlog
 ---
-* 0.0.18 - UNRELEASED - TBD
+* 0.0.18 - 2016-01-10 - Grammar changes to support object attributes and methods, start of servo support in arduino profile.
 * 0.0.17 - 2015-08-12 - Add pass statement, enable "for" on arduino, update documentation, refactor pyxie harness
 * 0.0.16 - 2015-08-02 - Adds initial Arduino LEONARDO support, improved function call, release build scripts
 * 0.0.15 - 2015-07-18 - clib converted to py clib for adding to build directory

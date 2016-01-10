@@ -6,15 +6,52 @@ reason.
 
 ### In progress
 
-## [0.0.18] - UNRELEASED
+## [0.0.18] - 2016-01-10
 
 ### New
 
-*
+* Parsing of "long" integers, treating "l" as unsigned long values and "L" as signed long values.
+* Code generation for long and unsigned long values works
+* Add first major example of a pyxie parsable program - for controlling a 4 legged robot - DAGU playful puppy (8 servos for 4 legs, 2 for pan/tilt in head, IR Array)
+  -- Does not parse/compile yet! (But will!)
+* Add parsing of attribute lookup for objects
+ * Parsing tests for object attribute and method access
+ * Test cases for attribute access
+* Add simple servo example
+ * Couple of versions to simplify development - target version + simplest
+   working version
+* Some helper scripts to help while building/testing examples
+* Redo function calls to allow attribute access ordering
+* Recast identifier in functions as a callable expression
+* Initial version of arduino function call descriptors
+* Initial support for arduino profile in pynodes
+* Code generation for first arduino specific types (specifically "Servo")
+
+### Fixes
+
+* Re-enable parse only option
+* Allow expression atoms to be negatable, not just numbers (allows things like -step/2)
+* Remove trailing semi-colons in arduino-blink test
+* Fix Missing import regarding parsing testfiles in bin/pyxie
+* Changes regarding precedence of brackets to other expression atoms
 
 ### Other
 
-*
+* Add a list of the high level things 'missing' to Language status
+* Support for dumping the parse tree results as a json file - for debug purposes (disabled in code by default)
+* Restores long/unsigned hinting where necessary
+* Update range to support start, end and step - replacing max
+* Test case for new range implementation
+* Make PyAttribute's jdump correctly
+* MAJOR Clean up how options are handled - shifted into introspected classes in bin/pyxie, along with improved internal docs
+* Initial cleanup inside bin/pyxie-dev
+* Improve lexing error messages
+* clib updated
+
+### Will need revisiting
+
+* Do not clean up builds temporarily
+
 
 ## [0.0.17] - 2015-08-12
 

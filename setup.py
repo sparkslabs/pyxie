@@ -302,7 +302,8 @@ Release History
 
 Release History:
 
--  0.0.18 - UNRELEASED - TBD
+-  0.0.18 - 2016-01-10 - Grammar changes to support object attributes
+   and methods, start of servo support in arduino profile.
 -  0.0.17 - 2015-08-12 - Add pass statement, enable "for" on arduino,
    update documentation, refactor pyxie harness
 -  0.0.16 - 2015-08-02 - Adds initial Arduino LEONARDO support, improved
@@ -408,9 +409,13 @@ Language Status
                | expression '-' arith_expression
                | expression '**' arith_expression
 
-    arith_expression : expression_atom
-                     | arith_expression '*' expression_atom
-                     | arith_expression '/' expression_atom
+    arith_expression : negatable_expression_atom
+                     | arith_expression '*' negatable_expression_atom
+                     | arith_expression '/' negatable_expression_atom
+
+
+    negatable_expression_atom : "-" negatable_expression_atom 
+                              | expression_atom
 
     expression_atom : value_literal
                     | IDENTIFIER '(' ')' # Function call, with no arguments
@@ -428,6 +433,8 @@ Language Status
            | HEX
            | OCTAL
            | BINARY
+           | LONG         (suffice is L)
+           | UNSIGNEDLONG (suffice is l)
            | '-' number
 
 Current Lexing rules used by the grammar:
@@ -467,7 +474,7 @@ around version 0.0.15, based on current rate of progress.
 
 Keeping it for now also simplifies "yield" later
 
-Michael Sparks, August 2015
+Michael Sparks, January 2015
 
 """
       )
