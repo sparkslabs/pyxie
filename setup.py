@@ -48,7 +48,7 @@ packages = find_packages(".")
 package_names = packages.keys()
 
 setup(name = "pyxie",
-      version = "0.0.18",
+      version = "0.0.19",
       description = "Little Python to C++ Compiler",
       url='http://www.sparkslabs.com/pyxie/',
       author='Michael Sparks (sparkslabs)',
@@ -302,6 +302,7 @@ Release History
 
 Release History:
 
+-  0.0.19 - UNRELEASED - TBD
 -  0.0.18 - 2016-01-10 - Grammar changes to support object attributes
    and methods, start of servo support in arduino profile.
 -  0.0.17 - 2015-08-12 - Add pass statement, enable "for" on arduino,
