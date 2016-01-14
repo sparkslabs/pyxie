@@ -381,7 +381,7 @@ def make_release():
     os.system("rm MANIFEST")
     ver,release = get_shortlog_version()
 
-    os.system("git tag v"+ver)
+    os.system('git tag -a v%s -m "Version %s"' % (ver, ver) )
 
     # Update python version of the clib.
     os.chdir("clib")
