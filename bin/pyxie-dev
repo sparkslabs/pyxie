@@ -75,30 +75,68 @@ def get_next_version(ver_type):
     new_version = "%d.%d.%d" % (major, minor, patch)
     return new_version, release
 
+help_text = """
+pyxie-dev [toggles] [options]
+
+toggles:
+    -v        verbose mode
+    -d        dryrun - don't change files
+
+options:
+    get       get current version, and if verbose other information
+    propose   get proposed version
+    released  get status of released, Returns 0 if released, 1 if not. If verbose outputs state as well
+    bump      bump version
+
+    rebase-release Rebase the current code, ready for release
+    make-release   Make the release based on current code
+    do-upload      upload to launchpad and pypi
+
+pyxie-dev is intended to be run relative to a development checkout
+If this is not what you want, set PYXIE_DEV=global prior to running pyxie-dev
+
+eg:
+    PYXIE_DEV=global pyxie-dev options"
+
+Expected usage:
+
+Before a release:
+
+    - Create a branch containing the history. (eg git checkout -b pre_v0.0.19)
+    - Checkout WIP again
+    - Then: ./bin/pyxie-dev rebase-release
+       - Clean up your history as you see fit
+    - Then: ./bin/pyxie-dev make-release
+    - Assuming that went fine, add/commit all the changes made for the release to git
+    - Then: ./bin/pyxie-dev do-upload
+    - Then double check everything related to that release is committed and push.
+
+    - NOTE: When pushing, remember to push the tags - git push --follow-tags so that
+      the release shows up on github.
+
+You may need to do a stash/fetch/rebase/stash pop/build_site.py on the webserver
+
+After a release:
+
+    - Update latest release info in site/src/index.md (this will get rolled in make-release)
+    - You may need to do a stash/fetch/rebase/stash pop/build_site.py on the webserver
+    - Check the version you've just released has been released:
+      - ./bin/pyxie-dev get
+      - ./bin/pyxie-dev released
+    - Check the next version looks sane:
+      - ./bin/pyxie-dev propose
+    - If it does, bump versions:
+      - ./bin/pyxie-dev bump
+
+"""
+
 def do_usage():
-    print "pyxie-dev [toggles] [options]"
-    print 
-    print "toggles:"
-    print "    -v        verbose mode"
-    print "    -d        dryrun - don't change files"
-    print
-    print "options:"
-    print "    get       get current version, and if verbose other information"
-    print "    propose   get proposed version"
-    print "    released  get status of released, Returns 0 if released, 1 if not. If verbose outputs state as well"
-    print "    bump      bump version"
-    print
-    print "    rebase-release Rebase the current code, ready for release"
-    print "    make-release   Make the release based on current code"
-    print "    do-upload      upload to launchpad and pypi"
-    print
-    print     
-    print "pyxie-dev is intended to be run relative to a development checkout"
-    print "If this is not what you want, set PYXIE_DEV=global prior to running pyxie-dev"
-    print "eg:"
-    print "PYXIE_DEV=global pyxie-dev options"
-    print
-    print "CURRENT VERSION:", get_shortlog_version()
+    current_version = get_shortlog_version()
+
+    print help_text
+    print "CURRENT VERSION:", current_version
+
+
 
 def do_get():
     ver, release = get_shortlog_version()
