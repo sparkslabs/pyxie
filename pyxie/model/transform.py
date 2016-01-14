@@ -26,7 +26,7 @@ from pyxie.model.functions import arduino_profile_types as arduino
 iterator_unique_base = 0
 
 def todo(*args):
-    print "TODO", " ".join([repr(x) for x in args])
+    print("TODO", " ".join([repr(x) for x in args]))
 
 # Assumes that the analysis phase has taken place
 def find_variables(AST):
@@ -38,25 +38,25 @@ def find_variables(AST):
             rvalue_source = node.expression
             identifier = lvalue.value
             v_type = lvalue.ntype
-            print "FOR LOOP, IDENTIFIER", identifier, "HAS TYPE", v_type
+            print("FOR LOOP, IDENTIFIER", identifier, "HAS TYPE", v_type)
             variables[identifier] = v_type
             if node.expression.isiterator:
-                print "#####################################################"
-                print "Extracting generator intermediate variable"
-                print node.expression
+                print("#####################################################")
+                print("Extracting generator intermediate variable")
+                print(node.expression)
                 if isinstance(node.expression, nodes.PyFunctionCall):
                     identifier = node.expression.identifier
-                    print "Bibble", identifier
-                    print "Bibble", identifier.value
+                    print("Bibble", identifier)
+                    print("Bibble", identifier.value)
                     iterator_type = identifier.value
                     iterator_unique_base += 1
                     iterator_name = identifier.value + "_iter_" + str(iterator_unique_base)
-                    print "iterator_type", iterator_type
-                    print "iterator_name", iterator_name
+                    print("iterator_type", iterator_type)
+                    print("iterator_name", iterator_name)
                     variables[iterator_name] = iterator_type
                     node.expression.ivalue_name = iterator_name
 
-                print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
         if node.tag == "assignment_statement":
             if node.assign_type != "=":
@@ -184,7 +184,7 @@ def convert_assignment(assignment):
         todo("assignment where the rvalue is not a value_literal or operator")
         raise CannotConvert("Cannot convert assignment where the rvalue is not a value_literal")
 
-    # print rvalue
+    # print(rvalue)
     clvalue = lvalue.value # FIXME: This is only valid for identifiers
     if isinstance(assignment.rvalue, nodes.PyValueLiteral):
         crvalue = crepr_literal(rvalue)
@@ -201,7 +201,7 @@ def convert_assignment(assignment):
     return ["assignment", clvalue, "=", crvalue ]
 
 def convert_value_literal(arg):
-    # print repr(arg), arg
+    # print(repr(arg), arg)
     stype = None
     tag, value, vtype, line = arg.tag, arg.value,arg.get_type(), arg.lineno
     if tag == "identifier":
@@ -227,7 +227,7 @@ def convert_value_literal(arg):
 
 
 def convert_bool_operator_function(opfunc):
-    print "CONVERT - convert_bool_operator_function", repr(opfunc)
+    print("CONVERT - convert_bool_operator_function", repr(opfunc))
     assert isinstance(opfunc, nodes.PyBoolOperator)
 
     func = opfunc.tag
@@ -244,19 +244,19 @@ def convert_bool_operator_function(opfunc):
     else:
         crepr_arg2 = None
 
-    print "crepr_arg1", repr(crepr_arg1)
+    print("crepr_arg1", repr(crepr_arg1))
 
     if arg2:
-        print "crepr_arg2", repr(crepr_arg2)
+        print("crepr_arg2", repr(crepr_arg2))
         result = crepr_op(opfunc) + [crepr_arg1, crepr_arg2]
     else:
         result = crepr_op(opfunc) + [crepr_arg1 ]
-    print repr(result)
+    print(repr(result))
     return result
 
 
 def convert_operator_function(opfunc):
-    print "CONVERT - convert_operator_function", repr(opfunc)
+    print("CONVERT - convert_operator_function", repr(opfunc))
     assert isinstance(opfunc, nodes.PyOperator)
 
     func = opfunc.tag
@@ -265,11 +265,11 @@ def convert_operator_function(opfunc):
 
     crepr_arg1 = convert_arg(arg1)
     crepr_arg2 = convert_arg(arg2)
-    print "crepr_arg1", repr(crepr_arg1)
-    print "crepr_arg2", repr(crepr_arg2)
+    print("crepr_arg1", repr(crepr_arg1))
+    print("crepr_arg2", repr(crepr_arg2))
 
     result = crepr_op(opfunc) + [crepr_arg1, crepr_arg2]
-    print repr(result)
+    print(repr(result))
     return result
 
     #todo("Cannot yet convert operator functions")
@@ -284,7 +284,7 @@ def convert_comparison_operator(comparison):
     raise NotImplementedError(repr(comparison))
 
 def convert_comparison(comparison_spec):
-    print "CONVERT - convert_comparison", repr(comparison_spec)
+    print("CONVERT - convert_comparison", repr(comparison_spec))
     assert isinstance(comparison_spec, nodes.PyComparisonOperator)
 
     comparison = comparison_spec.comparison
@@ -294,18 +294,18 @@ def convert_comparison(comparison_spec):
     crepr_comparison = convert_comparison_operator(comparison)
     crepr_arg1 = convert_arg(arg1)
     crepr_arg2 = convert_arg(arg2)
-    print "crepr_arg1", repr(crepr_arg1)
-    print "crepr_arg2", repr(crepr_arg2)
+    print("crepr_arg1", repr(crepr_arg1))
+    print("crepr_arg2", repr(crepr_arg2))
 
     result = ["op", crepr_comparison, crepr_arg1, crepr_arg2]
-    print repr(result)
+    print(repr(result))
     return result
 
 
 
 def convert_arg(arg):
     if isinstance(arg, nodes.PyValueLiteral):
-        print "CONVERTING LITERAL", arg
+        print("CONVERTING LITERAL", arg)
         return convert_value_literal(arg)
     elif isinstance(arg, nodes.PyComparisonOperator):
         return convert_comparison(arg)
@@ -315,12 +315,12 @@ def convert_arg(arg):
         return  convert_bool_operator_function(arg)
 
     elif isinstance(arg, nodes.PyFunctionCall):
-        print "NEED TO CONVERT FUNCTION CALL TO SOMETHING THE C CODE GENERATOR CAN HANDLE"
+        print("NEED TO CONVERT FUNCTION CALL TO SOMETHING THE C CODE GENERATOR CAN HANDLE")
         cargs = []
         if arg.expr_list:
             for expr in arg.expr_list:
-                #print arg
-                #print "We need to convert the arg", arg
+                #print(arg)
+                #print("We need to convert the arg", arg)
                 crepr = convert_arg(expr)
                 carg = crepr
                 cargs.append(carg)
@@ -335,8 +335,8 @@ def convert_print(print_statement):
     cstatement = []
     cargs = []
     for arg in print_statement.expr_list:
-        #print arg
-        #print "We need to convert the arg", arg
+        #print(arg)
+        #print("We need to convert the arg", arg)
         crepr = convert_arg(arg)
         carg = crepr
         cargs.append(carg)
@@ -359,21 +359,21 @@ def convert_for_statement(for_statement):
     cstep = convert_statements(step)
 
 
-    print "*******************"
-    print crvalue_source 
-    print "*******************"
-    print "FOR STATEMENT :", 
-    print "              : ", for_statement
-    print "              :", dir(for_statement)
-    print "     loop var :", for_statement.identifier
-    print "loop var type :", for_statement.identifier.get_type()
-    print "loop var ctype:", python_type_to_c_type(for_statement.identifier.get_type())
-    print "     iterator :", for_statement.expression
-    print "        block :", for_statement.block
-    print "        info :", for_statement.__info__()
-    print "*******************"
+    print("*******************")
+    print(crvalue_source )
+    print("*******************")
+    print("FOR STATEMENT :" )
+    print("              : ", for_statement)
+    print("              :", dir(for_statement))
+    print("     loop var :", for_statement.identifier)
+    print("loop var type :", for_statement.identifier.get_type())
+    print("loop var ctype:", python_type_to_c_type(for_statement.identifier.get_type()))
+    print("     iterator :", for_statement.expression)
+    print("        block :", for_statement.block)
+    print("        info :", for_statement.__info__())
+    print("*******************")
     pprint.pprint( for_statement.__info__() )
-    print "*******************"
+    print("*******************")
     # crepr_condition = convert_arg(for_statement.condition)
     # cstatements = convert_statements(while_statement.block)
 #    return ["while_statement", crepr_condition] + cstatements
@@ -382,7 +382,7 @@ def convert_for_statement(for_statement):
 
 def convert_extended_clause(extended_clause):
     if extended_clause.tag == "elif_clause":
-        print "WORKING THROUGH ELIF:", extended_clause
+        print("WORKING THROUGH ELIF:", extended_clause)
         crepr_condition = convert_arg(extended_clause.condition)
         cstatements = convert_statements(extended_clause.block)
         if extended_clause.else_clause:
@@ -391,18 +391,18 @@ def convert_extended_clause(extended_clause):
         return ["elif_clause", crepr_condition, cstatements ]
 
     if extended_clause.tag == "else_clause":
-        print "WORKING THROUGH ELSE:", extended_clause
+        print("WORKING THROUGH ELSE:", extended_clause)
         cstatements = convert_statements(extended_clause.block)
         return ["else_clause", cstatements ]
 
-    print "NOT ELIF!"
-    print "NOT ELSE!"
-    print extended_clause
+    print("NOT ELIF!")
+    print("NOT ELSE!")
+    print(extended_clause)
     raise ValueError("Extended clause isn't a else or elif clause: %s" % repr(extended_clause))
 
 
 def convert_if_statement(if_statement):
-    print "WORKING THROUGH IF:", if_statement
+    print("WORKING THROUGH IF:", if_statement)
     crepr_condition = convert_arg(if_statement.condition)
     cstatements = convert_statements(if_statement.block)
     if if_statement.else_clause:
@@ -420,11 +420,11 @@ def convert_continue_statement(continue_statement):
     return ["continue_statement"]
 
 def convert_expression_statement(statement):
-    print "CONVERTING EXPRESSION STATEMENTS", statement.value
-    print "EXPRESSION STATEMENT", statement.value.tag
+    print("CONVERTING EXPRESSION STATEMENTS", statement.value)
+    print("EXPRESSION STATEMENT", statement.value.tag)
     crepr = convert_arg(statement.value)
-    print "RECHED HERE"
-    print "CONVERTED ", crepr
+    print("REACHED HERE")
+    print("CONVERTED ", crepr)
     return ["expression_statement", crepr]
 
 
@@ -435,7 +435,7 @@ def convert_statements(AST):
         try:
             if statement.tag == "assignment_statement":
                 cstatement = convert_assignment(statement)
-                print cstatement
+                print(cstatement)
                 cstatements.append(cstatement)
             elif statement.tag == "print_statement":
                 cstatement = convert_print(statement)
@@ -461,10 +461,10 @@ def convert_statements(AST):
                 cstatement = convert_continue_statement(statement)
                 cstatements.append(cstatement)
             else:
-                print "SKIPPING STATEMENT", statement.tag
+                print("SKIPPING STATEMENT", statement.tag)
 
         except CannotConvert:
-            print "REACHED HERE FOR", statement
+            print("REACHED HERE FOR", statement)
             pass
     return cstatements
 
@@ -472,7 +472,7 @@ def ast_to_cst(program_name, AST):
     cst = {}
 
     ast_includes = [ x.replace("#include ","") for x in AST.includes ]
-    print "AST.includes = ", ast_includes
+    print("AST.includes = ", ast_includes)
     # Extract and handle variables
     pvariables = find_variables(AST)
     cvariables = []
@@ -487,10 +487,10 @@ def ast_to_cst(program_name, AST):
         cvariables.append(identifier)
         ctypes[ctype] = True
 
-    print "cvariables",cvariables
+    print("cvariables",cvariables)
 
     cstatements = convert_statements(AST)
-    print cstatements
+    print(cstatements)
 
     # Based on variables, update includes
     for ctype in ctypes:
@@ -498,7 +498,7 @@ def ast_to_cst(program_name, AST):
         if inc:
             includes.append(inc)
 
-    print "INCLUDES::", includes
+    print("INCLUDES::", includes)
     # Based on statements, update includes
     for cstatement in cstatements:
         inc = includes_for_cstatement(cstatement)
@@ -579,7 +579,7 @@ if __name__ == "__main__":
 
     actual = ast_to_cst("hello_operators", AST)
 
-    print "actual == expect --->", actual == expect
+    print("actual == expect --->", actual == expect)
 
     import json
     import pprint

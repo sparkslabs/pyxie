@@ -65,7 +65,7 @@ def parse_source_data(page):
         process = process[index+2:]
         index = process.find("%}")
         if index == -1:
-            print "UNMATCHED {%, aborting unprocessed"
+            print("UNMATCHED {%, aborting unprocessed")
             if len(process) > 0:
                 parts.append(("passthrough", process))
                 process = ""
@@ -97,12 +97,12 @@ def process_directives(source_data):
             result.append(page_part)
         elif page_part_type == "process":
             part_result = process_directive(page_part)
-            print page_part
-            print "PRE LEN", len(part_result)
+            print(page_part)
+            print("PRE LEN", len(part_result))
             while "{%" in part_result: # panels may contain sub panels after all.
-                print "RECURSING!"
+                print("RECURSING!")
                 part_result = process_directives(part_result)
-                print "POST LEN", len(part_result)
+                print("POST LEN", len(part_result))
             result.append(part_result)
         else:
             result.append(page_part)
@@ -113,17 +113,17 @@ try:
     from build_site_local import pre_run
     
     pre_run()
-    print "LOCAL PRE RUN"
+    print("LOCAL PRE RUN")
 
 except ImportError:
-    print "NO PRE RUN"
+    print("NO PRE RUN")
     pass
 
 
 
 site_meta = {}
 for filename in files("src"):
-    print filename
+    print(filename)
     stripped = filename[:filename.rfind(".")]
     result_file = stripped.lower() + ".html"
     source_data = open("src/"+ filename ).read()
@@ -141,9 +141,9 @@ count = 0
 for filename in files("src"):
     meta, source_data = site_meta[filename],site_meta[filename]["_source_data"]
     if meta.get("skip", False):
-        print "Skipping", filename
+        print("Skipping", filename)
         continue
-    print "PROCESSING", filename
+    print("PROCESSING", filename)
 
     stripped = meta["_stripped"]
     result_file = meta["_result_file"]
@@ -162,7 +162,7 @@ for filename in files("src"):
     try:
         result_html = result_html.replace(u"{% page.title %}",meta.get("title", meta["_stripped"]))
     except KeyError as e:
-        print "KEYERROR meta",meta
+        print("KEYERROR meta",meta)
         raise
 
     out = open("site/"+ result_file,"w")
@@ -182,9 +182,9 @@ try:
     import build_site_local
     from build_site_local import run_local
     run_local(site_meta, process_directives)
-    print "LOCAL RUN"
+    print("LOCAL RUN")
 
 except ImportError:
-    print "No build_site_local customisations"
+    print("No build_site_local customisations")
 
-print "Success!", count, "files published."
+print("Success!", count, "files published.")

@@ -99,17 +99,17 @@ def _run_tests():
         def DF_walk(self):
             "Process the tree depth first"
             for i in self.depth_walk():
-                print "DFS", i
+                print("DFS", i)
 
         def BF_walk(self):
             "Process the tree breadth first"
             for i in a.breadth_walk():
-                print "BFS", i
+                print("BFS", i)
 
         def BFUP_walk(self):
             "Process the tree breadth first"
             for i in a.breadth_walk_up():
-                print "BFUP", i
+                print("BFUP", i)
 
         def __repr__(self):
             return "N:" + str(self.tag)
@@ -159,13 +159,13 @@ def _run_tests():
     f.add_children(l,m)
     g.add_children(n,o)
 
-    print "df_walk"
+    print("df_walk")
     a.DF_walk()
 
-    print "bf_walk"
+    print("bf_walk")
     a.BF_walk()
 
-    print "bfup_walk"
+    print("bfup_walk")
     a.BFUP_walk()
 
 

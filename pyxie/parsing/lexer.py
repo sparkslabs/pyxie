@@ -185,8 +185,8 @@ def t_BLOCKS_EOL(t):
 
 def t_NORMAL_INCLUDELINE(t):
     r'\#include.*'
-    print "WE SAW A #INCLUDE line! :-)"
-    print "It was this:", repr(t.value)
+    print("WE SAW A #INCLUDE line! :-)")
+    print("It was this:", repr(t.value))
     t.lexer.includes.append(t.value)
 
 def t_INITIAL_BLOCKS_WS(t):
@@ -233,7 +233,7 @@ def t_INITIAL_BLOCKS_INDENT(t):
     # If it's a new one, add it to the "lexer.indents" stack
     if curr_indent > t.lexer.indents[-1]:
         t.lexer.indents.append(t.lexer.curr_indent)
-        print "EMITTING INDENT", t
+        print("EMITTING INDENT", t)
         return t
 
     t.lexer.begin('NORMAL')
@@ -254,13 +254,13 @@ def t_ENDBLOCKS_DEDENT(t):
     # This allows us to emit as many DEDENT tokens as necessary.
     if t.lexer.dedents_needed > 0:
         t.lexer.dedents_needed -= 1
-        print "EMITTING DEDENT", t
+        print("EMITTING DEDENT", t)
         return t
     t.lexer.begin('NORMAL')
 
 # Error handling rule
 def t_ANY_error(t):
-    print "Illegal character '%s'" % t.value[0], t
+    print("Illegal character '%s'" % t.value[0], t)
     t.lexer.skip(1)
 
 def build_lexer():

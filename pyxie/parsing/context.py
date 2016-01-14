@@ -70,14 +70,14 @@ class Context(object):
             self.contexts[id(self)] = self
 
     def store(self, name, expression):
-        print "Context.store NAME", name, "VALUE", expression
+        print("Context.store NAME", name, "VALUE", expression)
         if name in self.names:
-            print "WARNING: Name %s already exists in names, this may be OK. Storing expression %s" % (repr(name), repr(expression))
+            print("WARNING: Name %s already exists in names, this may be OK. Storing expression %s" % (repr(name), repr(expression)))
         try:
             self.names[name].append( expression )
         except KeyError:
             self.names[name] = [ expression ]
-        print "CONTEXT", self.names
+        print("CONTEXT", self.names)
 
     def lookup(self, name):
         if name in self.names:

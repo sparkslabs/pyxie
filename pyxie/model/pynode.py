@@ -43,14 +43,14 @@ def jdump(thing):
     try:
         return thing.__json__()
     except AttributeError:
-        print "WARNING::", repr(thing), "is not a pynode"
-        print "       ::", type(thing)
+        print("WARNING::", repr(thing), "is not a pynode")
+        print("       ::", type(thing))
 
 def warn(message):
     if WARNINGS_ARE_FAILURES:
         raise Exception(message)
     else:
-        print message
+        print(message)
 
 # Astract base nodes
 
@@ -103,13 +103,13 @@ class PyProgram(PyNode):
         return info
 
     def analyse(self):
-        print "ANALYSING PROGRAM"
+        print("ANALYSING PROGRAM")
 
         global_context = Context()
         for node in self.depth_walk():
             if node.tag == "identifier":
                 node.context = global_context
-                print "NODE", node
+                print("NODE", node)
 
         self.ntype = self.get_type()
         self.statements.analyse() # Descend through the tree
@@ -143,7 +143,7 @@ class PyBlock(PyNode):
         return info
 
     def analyse(self):
-        print "ANALYSING BLOCK"
+        print("ANALYSING BLOCK")
 
 #        global_context = Context()
 #        for node in self.depth_walk():
@@ -187,7 +187,7 @@ class PyStatements(PyNode):
             yield statement
 
     def analyse(self):
-        print "ANALYSING STATEMENTS"
+        print("ANALYSING STATEMENTS")
         self.ntype = self.get_type()
         for statement in self.statements:
             statement.analyse() # Descend through the tree
@@ -218,8 +218,8 @@ class PyAssignment(PyStatement):
         return info
 
     def analyse(self):
-        print "ANALYSING ASSIGNMENT"
-        print "ANALYSE RIGHT"
+        print("ANALYSING ASSIGNMENT")
+        print("ANALYSE RIGHT")
         self.rvalue.analyse()
         self.lvalue.add_rvalue(self.rvalue)
         self.lvalue.analyse()
@@ -230,9 +230,9 @@ class PyAssignment(PyStatement):
         ltype = self.lvalue.get_type()
         rtype = self.rvalue.get_type()
 
-        print "Type for lvalue:", ltype
-        print "Type for rvalue:", rtype
-        print "Types match:", rtype==ltype
+        print("Type for lvalue:", ltype)
+        print("Type for rvalue:", rtype)
+        print("Types match:", rtype==ltype)
 
         # rtype wins because it's being used to set the left
         return rtype
@@ -253,13 +253,13 @@ class PyExpressionStatement(PyStatement):
         info[self.tag]["value"] = self.value.__info__()
         return info
     def analyse(self):
-        print "ANALYSING EXPRESSION STATEMENT"
+        print("ANALYSING EXPRESSION STATEMENT")
         try:
             self.value.analyse()
         except AttributeError:
-            print "CANNOT ANALYSE VALUE"
-            print repr(self.value)
-            print jdump(self.value)
+            print("CANNOT ANALYSE VALUE")
+            print(repr(self.value))
+            print(jdump(self.value))
             raise
         self.ntype = self.get_type()
     def get_type(self):
@@ -299,25 +299,25 @@ class PyFunctionCall(PyStatement):
     def analyse(self):
         # We'll need to decorate the function call with information from somewhere
         # For now though, we won't
-        print "XXXX self.callable_", self.callable_
+        print("XXXX self.callable_", self.callable_)
         try:
-            print "XXXX self.callable_", self.callable_.value
+            print("XXXX self.callable_", self.callable_.value)
         except AttributeError as e:
-            print "XXXX self.callable_.value ERROR"
-            print e, dir(e), repr(e)
-            print self.callable_
-            print dir(self.callable_)
-            print "self.callable_.expression", self.callable_.expression
-            print "self.callable_.attribute", self.callable_.attribute
+            print("XXXX self.callable_.value ERROR")
+            print(e, dir(e), repr(e))
+            print(self.callable_)
+            print(dir(self.callable_))
+            print("self.callable_.expression", self.callable_.expression)
+            print("self.callable_.attribute", self.callable_.attribute)
 
-            print "XXXX self.callable_.value ERROR"
+            print("XXXX self.callable_.value ERROR")
             raise
         if self.callable_.value in builtins:
             self.builtin = True
             self.ntype = self.get_type()
             return
         if self.callable_.value in arduino:
-            print "GOT HERE!"
+            print("GOT HERE!")
             self.arduino = True
             self.ntype = self.get_type()
             return
@@ -335,8 +335,8 @@ class PyFunctionCall(PyStatement):
             return meta.get("return_type", None)
         if self.arduino:
             meta = arduino[self.callable_.value]
-            print "META META META", meta
-            print "META META META2", meta.get("return_ctype", None)
+            print("META META META", meta)
+            print("META META META2", meta.get("return_ctype", None))
             return meta.get("return_ctype", None)
 
         return None
@@ -362,21 +362,21 @@ class PyForLoop(PyStatement):
     def analyse(self):
         # We'll need to decorate the function call with information from somewhere
         # For now though, we won't
-        print "ANALYSING FOOR LOOP"
-        print"                ... Analyse expression"
+        print("ANALYSING FOOR LOOP")
+        print("                ... Analyse expression")
         expression = self.expression
         expression.analyse()
-        print expression
+        print(expression)
         if expression.isiterator:
-            print "Expression is an iterator"
+            print("Expression is an iterator")
 
         self.identifier.add_rvalue(expression) # The result of the expression becomes a repeated rvalue for the identifier, so this sorta makes sense
 
-        print"                ... Update identifier"
-        print"                ... Analyse identifier"
+        print("                ... Update identifier")
+        print("                ... Analyse identifier")
         self.identifier.analyse()
 
-        print"                ... Analyse block"
+        print("                ... Analyse block")
         self.block.analyse()
         return
 
@@ -400,15 +400,15 @@ class PyWhileStatement(PyStatement):
     def analyse(self):
         # We'll need to decorate the function call with information from somewhere
         # For now though, we won't
-        print "ANALYSING WHILE BLOCK"
-        print "analyse expression, and analyse block"
+        print("ANALYSING WHILE BLOCK")
+        print("analyse expression, and analyse block")
         self.condition.analyse()
         self.block.analyse()
         return
     def get_type(self):
         # function calls have no default value, so for now we'll return None
         # This will be improved later on.
-        print "GETTING WHILE BLOCK TYPE - which should be None - for now"
+        print("GETTING WHILE BLOCK TYPE - which should be None - for now")
         return None
 
 class PyIfStatement(PyStatement):
@@ -438,8 +438,8 @@ class PyIfStatement(PyStatement):
             info[self.tag]["else_clause"] = self.else_clause.__info__()
         return info
     def analyse(self):
-        print "ANALYSING IF BLOCK"
-        print "analyse expression, and analyse block"
+        print("ANALYSING IF BLOCK")
+        print("analyse expression, and analyse block")
         self.condition.analyse()
         self.block.analyse()
         if self.else_clause:
@@ -448,7 +448,7 @@ class PyIfStatement(PyStatement):
     def get_type(self):
         # function calls have no default value, so for now we'll return None
         # This will be improved later on.
-        print "GETTING IF BLOCK TYPE - which should be None - for now"
+        print("GETTING IF BLOCK TYPE - which should be None - for now")
         return None
 
 class PyElIfClause(PyStatement):
@@ -478,8 +478,8 @@ class PyElIfClause(PyStatement):
             info[self.tag]["else_clause"] = self.else_clause.__info__()
         return info
     def analyse(self):
-        print "ANALYSING ELIF BLOCK"
-        print "analyse expression, and analyse block"
+        print("ANALYSING ELIF BLOCK")
+        print("analyse expression, and analyse block")
         self.condition.analyse()
         self.block.analyse()
         if self.else_clause:
@@ -488,7 +488,7 @@ class PyElIfClause(PyStatement):
     def get_type(self):
         # function calls have no default value, so for now we'll return None
         # This will be improved later on.
-        print "GETTING IF BLOCK TYPE - which should be None - for now"
+        print("GETTING IF BLOCK TYPE - which should be None - for now")
         return None
 
 class PyElseClause(PyStatement):
@@ -506,14 +506,14 @@ class PyElseClause(PyStatement):
         info[self.tag]["block"] = self.block.__info__()
         return info
     def analyse(self):
-        print "ANALYSING ELSE CLAUSE"
-        print "analyse expression, and analyse block"
+        print("ANALYSING ELSE CLAUSE")
+        print("analyse expression, and analyse block")
         self.block.analyse()
         return
     def get_type(self):
         # function calls have no default value, so for now we'll return None
         # This will be improved later on.
-        print "GETTING ELSE CLAUSE TYPE - which should be None - for now"
+        print("GETTING ELSE CLAUSE TYPE - which should be None - for now")
         return None
 
 class PyEmptyStatement(PyStatement):
@@ -568,7 +568,7 @@ class PyPrintStatement(PyStatement):
         info[self.tag]["args"] = [ x.__info__() for x in self.expr_list ]
         return info
     def analyse(self):
-        print "ANALYSING PRINT STATEMENT"
+        print("ANALYSING PRINT STATEMENT")
         for expr in self.expr_list:
             expr.analyse() # Descend through the tree
 
@@ -632,9 +632,9 @@ class PyOperator(PyOperation):
                 self.ntype = "Mixed types, need to resolve", self.tag, self.arg1.get_type(),self.arg2.get_type()
             return self.ntype
         except:
-            print "TAG", self.tag
-            print "ARG1", self.arg1.get_type()
-            print "ARG2", self.arg2.get_type()
+            print("TAG", self.tag)
+            print("ARG1", self.arg1.get_type())
+            print("ARG2", self.arg2.get_type())
             raise
 
     def __repr__(self):
@@ -644,7 +644,7 @@ class PyOperator(PyOperation):
     def get_type(self):
         return self.type
     def analyse(self):
-        print "ANALYSING OPERATOR", self.tag
+        print("ANALYSING OPERATOR", self.tag)
         self.arg1.analyse()
         self.arg2.analyse()
 
@@ -679,7 +679,7 @@ class PyOrOperator(PyBoolOperator):
     def get_type(self):
         return "bool"
     def analyse(self):
-        print "ANALYSING OPERATOR:", self.tag
+        print("ANALYSING OPERATOR:", self.tag)
         self.arg1.analyse()
         self.arg2.analyse()
 
@@ -711,7 +711,7 @@ class PyAndOperator(PyBoolOperator):
     def get_type(self):
         return "bool"
     def analyse(self):
-        print "ANALYSING OPERATOR:", self.tag
+        print("ANALYSING OPERATOR:", self.tag)
         self.arg1.analyse()
         self.arg2.analyse()
 
@@ -741,7 +741,7 @@ class PyNotOperator(PyBoolOperator):
     def get_type(self):
         return "bool"
     def analyse(self):
-        print "ANALYSING OPERATOR:", self.tag
+        print("ANALYSING OPERATOR:", self.tag)
         self.arg1.analyse()
         self.ntype = self.get_type()
 
@@ -767,7 +767,7 @@ class PyComparisonOperator(PyOperation):
         self.ntype = None
         self.add_children(arg1,arg2)
 
-        print "CREATED COMPARISON OPERATOR", comparison, arg1, arg2
+        print("CREATED COMPARISON OPERATOR", comparison, arg1, arg2)
 
     def __info__(self):
         info = super(PyComparisonOperator, self).__info__()
@@ -787,7 +787,7 @@ class PyComparisonOperator(PyOperation):
     def get_type(self):
         return "bool"
     def analyse(self):
-        print "ANALYSING", self.tag
+        print("ANALYSING", self.tag)
         self.arg1.analyse()
         self.arg2.analyse()
 
@@ -837,7 +837,7 @@ class PyValueLiteral(PyNode):
         info[self.tag]["value"] = self.value
         return info
     def analyse(self):
-        print "ANALYSING VALUE LITERAL", self.tag
+        print("ANALYSING VALUE LITERAL", self.tag)
         # Don't go into containers, because there aren't any
         self.ntype = self.get_type()
     def get_type(self):
@@ -933,29 +933,29 @@ if __name__ == "__main__":
                 PyExpressionStatement(PyMinusOperator(PyInteger(1,10),PyInteger(1,10)))
         ]
     for tree in trees:
-        print tree
+        print(tree)
 
     for tree in trees:
-        print jdump(tree)
+        print(jdump(tree))
 
     MULTI_TYPES_WARN = True
     WARNINGS_ARE_FAILURES = False
 
     ident = PyIdentifier(1,"hello")
-    print ident, ident.get_type()
+    print(ident, ident.get_type())
 
     ident.add_type("string")
-    print ident, ident.get_type()
+    print(ident, ident.get_type())
     ident.add_type("string")
-    print ident, ident.get_type()
+    print(ident, ident.get_type())
     ident.add_type("char")
-    print ident, ident.get_type()
+    print(ident, ident.get_type())
     ident.add_type("integer")
-    print ident, ident.get_type()
+    print(ident, ident.get_type())
     ident.add_type("float")
-    print ident, ident.get_type()
+    print(ident, ident.get_type())
     ident.add_type("bool")
-    print ident, ident.get_type()
+    print(ident, ident.get_type())
 
     trees = [
                 PyString(1,"world"),
@@ -974,16 +974,16 @@ if __name__ == "__main__":
             ]
 
     for tree in trees:
-        print tree, tree.get_type()
+        print(tree, tree.get_type())
 
-    #print PyMinusOperator(PyInteger(1,10),PyInteger(1,10))
-    #print jdump(PyMinusOperator(PyInteger(1,10),PyInteger(1,10)))
+    #print(PyMinusOperator(PyInteger(1,10),PyInteger(1,10)))
+    #print(jdump(PyMinusOperator(PyInteger(1,10),PyInteger(1,10))))
 
-    #print PyBoolean(1,True)
-    #print jdump(PyBoolean(1,True))
+    #print(PyBoolean(1,True))
+    #print(jdump(PyBoolean(1,True)))
 
-    #print PyAssignment(PyIdentifier(1,"hello"), PyString(1,"world"), "=")
+    #print(PyAssignment(PyIdentifier(1,"hello"), PyString(1,"world"), "="))
 
-    #print jdump(PyAssignment(PyIdentifier(1,"hello"), PyString(1,"world"), "="))
+    #print(jdump(PyAssignment(PyIdentifier(1,"hello"), PyString(1,"world"), "=")))
 
 

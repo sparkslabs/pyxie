@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from __future__ import print_function
 
 import pprint
 import sys
@@ -88,7 +89,7 @@ class StandardOptions(CommandLineDispatcher):
         pprint.pprint(AST.__json__())
         if 0:
             import json
-            print "Also writing a copy to ", filename+".json"
+            print("Also writing a copy to ", filename+".json")
             f = open(filename+".json", "w")
             f.write(json.dumps(AST.__json__()))
             f.close()
@@ -132,7 +133,7 @@ def main(argv):
     raise BadArguments("Bad Arguments")
 
 def show_help():
-    print """\npyxie -- A little python compiler\nUsage:\n
+    print("""\npyxie -- A little python compiler\nUsage:\n
     pyxie -- show runtime arguments
     pyxie --test run-tests -- Run all tests
     pyxie --test parse-tests -- Just run parse tests
@@ -144,7 +145,7 @@ def show_help():
     pyxie codegen filename -- parses, analyse and generate code for the given filename, outputs result to console. Does not attempt compiling
     pyxie [--profile arduino] compile path/to/filename.suffix -- compiles the given file to path/to/filename
     pyxie [--profile arduino] compile path/to/filename.suffix  path/to/other/filename -- compiles the given file to the destination filename
-"""
+""")
 
 
 if __name__ == "__main__":
@@ -153,7 +154,7 @@ if __name__ == "__main__":
     except BadArguments:
         show_help()
     except TypeError as e:
-        print "USAGE ERROR: (see end)"
+        print("USAGE ERROR: (see end)")
         show_help()
-        print "USAGE ERROR:", e
+        print("USAGE ERROR:", e)
         print

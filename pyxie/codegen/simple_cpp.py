@@ -66,7 +66,7 @@ def mkStatement(statement_spec):
         return ContinueStatement()
 
     else:
-        print "Unknown statement type", ss[0], ss
+        print("Unknown statement type", ss[0], ss)
 
 
 class C_Program(object):
@@ -92,7 +92,7 @@ class C_Program(object):
         return program
 
     def generate(self, profile = "default"):
-        print "BUILDING FOR PROFILE", profile
+        print("BUILDING FOR PROFILE", profile)
         frame_lines = self.main_cframe.concrete()
         seen = {}
         for include in self.includes:
@@ -135,7 +135,7 @@ class C_Frame(object):
             if statement:
                 code = statement.code()
                 if code is None:
-                    print "STATEMENT IS None, WHY?", statement
+                    print("STATEMENT IS None, WHY?", statement)
                 block.append(code + ";")
         return block
 
@@ -160,12 +160,12 @@ class Assigment(object):
         return ["assignment", self.lvalue, self.assigntype, self.rvalue ]
 
     def code(self):
-        print self.rvalue
+        print(self.rvalue)
         if type(self.rvalue) == list:
-            print "Aha!",self.rvalue
+            print("Aha!",self.rvalue)
             crvalue = ArgumentList(self.rvalue)
             crvalue = crvalue.code()
-            print "AHA!", crvalue
+            print("AHA!", crvalue)
         else:
             crvalue = self.rvalue
         return self.lvalue + " "+self.assigntype+" " + crvalue
@@ -210,7 +210,7 @@ class ExpressionStatement(object):
         return ["expression_statement", self.expression ]
 
     def code(self):
-        print self.expression
+        print(self.expression)
         if type(self.expression) == list:
             cvalue = ArgumentList(self.expression)
             cvalue = cvalue.code()
@@ -295,7 +295,7 @@ class ArgumentList(object):
         elif arg[0] == "function_call":
             code_gen = FunctionCall(arg[1],arg[2])
             return code_gen.code()
-            print "We don't know how to generate code for function calls yet", arg
+            print("We don't know how to generate code for function calls yet", arg)
             return ""
         todo("Handle print value types that are more than the basic types")
         raise NotImplementedError("Handle print value types that are more than the basic types" + repr(arg))
@@ -402,7 +402,7 @@ class ForStatement(object):
         iterator_ctype = "range"
         iterator_expression = self.raw_iterable ## NOTE THIS RESULTS IN ['iterate_over', ['function_call', ['identifier', 'range'], [['integer', 5]]]]- so that needs work
 
-        print "OK, USE THIS THEN", self.for_statement_pynode.expression.ivalue_name
+        print("OK, USE THIS THEN", self.for_statement_pynode.expression.ivalue_name)
         iterator_name = self.for_statement_pynode.expression.ivalue_name
 
         if self.raw_iterable[0] == "iterator":
@@ -411,13 +411,13 @@ class ForStatement(object):
                 assert iterable[1][0] == "identifier"
                 identifier = iterable[1][1]
                 if identifier in builtins:
-                    print "YAY"
-                    pprint.pprint ( builtins[identifier] )
+                    print("YAY")
+                    pprint.pprint( builtins[identifier] )
                     iterator_ctype = builtins[identifier]["iterator_ctype"]
-                    print "iterator_name -- ", iterator_ctype
-                    print "YAY"
+                    print("iterator_name -- ", iterator_ctype)
+                    print("YAY")
 
-                print iterable
+                print(iterable)
                 fcall = FunctionCall(iterable[1],iterable[2])
                 fcall_code = fcall.code()
                 iterator_expression = fcall_code
@@ -432,23 +432,23 @@ class ForStatement(object):
 
 
 
-        print "=== template args ================================================="
+        print("=== template args =================================================")
         pprint.pprint (template_args )
-        print "--- template args -------------------------------------------------"
+        print("--- template args -------------------------------------------------")
         if self.for_statement_pynode.expression.isiterator:
             identifier = self.for_statement_pynode.identifier
-            print identifier.get_type()
-        print "=== end extractable template args ================================="
-        print template % template_args
+            print(identifier.get_type())
+        print("=== end extractable template args =================================")
+        print(template % template_args)
 
-        print "----------------------------------------------------------"
-        print dir(self.for_statement_pynode)
-        print repr(self.for_statement_pynode)
-        print "----------------------------------------------------------"
+        print("----------------------------------------------------------")
+        print(dir(self.for_statement_pynode))
+        print(repr(self.for_statement_pynode))
+        print("----------------------------------------------------------")
 #        raise NotImplementedError("Haven't finished implementing ForStatement yet...")
         code = template % template_args
 
-        print "CODE", code
+        print("CODE", code)
 
         return code
 
@@ -474,7 +474,7 @@ class IfStatement(object):
         block_code = "\n".join( self.block_cframe.concrete() )
         if self.extended_clause:
             if self.extended_clause[0] == "elif_clause":
-                print self.extended_clause[0]
+                print(self.extended_clause[0])
                 condition = self.extended_clause[1]
                 statements =  self.extended_clause[2]
                 if len(self.extended_clause) == 4:
@@ -484,8 +484,8 @@ class IfStatement(object):
                     extended_clauses_code = ElIfClause( condition, statements ).code()
 
             if self.extended_clause[0] == "else_clause":
-                print "***************************************************"
-                print self.extended_clause[0]
+                print("***************************************************")
+                print(self.extended_clause[0])
                 statements =  self.extended_clause[1]
                 extended_clauses_code = ElseClause( statements ).code()
 
@@ -516,8 +516,8 @@ class ElIfClause(object):
         block_code = "\n".join( self.block_cframe.concrete() )
         if self.extended_clause:
             if self.extended_clause[0] == "elif_clause":
-                print "***************************************************"
-                print self.extended_clause[0]
+                print("***************************************************")
+                print(self.extended_clause[0])
                 condition = self.extended_clause[1]
                 statements =  self.extended_clause[2]
 
@@ -529,8 +529,8 @@ class ElIfClause(object):
 
 
             if self.extended_clause[0] == "else_clause":
-                print "***************************************************"
-                print self.extended_clause[0]
+                print("***************************************************")
+                print(self.extended_clause[0])
                 statements =  self.extended_clause[1]
                 extended_clauses_code = ElseClause( statements ).code()
 
@@ -579,7 +579,7 @@ if __name__ == "__main__":
                              'name': 'hello_operators'}}
 
         program = C_Program.fromjson(progj)
-        print program
+        print(program)
 
         program.generate()
         import time
