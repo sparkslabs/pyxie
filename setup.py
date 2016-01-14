@@ -475,7 +475,7 @@ around version 0.0.15, based on current rate of progress.
 
 Keeping it for now also simplifies "yield" later
 
-Michael Sparks, January 2015
+Michael Sparks, January 2016
 
 """
       )
