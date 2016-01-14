@@ -38,7 +38,7 @@ def remove_directory(build_dir):
     for filename in os.listdir(build_dir):
         try:
             os.unlink(os.path.join(build_dir, filename))
-        except OSError, e:
+        except OSError as e :
             if e.errno == 21:
                 remove_directory(os.path.join(build_dir, filename))
     os.rmdir(build_dir)
