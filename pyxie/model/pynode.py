@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright 2015 Michael Sparks
+# Copyright 2016 Michael Sparks
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -87,8 +87,10 @@ class PyProgram(PyNode):
         self.statements = statements
         self.includes = None
         self.add_children(statements)
+
     def __repr__(self):
         return "PyProgram(%s)" % (repr(self.statements), )
+
     def __json__(self):
         return [ self.tag, jdump(self.statements) ]
 
@@ -124,8 +126,10 @@ class PyBlock(PyNode):
         super(PyBlock,self).__init__()
         self.statements = statements
         self.add_children(statements)
+
     def __repr__(self):
         return "PyBlock(%s)" % (repr(self.statements), )
+
     def __json__(self):
         return [ self.tag, jdump(self.statements) ]
 
@@ -207,6 +211,7 @@ class PyAssignment(PyStatement):
 
     def __repr__(self):
         return "PyAssignment(%s,%s,%s)" % (repr(self.lvalue), repr(self.rvalue), repr(self.assign_type))
+
     def __json__(self):
         return [ self.tag, jdump(self.lvalue), jdump(self.rvalue), self.assign_type ]
 
@@ -246,12 +251,15 @@ class PyExpressionStatement(PyStatement):
 
     def __repr__(self):
         return "PyExpressionStatement(%s)" % (repr(self.value), )
+
     def __json__(self):
         return [ self.tag, jdump(self.value) ]
+
     def __info__(self):
         info = super(PyExpressionStatement, self).__info__()
         info[self.tag]["value"] = self.value.__info__()
         return info
+
     def analyse(self):
         print("ANALYSING EXPRESSION STATEMENT")
         try:
@@ -262,6 +270,7 @@ class PyExpressionStatement(PyStatement):
             print(jdump(self.value))
             raise
         self.ntype = self.get_type()
+
     def get_type(self):
         return self.value.get_type()
 
@@ -276,6 +285,7 @@ class PyFunctionCall(PyStatement):
         self.builtin = False
         self.arduino = False
         self.isiterator = False
+
     def __repr__(self):
         if self.expr_list:
             return "PyFunctionCall(%s, %s)" % (repr(self.callable_), repr(self.expr_list), )
@@ -287,6 +297,7 @@ class PyFunctionCall(PyStatement):
             return [ self.tag, jdump(self.callable_), jdump(self.expr_list) ]
         else:
             return [ self.tag, jdump(self.callable_) ]
+
     def __info__(self):
         info = super(PyFunctionCall, self).__info__()
         info[self.tag]["name"] = self.callable_.__info__()
@@ -349,16 +360,20 @@ class PyForLoop(PyStatement):
         self.expression = expression
         self.block = block
         self.add_children(identifier, expression, block)
+
     def __repr__(self):
         return "PyForLoop(%s, %s, %s)" % (repr(self.identifier), repr(self.expression), repr(self.block) )
+
     def __json__(self):
         return [ self.tag, jdump(self.identifier), jdump(self.expression), jdump(self.block) ]
+
     def __info__(self):
         info = super(PyForLoop, self).__info__()
         info[self.tag]["identifier"] = self.identifier.__info__()
         info[self.tag]["block"] = self.block.__info__()
         info[self.tag]["expression"] = self.expression.__info__()
         return info
+
     def analyse(self):
         # We'll need to decorate the function call with information from somewhere
         # For now though, we won't
@@ -387,16 +402,20 @@ class PyWhileStatement(PyStatement):
         self.condition = condition
         self.block = block
         self.add_children(condition, block)
+
     def __repr__(self):
         return "PyWhileStatement(%s, %s)" % (repr(self.condition), repr(self.block) )
+
     def __json__(self):
         return [ self.tag, jdump(self.condition), jdump(self.block) ]
+
     def __info__(self):
         info = super(PyWhileStatement, self).__info__()
         info[self.tag]["condition"] = self.condition.__info__()
         # info[self.tag]["block"] = [ x.__info__() for x in self.expr_list ]
         info[self.tag]["block"] = self.block.__info__()
         return info
+
     def analyse(self):
         # We'll need to decorate the function call with information from somewhere
         # For now though, we won't
@@ -405,6 +424,7 @@ class PyWhileStatement(PyStatement):
         self.condition.analyse()
         self.block.analyse()
         return
+
     def get_type(self):
         # function calls have no default value, so for now we'll return None
         # This will be improved later on.
@@ -419,11 +439,13 @@ class PyIfStatement(PyStatement):
         self.block = block
         self.else_clause = else_clause
         self.add_children(condition, block)
+
     def __repr__(self):
         else_clause = ""
         if self.else_clause:
             else_clause = ", %s" % (repr(self.else_clause),)
         return "PyIfStatement(%s, %s%s)" % (repr(self.condition), repr(self.block), else_clause)
+
     def __json__(self):
         else_clause = ""
         if self.else_clause:
@@ -437,6 +459,7 @@ class PyIfStatement(PyStatement):
         if self.else_clause:
             info[self.tag]["else_clause"] = self.else_clause.__info__()
         return info
+
     def analyse(self):
         print("ANALYSING IF BLOCK")
         print("analyse expression, and analyse block")
@@ -445,6 +468,7 @@ class PyIfStatement(PyStatement):
         if self.else_clause:
             self.else_clause.analyse()
         return
+
     def get_type(self):
         # function calls have no default value, so for now we'll return None
         # This will be improved later on.
@@ -459,11 +483,13 @@ class PyElIfClause(PyStatement):
         self.block = block
         self.else_clause = else_clause
         self.add_children(condition, block)
+
     def __repr__(self):
         else_clause = ""
         if self.else_clause:
             else_clause = ", %s" % (repr(self.else_clause),)
         return "PyElIfClause(%s, %s%s)" % (repr(self.condition), repr(self.block), else_clause)
+
     def __json__(self):
         else_clause = ""
         if self.else_clause:
@@ -477,6 +503,7 @@ class PyElIfClause(PyStatement):
         if self.else_clause:
             info[self.tag]["else_clause"] = self.else_clause.__info__()
         return info
+
     def analyse(self):
         print("ANALYSING ELIF BLOCK")
         print("analyse expression, and analyse block")
@@ -485,6 +512,7 @@ class PyElIfClause(PyStatement):
         if self.else_clause:
             self.else_clause.analyse()
         return
+
     def get_type(self):
         # function calls have no default value, so for now we'll return None
         # This will be improved later on.
@@ -497,19 +525,24 @@ class PyElseClause(PyStatement):
         super(PyElseClause,self).__init__()
         self.block = block
         self.add_children(block)
+
     def __repr__(self):
         return "PyElseClause(%s)" % (repr(self.block), )
+
     def __json__(self):
         return [ self.tag, jdump(self.block) ]
+
     def __info__(self):
         info = super(PyElseClause, self).__info__()
         info[self.tag]["block"] = self.block.__info__()
         return info
+
     def analyse(self):
         print("ANALYSING ELSE CLAUSE")
         print("analyse expression, and analyse block")
         self.block.analyse()
         return
+
     def get_type(self):
         # function calls have no default value, so for now we'll return None
         # This will be improved later on.
@@ -520,8 +553,10 @@ class PyEmptyStatement(PyStatement):
     tag = "empty_statement"
     def __init__(self):
         super(PyEmptyStatement,self).__init__()
+
     def analyse(self):
         pass
+
     def __json__(self):
         return [ self.tag ]
 
@@ -529,8 +564,10 @@ class PyPassStatement(PyStatement):
     tag = "pass_statement"
     def __init__(self):
         super(PyPassStatement,self).__init__()
+
     def analyse(self):
         pass
+
     def __json__(self):
         return [ self.tag ]
 
@@ -538,8 +575,10 @@ class PyBreakStatement(PyStatement):
     tag = "break_statement"
     def __init__(self):
         super(PyBreakStatement,self).__init__()
+
     def analyse(self):
         pass
+
     def __json__(self):
         return [ self.tag ]
 
@@ -547,8 +586,10 @@ class PyContinueStatement(PyStatement):
     tag = "continue_statement"
     def __init__(self):
         super(PyContinueStatement,self).__init__()
+
     def analyse(self):
         pass
+
     def __json__(self):
         return [ self.tag ]
 
@@ -561,18 +602,22 @@ class PyPrintStatement(PyStatement):
 
     def __repr__(self):
         return "PyPrintStatement(%s)" % (repr(self.expr_list), )
+
     def __json__(self):
         return [ self.tag, jdump(self.expr_list) ]
+
     def __info__(self):
         info = super(PyPrintStatement, self).__info__()
         info[self.tag]["args"] = [ x.__info__() for x in self.expr_list ]
         return info
+
     def analyse(self):
         print("ANALYSING PRINT STATEMENT")
         for expr in self.expr_list:
             expr.analyse() # Descend through the tree
 
         self.ntype = self.get_type()
+
     def get_type(self):
         # Print statement has no return value or default value
         return None
@@ -639,10 +684,13 @@ class PyOperator(PyOperation):
 
     def __repr__(self):
         return "%s(%s, %s)" % (self.classname(),repr(self.arg1),repr(self.arg2))
+
     def __json__(self):
         return [ self.tag, jdump(self.arg1), jdump(self.arg2) ]
+
     def get_type(self):
         return self.type
+
     def analyse(self):
         print("ANALYSING OPERATOR", self.tag)
         self.arg1.analyse()
@@ -674,10 +722,13 @@ class PyOrOperator(PyBoolOperator):
 
     def __repr__(self):
         return "%s(%s, %s)" % (self.classname(),repr(self.arg1),repr(self.arg2))
+
     def __json__(self):
         return [ self.tag, jdump(self.arg1), jdump(self.arg2) ]
+
     def get_type(self):
         return "bool"
+
     def analyse(self):
         print("ANALYSING OPERATOR:", self.tag)
         self.arg1.analyse()
@@ -706,10 +757,13 @@ class PyAndOperator(PyBoolOperator):
 
     def __repr__(self):
         return "%s(%s, %s)" % (self.classname(),repr(self.arg1),repr(self.arg2))
+
     def __json__(self):
         return [ self.tag, jdump(self.arg1), jdump(self.arg2) ]
+
     def get_type(self):
         return "bool"
+
     def analyse(self):
         print("ANALYSING OPERATOR:", self.tag)
         self.arg1.analyse()
@@ -736,10 +790,13 @@ class PyNotOperator(PyBoolOperator):
 
     def __repr__(self):
         return "%s(%s)" % (self.classname(),repr(self.arg1),)
+
     def __json__(self):
         return [ self.tag, jdump(self.arg1) ]
+
     def get_type(self):
         return "bool"
+
     def analyse(self):
         print("ANALYSING OPERATOR:", self.tag)
         self.arg1.analyse()
@@ -782,10 +839,13 @@ class PyComparisonOperator(PyOperation):
 
     def __repr__(self):
         return "%s(%s, %s, %s)" % (self.classname(),self.comparison, repr(self.arg1),repr(self.arg2))
+
     def __json__(self):
         return [ self.tag, self.comparison, jdump(self.arg1), jdump(self.arg2) ]
+
     def get_type(self):
         return "bool"
+
     def analyse(self):
         print("ANALYSING", self.tag)
         self.arg1.analyse()
@@ -802,8 +862,10 @@ class PyAttribute(PyNode):
         super(PyAttribute, self).__init__()
         self.lineno = lineno
         self.value = value
+
     def __repr__(self):
         return "%s(%d, %s)" % (self.classname(),self.lineno, repr(self.value))
+
     def __json__(self):
         return [ self.tag, self.lineno, jdump(self.value) ]
 
@@ -813,10 +875,13 @@ class PyAttributeAccess(PyNode):
         super(PyAttributeAccess,self).__init__()
         self.expression = expression
         self.attribute = attribute
+
     def __repr__(self):
         return "%s(%s, %s)" % (self.classname(), repr(self.expression), repr(self.attribute))
+
     def __json__(self):
         return [ self.tag, jdump(self.expression), jdump(self.attribute) ]
+
 #    def value(self):
 #        return self.attribute
 
@@ -827,19 +892,24 @@ class PyValueLiteral(PyNode):
         super(PyValueLiteral,self).__init__()
         self.lineno = lineno
         self.value = value
+
     def __repr__(self):
         return "%s(%d, %s)" % (self.classname(),self.lineno, repr(self.value))
+
     def __json__(self):
         return [ self.tag, self.lineno, self.value ]
+
     def __info__(self):
         info = super(PyValueLiteral, self).__info__()
         info[self.tag]["lineno"] = self.lineno
         info[self.tag]["value"] = self.value
         return info
+
     def analyse(self):
         print("ANALYSING VALUE LITERAL", self.tag)
         # Don't go into containers, because there aren't any
         self.ntype = self.get_type()
+
     def get_type(self):
         raise NotImplementedError("PyValueLiteral does not have any implicit type - its subtypes do")
 
