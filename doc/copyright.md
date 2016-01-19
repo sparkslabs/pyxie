@@ -1,6 +1,6 @@
 ## Open Source, Apache 2 License
 
-Pyxie is &copy; Copyright 2015, Michael Sparks
+Pyxie is &copy; Copyright 2016, Michael Sparks
 
 * Note, this was written from scratch, entire on my own time, using my own
   resources and hosted on a server I pay for.

@@ -7,7 +7,7 @@ updated: June 2015
 ---
 ## Open Source, Apache 2 License
 
-Pyxie is &copy; Copyright 2015, Michael Sparks
+Pyxie is &copy; Copyright 2016, Michael Sparks
 
 It is released as open source, under the Apache 2 License.
 
