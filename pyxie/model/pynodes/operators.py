@@ -14,10 +14,6 @@
 # limitations under the License.
 #
 
-# from .pynode import *
-
-# from pyxie.model.tree import Tree
-
 from .util import *
 from .base_nodes import PyOperation
 
@@ -191,16 +187,3 @@ class PyComparisonOperator(PyOperation):
         self.arg2.analyse()
 
         self.ntype = self.get_type()
-
-
-
-
-
-
-
-
-
-
-
-
-

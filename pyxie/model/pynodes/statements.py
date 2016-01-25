@@ -14,10 +14,6 @@
 # limitations under the License.
 #
 
-# from .pynode import *
-
-# from pyxie.model.tree import Tree
-
 from .util import *
 from .base_nodes import PyStatement
 
@@ -179,6 +175,7 @@ class PyFunctionCall(PyStatement):
 
         return None
 
+
 class PyForLoop(PyStatement):
     tag = "for_statement"
     def __init__(self, identifier, expression, block):
@@ -221,6 +218,7 @@ class PyForLoop(PyStatement):
         print("                ... Analyse block")
         self.block.analyse()
         return
+
 
 class PyWhileStatement(PyStatement):
     tag = "while_statement"

@@ -18,16 +18,14 @@
 import sys
 import json
 
+# These imports are pretty icky, but appropriate in this context
+
 from .util import *
 from .base_nodes import *
 from .statements import *
 from .operators import *
 
 from pyxie.parsing.context import Context
-# from pyxie.model.tree import Tree
-# from pyxie.model.functions import builtins
-# 
-# from pyxie.model.functions import arduino_profile_function_calls as arduino
 
 MULTI_TYPES_WARN = False
 WARNINGS_ARE_FAILURES = False

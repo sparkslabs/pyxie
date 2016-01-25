@@ -14,8 +14,6 @@
 # limitations under the License.
 #
 
-# from .pynode import *
-
 from pyxie.model.tree import Tree
 
 class PyNode(Tree):
