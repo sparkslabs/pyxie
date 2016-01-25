@@ -231,10 +231,10 @@ def convert_bool_operator_function(opfunc):
     assert isinstance(opfunc, nodes.PyBoolOperator)
 
     func = opfunc.tag
-    arg1 = opfunc.arg1
+    arg1 = opfunc.argv[0]
 
     if not isinstance(opfunc, nodes.PyNotOperator):
-        arg2 = opfunc.arg2
+        arg2 = opfunc.argv[1]
     else:
         arg2 = None
 
