@@ -30,35 +30,6 @@ from .values import *
 MULTI_TYPES_WARN = False
 WARNINGS_ARE_FAILURES = False
 
-class PyAttribute(PyNode):
-    tag = "attribute"
-    def __init__(self, lineno, value):
-        super(PyAttribute, self).__init__()
-        self.lineno = lineno
-        self.value = value
-
-    def __repr__(self):
-        return "%s(%d, %s)" % (self.classname(),self.lineno, repr(self.value))
-
-    def __json__(self):
-        return [ self.tag, self.lineno, jdump(self.value) ]
-
-class PyAttributeAccess(PyNode):
-    tag = "attributeaccess"
-    def __init__(self, expression, attribute):
-        super(PyAttributeAccess,self).__init__()
-        self.expression = expression
-        self.attribute = attribute
-
-    def __repr__(self):
-        return "%s(%s, %s)" % (self.classname(), repr(self.expression), repr(self.attribute))
-
-    def __json__(self):
-        return [ self.tag, jdump(self.expression), jdump(self.attribute) ]
-
-#    def value(self):
-#        return self.attribute
-
 
 if __name__ == "__main__":
     trees = [
