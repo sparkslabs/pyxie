@@ -25,6 +25,7 @@ from .base_nodes import *
 from .statements import *
 from .operators import *
 from .structural import *
+from .values import *
 
 MULTI_TYPES_WARN = False
 WARNINGS_ARE_FAILURES = False
@@ -58,115 +59,6 @@ class PyAttributeAccess(PyNode):
 #    def value(self):
 #        return self.attribute
 
-# Base class for all Value Literals
-class PyValueLiteral(PyNode):
-    tag = "value_literal"
-    def __init__(self, lineno, value):
-        super(PyValueLiteral,self).__init__()
-        self.lineno = lineno
-        self.value = value
-
-    def __repr__(self):
-        return "%s(%d, %s)" % (self.classname(),self.lineno, repr(self.value))
-
-    def __json__(self):
-        return [ self.tag, self.lineno, self.value ]
-
-    def __info__(self):
-        info = super(PyValueLiteral, self).__info__()
-        info[self.tag]["lineno"] = self.lineno
-        info[self.tag]["value"] = self.value
-        return info
-
-    def analyse(self):
-        print("ANALYSING VALUE LITERAL", self.tag)
-        # Don't go into containers, because there aren't any
-        self.ntype = self.get_type()
-
-    def get_type(self):
-        raise NotImplementedError("PyValueLiteral does not have any implicit type - its subtypes do")
-
-# All non-number value literals first
-class PyString(PyValueLiteral):
-    tag = "string"
-    def get_type(self):
-        return "string"
-
-class PyCharacter(PyValueLiteral):
-    tag = "character"
-    def get_type(self):
-        return "char"
-
-class PyBoolean(PyValueLiteral):
-    tag = "boolean"
-    def get_type(self):
-        return "bool"
-
-# Resist the urge to put PyIdentifiers into a LUT immediately.
-class PyIdentifier(PyValueLiteral):
-    tag = "identifier"
-    def __init__(self, *args):
-        super(PyIdentifier, self).__init__(*args)
-        self.context = None
-        self.types = []
-
-    def add_rvalue(self, expression):
-        self.context.store(self.value, expression)
-
-    def __info__(self):
-        info = super(PyIdentifier, self).__info__()
-        info[self.tag]["context "] = self.context
-        info[self.tag]["types"] = self.types
-        return info
-
-    def get_type(self):
-        return self.ntype
-
-    def analyse(self):
-        expression = self.context.lookup(self.value)
-        self.ntype = expression.get_type()
-
-# Base class for all numbers
-class PyNumber(PyValueLiteral):
-    tag = "number"
-    def negate(self):
-        self.value = - self.value
-        return self
-
-class PyFloat(PyNumber):
-    tag = "float"
-    def get_type(self):
-        return "float"
-
-class PyInteger(PyNumber):
-    tag = "integer"
-    def get_type(self):
-        return "integer"
-
-class PySignedLong(PyNumber):
-    tag = "signedlong"
-    def get_type(self):
-        return "signedlong"
-
-class PyUnSignedLong(PyNumber):
-    tag = "unsignedlong"
-    def get_type(self):
-        return "unsignedlong"
-
-class PyHex(PyNumber):
-    tag = "hex"
-    def get_type(self):
-        return "integer"
-
-class PyOctal(PyNumber):
-    tag = "octal"
-    def get_type(self):
-        return "integer"
-
-class PyBinary(PyNumber):
-    tag = "binary"
-    def get_type(self):
-        return "integer"
 
 if __name__ == "__main__":
     trees = [
