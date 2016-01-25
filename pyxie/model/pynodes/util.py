@@ -24,6 +24,7 @@ def jdump(thing):
         print("WARNING::", repr(thing), "is not a pynode")
         print("       ::", type(thing))
 
+
 def warn(message):
     if WARNINGS_ARE_FAILURES:
         raise Exception(message)

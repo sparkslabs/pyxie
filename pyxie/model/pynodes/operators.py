@@ -21,6 +21,16 @@
 from .util import *
 from .base_nodes import PyOperation
 
+# This lookup should probably really look somewhere else
+expression_mixed_types = {
+       #(function_tag, type, type ) -> result_type
+        ("op_times", "integer", "string") : "string",
+        ("op_times", "string","integer") : "string",
+        ("op_times", "integer", "char") : "string",
+        ("op_times", "char","integer") : "string",
+     }
+
+
 # Base node for expressions, and all operators
 class PyOperator(PyOperation):
     tag = "operator"
@@ -71,6 +81,7 @@ class PyOperator(PyOperation):
 
         self.ntype = self.get_type()
 
+
 class PyBoolOperator(PyOperation):
     tag = "base_bool_operator"
 
@@ -109,29 +120,38 @@ class PyBoolOperator(PyOperation):
 
         self.ntype = self.get_type()
 
+
 class PyAndOperator(PyBoolOperator):
     tag = "and_operator"
+
 
 class PyOrOperator(PyAndOperator):
     tag = "or_operator"
 
+
 class PyNotOperator(PyBoolOperator):
     tag = "not_operator"
+
 
 class PyTimesOperator(PyOperator):
     tag = "op_times"
 
+
 class PyDivideOperator(PyOperator):
     tag = "op_divide"
+
 
 class PyPowerOperator(PyOperator):
     tag = "op_power"
 
+
 class PyPlusOperator(PyOperator):
     tag = "op_plus"
 
+
 class PyMinusOperator(PyOperator):
     tag = "op_minus"
+
 
 class PyComparisonOperator(PyOperation):
     tag = "comparison_operator"

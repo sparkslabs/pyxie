@@ -24,6 +24,7 @@ from .base_nodes import PyStatement
 from pyxie.model.functions import builtins
 from pyxie.model.functions import arduino_profile_function_calls as arduino
 
+
 class PyAssignment(PyStatement):
     tag = "assignment_statement"
     def __init__(self, lvalue, rvalue, assign_type):
@@ -66,6 +67,7 @@ class PyAssignment(PyStatement):
         # rtype wins because it's being used to set the left
         return rtype
 
+
 class PyExpressionStatement(PyStatement):
     tag = "expression_statement"
     def __init__(self, value):
@@ -97,6 +99,7 @@ class PyExpressionStatement(PyStatement):
 
     def get_type(self):
         return self.value.get_type()
+
 
 class PyFunctionCall(PyStatement):
     tag = "function_call"
@@ -255,6 +258,7 @@ class PyWhileStatement(PyStatement):
         print("GETTING WHILE BLOCK TYPE - which should be None - for now")
         return None
 
+
 class PyIfStatement(PyStatement):
     tag = "if_statement"
     def __init__(self, condition, block, else_clause=None):
@@ -298,6 +302,7 @@ class PyIfStatement(PyStatement):
         # This will be improved later on.
         print("GETTING IF BLOCK TYPE - which should be None - for now")
         return None
+
 
 class PyElIfClause(PyStatement):
     tag = "elif_clause"
@@ -343,6 +348,7 @@ class PyElIfClause(PyStatement):
         print("GETTING IF BLOCK TYPE - which should be None - for now")
         return None
 
+
 class PyElseClause(PyStatement):
     tag = "else_clause"
     def __init__(self, block):
@@ -373,6 +379,7 @@ class PyElseClause(PyStatement):
         print("GETTING ELSE CLAUSE TYPE - which should be None - for now")
         return None
 
+
 class PyEmptyStatement(PyStatement):
     tag = "empty_statement"
     def __init__(self):
@@ -383,6 +390,7 @@ class PyEmptyStatement(PyStatement):
 
     def __json__(self):
         return [ self.tag ]
+
 
 class PyPassStatement(PyStatement):
     tag = "pass_statement"
@@ -395,6 +403,7 @@ class PyPassStatement(PyStatement):
     def __json__(self):
         return [ self.tag ]
 
+
 class PyBreakStatement(PyStatement):
     tag = "break_statement"
     def __init__(self):
@@ -406,6 +415,7 @@ class PyBreakStatement(PyStatement):
     def __json__(self):
         return [ self.tag ]
 
+
 class PyContinueStatement(PyStatement):
     tag = "continue_statement"
     def __init__(self):
@@ -416,6 +426,7 @@ class PyContinueStatement(PyStatement):
 
     def __json__(self):
         return [ self.tag ]
+
 
 class PyPrintStatement(PyStatement):
     tag = "print_statement"
@@ -445,17 +456,3 @@ class PyPrintStatement(PyStatement):
     def get_type(self):
         # Print statement has no return value or default value
         return None
-
-
-
-
-
-
-
-
-
-
-
-
-
-
