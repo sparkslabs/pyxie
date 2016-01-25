@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+
 from .util import *
 from .base_nodes import PyNode
 from .statements import PyEmptyStatement
@@ -169,18 +170,4 @@ class PyExprList(PyNode):
 
     def analyse(self):
         raise Exception("Expression List should not have analyse called directly")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
