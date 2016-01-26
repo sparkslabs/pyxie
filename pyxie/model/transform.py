@@ -18,6 +18,7 @@
 # This is currently working from the AST as represented by lists,
 # switching to intermediate lists and then to nodes.
 
+
 from pyxie.model.pynode import jdump
 import pyxie.model.pynode as nodes
 from pyxie.model.functions import builtins
@@ -45,7 +46,7 @@ def find_variables(AST):
                 print("Extracting generator intermediate variable")
                 print(node.expression)
                 if isinstance(node.expression, nodes.PyFunctionCall):
-                    identifier = node.expression.identifier
+                    identifier = node.expression.callable_             # FIXME: May not be an identifier...
                     print("Bibble", identifier)
                     print("Bibble", identifier.value)
                     iterator_type = identifier.value
@@ -325,8 +326,7 @@ def convert_arg(arg):
                 carg = crepr
                 cargs.append(carg)
 
-        return ["function_call", convert_value_literal(arg.identifier),  cargs ]
-        return ["Nothing"]
+        return ["function_call", convert_value_literal(arg.callable_),  cargs ]    # FIXME: callable_ may not be an identifier...
     else:
         todo("Handle print for non-value-literals")
         raise CannotConvert("Cannot convert print for non-value-literals")
