@@ -1,0 +1,12 @@
+led = 13
+
+pinMode(led, OUTPUT)
+
+while True:
+  for i in range(6):
+      digitalWrite(led, HIGH)
+      delay(200)
+      digitalWrite(led, LOW)
+      delay(200)
+  delay(1000)
+
