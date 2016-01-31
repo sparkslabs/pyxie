@@ -2,7 +2,7 @@
 template: mainpage
 source_form: markdown
 name: Dev Status
-updated: 11 January 2016
+updated: 31 January 2016
 title: Detailed Dev status
 ---
 ## Detailed Development status
@@ -19,6 +19,8 @@ commits. _(This is exported from trello)_
 
 {% paused = panel("panels/trello-cardlist-paused.md") %}
 
+{% backlog_arising = panel("panels/trello-cardlist-backlog-arising.md") %}
+
 {% release_backlog_features = panel("panels/trello-cardlist-release-backlog-features.md") %}
 
 {% release_backlog_tasks = panel("panels/trello-cardlist-release-backlog-tasks.md") %}
@@ -30,8 +32,6 @@ commits. _(This is exported from trello)_
 {% backlog_features = panel("panels/trello-cardlist-backlog-features.md") %}
 
 {% backlog_tasks = panel("panels/trello-cardlist-backlog-tasks.md") %}
-
-{% backlog_arising = panel("panels/trello-cardlist-backlog-arising.md") %}
 
 {% backlog_website_docs_etc = panel("panels/trello-cardlist-backlog-website-docs-etc.md") %}
 

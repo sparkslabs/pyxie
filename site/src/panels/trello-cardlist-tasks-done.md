@@ -7,9 +7,9 @@ title: Trello Cardlist Tasks Done
 ---
 ### Tasks Done
 
-* Package for release
-* Cleanup clib packaging
 * 0\.0.18 - - - - - (tasks)
+* Package for release and release (DONE)
+* Cleanup clib packaging
 * 0\.0.17 - - - - - (tasks)
 * 10\. Decide whether to add functionality of bin/pyxie-dev is in core
 * 0\.0.16 - - - - - (tasks)

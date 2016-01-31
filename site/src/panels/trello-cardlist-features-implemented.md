@@ -7,6 +7,8 @@ title: Trello Cardlist Features Implemented
 ---
 ### Features Implemented
 
+* 226\. Implementation can analyse a simple call to arduino Servo() from Servo.h
+* 228\. Compiler Runs under Python 3 (and Python 2)
 * 0\.0.18 = = = = = = = = = =
 * 224\. Parsing of attribute access is implemented
 * 51\. Pyxie compile harness is switched over to use a better system for determining runtime options #internals

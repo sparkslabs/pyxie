@@ -237,7 +237,8 @@ Release History
 
 Release History:
 
--  0.0.19 - 2016-01-31 - Continued work on arduino profile and initial Python3 support
+-  0.0.19 - 2016-01-31 - Continued work on arduino profile and initial
+   Python3 support
 -  0.0.18 - 2016-01-10 - Grammar changes to support object attributes
    and methods, start of servo support in arduino profile.
 -  0.0.17 - 2015-08-12 - Add pass statement, enable "for" on arduino,

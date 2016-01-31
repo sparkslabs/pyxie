@@ -7,5 +7,4 @@ title: Trello Cardlist WIP
 ---
 ### WIP
 
-* 227\. .get_type() should be delegated, not rely on internal pynode details.
-* 226\. Implementation can analyse a simple call to arduino Servo() from Servo.h
+* 229\. Implementation can analyse call to myservo.attach(pin)
