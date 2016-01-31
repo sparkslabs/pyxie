@@ -8,13 +8,35 @@ reason.
 
 ## [0.0.19] - UNRELEASED
 
+
+### Fixes
+
+* Fix regression in code generation for function calls
+ * This was due to FunctionCalls now assuming they work on a callable
+   which may be an identifier, but can also be other things too
+
 ### New
 
-*
+* Changes to support Python 3
+ * Now runs under python 3 as well as python 2 :-)
+* (internals) Pynode docs - very much work in progress
+* Arduino blink test case copied into examples
+ * Makes testing easier and usage more obvious
+
+
+### Internals
+
+* Massive reorg of pynodes from single file to categorised files
+* Use annotated tags for releases - makes them show up on github - showing
+  releases
+* Help text for pyxie-dev extended to show release process
+* Bump versions for 0.0.19
 
 ### Other
 
-*
+* Work on arduino profile continues with more work on servos (still WIP)
+* Bump copyright notices to 2016(!)
+* Add link to latest release on homepage
 
 ## [0.0.18] - 2016-01-10
 
@@ -37,7 +59,6 @@ reason.
 * Initial support for arduino profile in pynodes
 * Code generation for first arduino specific types (specifically "Servo")
 
-### Fixes
 
 * Re-enable parse only option
 * Allow expression atoms to be negatable, not just numbers (allows things like -step/2)
