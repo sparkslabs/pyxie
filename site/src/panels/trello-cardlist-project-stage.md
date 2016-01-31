@@ -2,7 +2,7 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Project Stage
-updated: January 2016
+updated: February 2016
 title: Trello Cardlist Project Stage
 ---
 ### Project Stage

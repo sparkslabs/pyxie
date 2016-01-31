@@ -2,7 +2,7 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Features Implemented
-updated: January 2016
+updated: February 2016
 title: Trello Cardlist Features Implemented
 ---
 ### Features Implemented

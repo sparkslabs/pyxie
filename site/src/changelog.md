@@ -3,7 +3,7 @@ template: mainpage
 source_form: markdown
 name: Changelog
 title: Changelog
-updated: January 2016
+updated: February 2016
 ---
 ## Change Log
 

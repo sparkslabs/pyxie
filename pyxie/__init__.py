@@ -383,7 +383,7 @@ based on current rate of progress.
 
 Keeping it for now also simplifies "yield" later
 
-Michael Sparks, January 2016
+Michael Sparks, February 2016
 
 
 """

@@ -2,7 +2,7 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Backlog: Features
-updated: January 2016
+updated: February 2016
 title: Trello Cardlist Backlog: Features
 ---
 ### Backlog: Features
