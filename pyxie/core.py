@@ -145,12 +145,23 @@ def build_program(source, work_dir, name, profile):
 
     extension = profiles.mainfile_extensions.get(profile,"c")
 
-    f = open(os.path.join(work_dir,name+"." +extension), "w")
+    source_filename = os.path.join(work_dir,name+"." +extension)
+
+#    f = open(os.path.join(work_dir,name+"." +extension), "w")
+    f = open(source_filename, "w")
     for line in source:
         f.write(line)
         f.write("\n")
     f.close()
 
+    if os.path.exists("/usr/bin/indent"):
+        try:
+            print("TIDYING")
+            print("/usr/bin/indent %s" % source_filename)
+            os.system("/usr/bin/indent -npcs -brf -br -npsl -l120 -i4 -nut %s" % source_filename)
+        except Exception as e:
+            print("TIDYING Failed - continuing anyway")
+            print("TIDYING error: %s %s" % (str(e), repr(e)))
 
     try:
         makefile_tmpl = profiles.makefile_templates[profile]
