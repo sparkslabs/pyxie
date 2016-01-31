@@ -234,7 +234,7 @@ inspired heavily by python introspection) That's quite some time off.
 
 Release History:
 
-* 0.0.19 - UNRELEASED - TBD
+* 0.0.19 - 2016-01-31 - Continued work on arduino profile and initial Python3 support
 * 0.0.18 - 2016-01-10 - Grammar changes to support object attributes and methods, start of servo support in arduino profile.
 * 0.0.17 - 2015-08-12 - Add pass statement, enable "for" on arduino, update documentation, refactor pyxie harness
 * 0.0.16 - 2015-08-02 - Adds initial Arduino LEONARDO support, improved function call, release build scripts
@@ -384,6 +384,7 @@ based on current rate of progress.
 Keeping it for now also simplifies "yield" later
 
 Michael Sparks, January 2016
+
 
 """
 #END
