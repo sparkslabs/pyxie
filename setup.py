@@ -48,7 +48,7 @@ packages = find_packages(".")
 package_names = packages.keys()
 
 setup(name = "pyxie",
-      version = "0.0.19",
+      version = "0.0.20",
       description = "Little Python to C++ Compiler",
       url='http://www.sparkslabs.com/pyxie/',
       author='Michael Sparks (sparkslabs)',
@@ -302,6 +302,7 @@ Release History
 
 Release History:
 
+-  0.0.20 - UNRELEASED - TBD
 -  0.0.19 - 2016-01-31 - Continued work on arduino profile and initial
    Python3 support
 -  0.0.18 - 2016-01-10 - Grammar changes to support object attributes

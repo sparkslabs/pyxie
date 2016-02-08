@@ -6,6 +6,16 @@ reason.
 
 ### In progress
 
+## [0.0.20] - UNRELEASED
+
+### New
+
+*
+
+### Other
+
+*
+
 ## [0.0.19] - 2016-01-31
 
 
