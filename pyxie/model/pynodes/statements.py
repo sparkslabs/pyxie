@@ -14,12 +14,36 @@
 # limitations under the License.
 #
 
+from __future__ import print_function
+from __future__ import absolute_import
+
 from .util import *
 from .base_nodes import PyStatement
 
 from pyxie.model.functions import builtins
 from pyxie.model.functions import arduino_profile_function_calls as arduino
 
+from contextlib import contextmanager
+
+class indenting_logger(object):
+    """
+    This class exists specifically to help with debugging semantic analysis
+    """
+    def __init__(self):
+        self.indent = 0
+    #
+    def print(self,*argv):
+        print(self.indent*"  " +  " ".join([str(x) for x in argv]) )
+    #
+    @contextmanager
+    def dent(self,*argv):
+        self.print("ENTER> " + " ".join([str(x) for x in argv]))
+        self.indent += 1
+        yield self
+        self.indent -= 1
+
+
+log = indenting_logger()
 
 class PyAssignment(PyStatement):
     tag = "assignment_statement"
@@ -83,15 +107,18 @@ class PyExpressionStatement(PyStatement):
         return info
 
     def analyse(self):
-        print("ANALYSING EXPRESSION STATEMENT")
-        try:
-            self.value.analyse()
-        except AttributeError:
-            print("CANNOT ANALYSE VALUE")
-            print(repr(self.value))
-            print(jdump(self.value))
-            raise
-        self.ntype = self.get_type()
+        with log.dent("PyExpressionStatement.analyse"):
+            log.print("ANALYSING EXPRESSION STATEMENT")
+            log.print("ANALYSING EXPRESSION STATEMENT", self)
+            log.print("----------------------------->",self.value)
+            try:
+                self.value.analyse()
+            except AttributeError:
+                log.print("CANNOT ANALYSE VALUE")
+                log.print(repr(self.value))
+                log.print(jdump(self.value))
+                raise
+            self.ntype = self.get_type()
 
     def get_type(self):
         return self.value.get_type()
@@ -131,32 +158,40 @@ class PyFunctionCall(PyStatement):
         return info
 
     def analyse(self):
-        # We'll need to decorate the function call with information from somewhere
-        # For now though, we won't
-        print("XXXX self.callable_", self.callable_)
-        try:
-            print("XXXX self.callable_", self.callable_.value)
-        except AttributeError as e:
-            print("XXXX self.callable_.value ERROR")
-            print(e, dir(e), repr(e))
-            print(self.callable_)
-            print(dir(self.callable_))
-            print("self.callable_.expression", self.callable_.expression)
-            print("self.callable_.attribute", self.callable_.attribute)
+        """
+        FUNDAMENTAL PROBELM HERE IS RUMMAGEING AROUND INSIDE THE callable
+        RATHER THAN ASKING THE CALLABLE WHAT TO DO.
+        """
+        with log.dent("PyExpressionStatement.analyse"):
+            # We'll need to decorate the function call with information from somewhere
+            # For now though, we won't
 
-            print("XXXX self.callable_.value ERROR")
-            raise
-        if self.callable_.value in builtins:
-            self.builtin = True
-            self.ntype = self.get_type()
-            return
-        if self.callable_.value in arduino:
-            print("GOT HERE!")
-            self.arduino = True
-            self.ntype = self.get_type()
-            return
+            log.print("XXXX self.callable_", self.callable_)
+            try:
+                log.print("XXXX self.callable_", self.callable_.value)
+            except AttributeError as e:
+                with log.dent("FAILURE PyExpressionStatement.analyse"):
+                    log.print("XXXX self.callable_.value ERROR")
+                    log.print(e, dir(e), repr(e))
+                    log.print(self.callable_)
+                    log.print(dir(self.callable_))
+                    log.print("self.callable_.expression", self.callable_.expression)
+                    log.print("self.callable_.attribute", self.callable_.attribute)
 
-        return
+                    log.print("XXXX self.callable_.value ERROR")
+                    log.print("")
+                    raise
+            if self.callable_.value in builtins:
+                self.builtin = True
+                self.ntype = self.get_type()
+                return
+            if self.callable_.value in arduino:
+                print("GOT HERE!")
+                self.arduino = True
+                self.ntype = self.get_type()
+                return
+
+            return
 
     def get_type(self):
         # function calls have no default value, so for now we'll return None
