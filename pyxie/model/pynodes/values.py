@@ -89,6 +89,9 @@ class PyIdentifier(PyValueLiteral):
         expression = self.context.lookup(self.value)
         self.ntype = expression.get_type()
 
+    # FIXME: This name is created to allow attribute access lookup
+    def name(self):
+        return self.value
 
 class PyAttribute(PyNode):
     tag = "attribute"
@@ -103,6 +106,8 @@ class PyAttribute(PyNode):
     def __json__(self):
         return [ self.tag, self.lineno, jdump(self.value) ]
 
+    def name(self):
+        return self.value.name()
 
 class PyAttributeAccess(PyNode):
     tag = "attributeaccess"
@@ -117,9 +122,11 @@ class PyAttributeAccess(PyNode):
     def __json__(self):
         return [ self.tag, jdump(self.expression), jdump(self.attribute) ]
 
-#    def value(self):
-#        return self.attribute
+    def analyse(self):
+        raise Exception("HERE")
 
+    def name(self):
+        return [ self.expression.name(), self.attribute.name() ]
 
 # Base class for all numbers
 class PyNumber(PyValueLiteral):
