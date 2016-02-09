@@ -126,9 +126,9 @@ class PyExpressionStatement(PyStatement):
 
 class PyFunctionCall(PyStatement):
     tag = "function_call"
-    def __init__(self, callable_, expr_list):
+    def __init__(self, func_label, expr_list):
         super(PyFunctionCall,self).__init__()
-        self.callable_ = callable_
+        self.func_label = func_label
         self.expr_list = expr_list
         if expr_list:
             self.add_children(expr_list)
@@ -138,19 +138,19 @@ class PyFunctionCall(PyStatement):
 
     def __repr__(self):
         if self.expr_list:
-            return "PyFunctionCall(%s, %s)" % (repr(self.callable_), repr(self.expr_list), )
+            return "PyFunctionCall(%s, %s)" % (repr(self.func_label), repr(self.expr_list), )
         else:
-            return "PyFunctionCall(%s)" % (repr(self.callable_), )
+            return "PyFunctionCall(%s)" % (repr(self.func_label), )
 
     def __json__(self):
         if self.expr_list:
-            return [ self.tag, jdump(self.callable_), jdump(self.expr_list) ]
+            return [ self.tag, jdump(self.func_label), jdump(self.expr_list) ]
         else:
-            return [ self.tag, jdump(self.callable_) ]
+            return [ self.tag, jdump(self.func_label) ]
 
     def __info__(self):
         info = super(PyFunctionCall, self).__info__()
-        info[self.tag]["name"] = self.callable_.__info__()
+        info[self.tag]["name"] = self.func_label.__info__()
         if self.expr_list:
             info[self.tag]["args"] = [ x.__info__() for x in self.expr_list ]
         else:
@@ -197,13 +197,13 @@ class PyFunctionCall(PyStatement):
         # function calls have no default value, so for now we'll return None
         # This will be improved later on.
         if self.builtin:
-            meta = builtins[self.callable_.value]
+            meta = builtins[self.func_label.value]
             self.isiterator = meta.get("iterator", False)
             if self.isiterator:
                 return meta.get("values_type", None)
             return meta.get("return_type", None)
         if self.arduino:
-            meta = arduino[self.callable_.value]
+            meta = arduino[self.func_label.value]
             print("META META META", meta)
             print("META META META2", meta.get("return_ctype", None))
             return meta.get("return_ctype", None)

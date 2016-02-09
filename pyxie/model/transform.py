@@ -46,7 +46,7 @@ def find_variables(AST):
                 print("Extracting generator intermediate variable")
                 print(node.expression)
                 if isinstance(node.expression, nodes.PyFunctionCall):
-                    identifier = node.expression.callable_             # FIXME: May not be an identifier...
+                    identifier = node.expression.func_label             # FIXME: May not be an identifier...
                     print("Bibble", identifier)
                     print("Bibble", identifier.value)
                     iterator_type = identifier.value
@@ -204,7 +204,15 @@ def convert_assignment(assignment):
 def convert_value_literal(arg):
     # print(repr(arg), arg)
     stype = None
-    tag, value, vtype, line = arg.tag, arg.value,arg.get_type(), arg.lineno
+    print "ARG::",arg.tag
+
+    if arg.tag == "attributeaccess":
+        expression = convert_value_literal( arg.expression )
+        attribute = convert_value_literal( arg.attribute )
+
+        return ["attributeaccess", arg ]
+    tag, value, vtype, line = arg.tag, arg.value, arg.get_type(), arg.lineno
+
     if tag == "identifier":
         return ["identifier",  value]
 
@@ -326,7 +334,7 @@ def convert_arg(arg):
                 carg = crepr
                 cargs.append(carg)
 
-        return ["function_call", convert_value_literal(arg.callable_),  cargs ]    # FIXME: callable_ may not be an identifier...
+        return ["function_call", convert_value_literal(arg.func_label),  cargs ]    # FIXME: func_label may not be an identifier...
     else:
         todo("Handle print for non-value-literals")
         raise CannotConvert("Cannot convert print for non-value-literals")
