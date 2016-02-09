@@ -18,6 +18,8 @@
 # This is currently working from the AST as represented by lists,
 # switching to intermediate lists and then to nodes.
 
+from __future__ import print_function
+from __future__ import absolute_import
 
 from pyxie.model.pynode import jdump
 import pyxie.model.pynode as nodes
@@ -204,7 +206,7 @@ def convert_assignment(assignment):
 def convert_value_literal(arg):
     # print(repr(arg), arg)
     stype = None
-    print "ARG::",arg.tag
+    print ("ARG::",arg.tag)
 
     if arg.tag == "attributeaccess":
         expression = convert_value_literal( arg.expression )

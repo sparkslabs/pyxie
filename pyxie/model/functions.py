@@ -17,6 +17,9 @@ This file is primarily focussed on built in functions at the
 moment, to facilitate "range"
 """
 
+from __future__ import print_function
+from __future__ import absolute_import
+
 # built_ins = ("range", "print")
 
 # Might be worth considering bunging all the builtins into seperate modules

@@ -55,7 +55,9 @@
 #  * When we need the type of an identifier, we look in it's context for the name, find
 #    an expression and evaluate it's type
 
-#
+
+from __future__ import print_function
+from __future__ import absolute_import
 
 class UndefinedValue(Exception):
     pass

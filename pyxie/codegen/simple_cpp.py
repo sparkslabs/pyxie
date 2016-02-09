@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+from __future__ import print_function
+from __future__ import absolute_import
+
 import pprint
 import pyxie.model.functions
 from pyxie.model.functions import builtins

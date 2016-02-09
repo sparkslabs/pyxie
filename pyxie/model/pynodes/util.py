@@ -16,6 +16,39 @@
 
 # Utility functions
 
+from __future__ import print_function
+from __future__ import absolute_import
+
+from contextlib import contextmanager
+
+class indenting_logger(object):
+    """
+    This class exists specifically to help with debugging semantic analysis
+
+    It's specifically meant to be used like this:
+        with log.dent("PyExpressionStatement.analyse"):
+            log.print("ANALYSING EXPRESSION STATEMENT")
+            with log.dent("Some nested thing"):
+               log.print("ANALYSING EXPRESSION STATEMENT", self)
+               log.print("----------------------------->",self.value)
+
+    """
+    def __init__(self):
+        self.indent = 0
+    #
+    def print(self,*argv):
+        print(self.indent*"  " +  " ".join([str(x) for x in argv]) )
+    #
+    @contextmanager
+    def dent(self,*argv):
+        self.print("ENTER> " + " ".join([str(x) for x in argv]))
+        self.indent += 1
+        yield self
+        self.indent -= 1
+
+log = indenting_logger()
+
+
 def jdump(thing):
     "Calls __json__ on a thing to try and convert it into a json serialisable thing"
     try:

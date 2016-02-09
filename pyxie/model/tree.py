@@ -18,6 +18,9 @@
 # Added once the pynode parsing required it.
 #
 
+from __future__ import print_function
+from __future__ import absolute_import
+
 def cmp_first(x,y):
     hx,tx = x
     hy,ty = y

@@ -19,31 +19,11 @@ from __future__ import absolute_import
 
 from .util import *
 from .base_nodes import PyStatement
+from .values import PyAttributeAccess
 
 from pyxie.model.functions import builtins
 from pyxie.model.functions import arduino_profile_function_calls as arduino
 
-from contextlib import contextmanager
-
-class indenting_logger(object):
-    """
-    This class exists specifically to help with debugging semantic analysis
-    """
-    def __init__(self):
-        self.indent = 0
-    #
-    def print(self,*argv):
-        print(self.indent*"  " +  " ".join([str(x) for x in argv]) )
-    #
-    @contextmanager
-    def dent(self,*argv):
-        self.print("ENTER> " + " ".join([str(x) for x in argv]))
-        self.indent += 1
-        yield self
-        self.indent -= 1
-
-
-log = indenting_logger()
 
 class PyAssignment(PyStatement):
     tag = "assignment_statement"
@@ -162,36 +142,29 @@ class PyFunctionCall(PyStatement):
         FUNDAMENTAL PROBELM HERE IS RUMMAGEING AROUND INSIDE THE callable
         RATHER THAN ASKING THE CALLABLE WHAT TO DO.
         """
-        with log.dent("PyExpressionStatement.analyse"):
-            # We'll need to decorate the function call with information from somewhere
-            # For now though, we won't
+        func_name = self.func_label.name()
 
-            log.print("XXXX self.callable_", self.callable_)
-            try:
-                log.print("XXXX self.callable_", self.callable_.value)
-            except AttributeError as e:
-                with log.dent("FAILURE PyExpressionStatement.analyse"):
-                    log.print("XXXX self.callable_.value ERROR")
-                    log.print(e, dir(e), repr(e))
-                    log.print(self.callable_)
-                    log.print(dir(self.callable_))
-                    log.print("self.callable_.expression", self.callable_.expression)
-                    log.print("self.callable_.attribute", self.callable_.attribute)
-
-                    log.print("XXXX self.callable_.value ERROR")
-                    log.print("")
-                    raise
-            if self.callable_.value in builtins:
-                self.builtin = True
-                self.ntype = self.get_type()
-                return
-            if self.callable_.value in arduino:
-                print("GOT HERE!")
-                self.arduino = True
-                self.ntype = self.get_type()
-                return
-
+        #if type(func_name) == list:
+        if type(self.func_label) == PyAttributeAccess:
+            log.print("OK, name is:", func_name)
+            log.print("HMMM:", dir(self))
+            log.print("HMMM:", self.arduino)
+            log.print("HMMM:", self.builtin)
+            log.print("HMMM:", self.func_label)
             return
+            raise NotImplementedError("Not yet implemented attribute access")
+
+        if func_name in builtins:
+            self.builtin = True
+            self.ntype = self.get_type()
+            return
+
+        if func_name in arduino:
+            self.arduino = True
+            self.ntype = self.get_type()
+            return
+
+        return
 
     def get_type(self):
         # function calls have no default value, so for now we'll return None

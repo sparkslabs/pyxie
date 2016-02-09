@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+from __future__ import print_function
+from __future__ import absolute_import
+
 from .util import *
 from .base_nodes import PyNode
 
@@ -123,6 +126,12 @@ class PyAttributeAccess(PyNode):
         return [ self.tag, jdump(self.expression), jdump(self.attribute) ]
 
     def analyse(self):
+        print("""
+**********************************************************************
+**********************************************************************
+**********************************************************************
+**********************************************************************
+""")
         raise Exception("HERE")
 
     def name(self):
