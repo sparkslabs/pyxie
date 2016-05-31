@@ -1,0 +1,20 @@
+---
+Summary: Directory overview
+Updated: May 2016
+git-hash: b7f7cd879a726d7a88adf78704784e08bd62c9dd
+---
+In here will go what I'm terming as "WIP NOTES".
+In particular, these are notes on "how things work right now"
+
+This isn't necessarily how they should work, but how they actually work.
+
+There may also be notes on how things should work.
+
+In all cases, all of these docs will either have a git-hash (or
+git-hash-like) value so that correlating when this information was
+(probably) true can be found.
+
+The reason for this is because I rarely have time to work on this and it's
+to remind me "what was I thinking..."
+
+Reality is likely to differ. If it does, updates welcome.
