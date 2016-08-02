@@ -15,6 +15,8 @@ Functions can be:
 
 This file is primarily focussed on built in functions at the
 moment, to facilitate "range"
+
+TODO: This file needs a major rethink
 """
 
 from __future__ import print_function
@@ -42,13 +44,13 @@ range_raw_code_template = """
 
 
 # This might well be used
-iterated_code_variable_declarations_template = """
+icvdt = iterated_code_variable_declarations_template = """
     %(ITERATED_TYPE)s %(IDENTIFIER)s;
     %(ITERATOR_TYPE)s %(ITERATOR)s_gen_%(UNIQIFIER)s = %(ITERATOR)s;
 """
 
 # This might well be used
-iterated_code_actual_code_template = """
+icact = iterated_code_actual_code_template = """
     while (true) {
         try {
             %(IDENTIFIER)s = %(ITERATOR)s_gen_%(UNIQIFIER)s.next();
@@ -60,7 +62,7 @@ iterated_code_actual_code_template = """
 """
 
 # This next line doesn't seem likely to be what we want here.
-iterated_code_template = iterated_code_variable_declarations_template + iterated_code_actual_code_template
+iterated_code_template = icvdt + icact
 """
     %(ITERATED_TYPE)s %(IDENTIFIER)s;
     %(ITERATOR)s %(ITERATOR)s_gen_%(UNIQIFIER)s = %(ITERATED_TYPE)s %(ITERATOR)s(5);
@@ -90,8 +92,8 @@ builtins = {
                          "values_type": "integer",
                          "iterator_ctype" : "range",  # The name of the C function/struct/class
                          "code_template" : iterated_code_template, # Probably not what we want
-                         "variable_declarations_template" :  iterated_code_variable_declarations_template,
-                         "actual_code_template" :  iterated_code_actual_code_template,
+                         "variable_declarations_template" :  icvdt,
+                         "actual_code_template" :  icact,
                      }
             }
 
@@ -109,7 +111,7 @@ arduino_profile_types = {
     }
 
 
-templates = { "iterator" : { "declarations" : iterated_code_variable_declarations_template,
-                             "code" : iterated_code_actual_code_template,
+templates = { "iterator" : { "declarations" : icvdt,
+                             "code" : icact,
                            }
             }
