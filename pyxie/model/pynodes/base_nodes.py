@@ -14,15 +14,24 @@
 # limitations under the License.
 #
 
-from pyxie.model.tree import Tree
+# from pyxie.model.tree import Tree
 
-class PyNode(Tree):
+# class PyNode(Tree):
+class PyNode(object):
     """Representation of a python node"""
     tag = "node"
     ntype = None # Type for this node
     def __init__(self, *args):
         # Initialise the tree
-        super(PyNode,self).__init__()
+        self.children = [] # Children are ordered
+#        super(PyNode,self).__init__()
+
+    def add_child(self, node):
+        self.children.append(node)
+
+    def add_children(self, *nodes):
+        self.children = self.children + list(nodes)
+
     def tags(self):
         return ["node"]
     def classname(self):

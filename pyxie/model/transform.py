@@ -23,6 +23,7 @@ from __future__ import absolute_import
 
 from pyxie.model.pynode import jdump
 import pyxie.model.pynode as nodes
+from pyxie.model.pynode import depth_walk
 from pyxie.model.functions import builtins
 from pyxie.model.functions import arduino_profile_types as arduino
 
@@ -35,7 +36,7 @@ def todo(*args):
 def find_variables(AST):
     global iterator_unique_base
     variables = {}
-    for node in AST.depth_walk():
+    for node in depth_walk(AST):
         if node.tag == "for_statement":
             lvalue = node.identifier
             rvalue_source = node.expression
@@ -87,14 +88,14 @@ class CannotConvert(Exception):
     pass
 
 def python_type_to_c_type(ptype):
-    if ptype == "string":  return "string"
-    if ptype == "integer":  return "int"
+    if ptype == "string": return "string"
+    if ptype == "integer": return "int"
 
-    if ptype == "signedlong":  return "long"
-    if ptype == "unsignedlong":  return "unsigned long"
+    if ptype == "signedlong": return "long"
+    if ptype == "unsignedlong": return "unsigned long"
 
     if ptype == "bool": return "bool"
-    if ptype == "float":   return "double"
+    if ptype == "float": return "double"
     if ptype == "char": return "char"
 
     if ptype in builtins: return ptype
@@ -104,7 +105,7 @@ def python_type_to_c_type(ptype):
     raise UnknownType("Cannot identify C Type for %s" % ptype)
 
 def includes_for_ctype(ctype):
-    if ctype == "string":  return "<string>"
+    if ctype == "string": return "<string>"
 
 def includes_for_cstatement(cstatement):
     if cstatement[0] == "print_statement": return "<iostream>"
@@ -117,12 +118,12 @@ def crepr_literal(pyliteral):
 
     if ctype == "string":
         result = pyliteral.value
-        result = result.replace('"','\\"')
+        result = result.replace('"', '\\"')
         return '"' + result + '"'
 
     if ctype == "char":
         char = pyliteral.value
-        char = char.replace("'","\\'")
+        char = char.replace("'", "\\'")
         return "'" + char + "'"
 
     if ctype == "int":
@@ -146,8 +147,7 @@ def crepr_literal(pyliteral):
     raise ValueError("Do not not know how to create crepr_literal for " + repr(pyliteral))
 
 def crepr_op(py_op):
-    assert ( isinstance(py_op, nodes.PyOperator) or isinstance(py_op, nodes.PyBoolOperator))
-#    assert py_op[0] == "operator_function"
+    assert isinstance(py_op, nodes.PyOperator) or isinstance(py_op, nodes.PyBoolOperator)
     func = py_op.tag
 
     if func == "op_plus":
@@ -169,7 +169,7 @@ def crepr_op(py_op):
         raise CannotConvert("Cannot yet convert operators functions other than plus...:" + repr(py_op))
 
 def convert_assignment(assignment):
-    lvalue, assign_type, rvalue = assignment.lvalue,assignment.assign_type, assignment.rvalue
+    lvalue, assign_type, rvalue = assignment.lvalue, assignment.assign_type, assignment.rvalue
 
     if assign_type != "=":
         todo("Convert Assignment where assign_type is not '='")
@@ -179,10 +179,10 @@ def convert_assignment(assignment):
         todo("assignment where the lvalue is not an identifier")
         raise CannotConvert("Cannot convert assignment where the lvalue is not an identifier")
 
-    if not ( isinstance(assignment.rvalue, nodes.PyOperator) or
-             isinstance(assignment.rvalue, nodes.PyValueLiteral) or
-             isinstance(assignment.rvalue, nodes.PyComparisonOperator) or
-             isinstance(assignment.rvalue, nodes.PyBoolOperator)) :
+    if not (isinstance(assignment.rvalue, nodes.PyOperator) or
+            isinstance(assignment.rvalue, nodes.PyValueLiteral) or
+            isinstance(assignment.rvalue, nodes.PyComparisonOperator) or
+            isinstance(assignment.rvalue, nodes.PyBoolOperator)):
 
         todo("assignment where the rvalue is not a value_literal or operator")
         raise CannotConvert("Cannot convert assignment where the rvalue is not a value_literal")
@@ -201,35 +201,35 @@ def convert_assignment(assignment):
     if isinstance(assignment.rvalue, nodes.PyComparisonOperator):
         crvalue = convert_comparison(rvalue)
 
-    return ["assignment", clvalue, "=", crvalue ]
+    return ["assignment", clvalue, "=", crvalue]
 
 def convert_value_literal(arg):
     # print(repr(arg), arg)
     stype = None
-    print ("ARG::",arg.tag)
+    print ("ARG::", arg.tag)
 
     if arg.tag == "attributeaccess":
-        expression = convert_value_literal( arg.expression )
-        attribute = convert_value_literal( arg.attribute )
+        expression = convert_value_literal(arg.expression)
+        attribute = convert_value_literal(arg.attribute)
 
-        return ["attributeaccess", arg ]
+        return ["attributeaccess", arg]
     tag, value, vtype, line = arg.tag, arg.value, arg.get_type(), arg.lineno
 
     if tag == "identifier":
-        return ["identifier",  value]
+        return ["identifier", value]
 
     if vtype == "string":
-        return ["string",  value]
+        return ["string", value]
     if vtype == "integer":
-        return ["integer",  value]
+        return ["integer", value]
     if vtype == "float":
-        return ["double",  value]
+        return ["double", value]
     if vtype == "bool":
         if value == True:
             value = "true"
         else:
             value = "false"
-        return ["boolean",  value]
+        return ["boolean", value]
 
     todo("CONVERSION: Cannot handle other value literals %s" % repr(arg))
     todo("CONVERSION: %s %s %s %d" % (tag, repr(value), repr(vtype), line))
@@ -261,7 +261,7 @@ def convert_bool_operator_function(opfunc):
         print("crepr_arg2", repr(crepr_arg2))
         result = crepr_op(opfunc) + [crepr_arg1, crepr_arg2]
     else:
-        result = crepr_op(opfunc) + [crepr_arg1 ]
+        result = crepr_op(opfunc) + [crepr_arg1]
     print(repr(result))
     return result
 
@@ -336,7 +336,7 @@ def convert_arg(arg):
                 carg = crepr
                 cargs.append(carg)
 
-        return ["function_call", convert_value_literal(arg.func_label),  cargs ]    # FIXME: func_label may not be an identifier...
+        return ["function_call", convert_value_literal(arg.func_label), cargs]    # FIXME: func_label may not be an identifier...
     else:
         todo("Handle print for non-value-literals")
         raise CannotConvert("Cannot convert print for non-value-literals")
@@ -365,14 +365,14 @@ def convert_for_statement(for_statement):
     step = for_statement.block
 
     clvalue = lvalue.value # FIXME: This is only valid for identifiers
-    crvalue_source  = [ "iterator", convert_arg(rvalue_source) ]
+    crvalue_source = ["iterator", convert_arg(rvalue_source)]
     cstep = convert_statements(step)
 
 
     print("*******************")
-    print(crvalue_source )
+    print(crvalue_source)
     print("*******************")
-    print("FOR STATEMENT :" )
+    print("FOR STATEMENT :")
     print("              : ", for_statement)
     print("              :", dir(for_statement))
     print("     loop var :", for_statement.identifier)
@@ -382,12 +382,12 @@ def convert_for_statement(for_statement):
     print("        block :", for_statement.block)
     print("        info :", for_statement.__info__())
     print("*******************")
-    pprint.pprint( for_statement.__info__() )
+    pprint.pprint(for_statement.__info__())
     print("*******************")
     # crepr_condition = convert_arg(for_statement.condition)
     # cstatements = convert_statements(while_statement.block)
 #    return ["while_statement", crepr_condition] + cstatements
-    return ["for_statement", clvalue, crvalue_source, cstep, for_statement ]
+    return ["for_statement", clvalue, crvalue_source, cstep, for_statement]
 
 
 def convert_extended_clause(extended_clause):
@@ -397,13 +397,13 @@ def convert_extended_clause(extended_clause):
         cstatements = convert_statements(extended_clause.block)
         if extended_clause.else_clause:
             cextended_clause = convert_extended_clause(extended_clause.else_clause)
-            return["elif_clause", crepr_condition, cstatements, cextended_clause ]
-        return ["elif_clause", crepr_condition, cstatements ]
+            return["elif_clause", crepr_condition, cstatements, cextended_clause]
+        return ["elif_clause", crepr_condition, cstatements]
 
     if extended_clause.tag == "else_clause":
         print("WORKING THROUGH ELSE:", extended_clause)
         cstatements = convert_statements(extended_clause.block)
-        return ["else_clause", cstatements ]
+        return ["else_clause", cstatements]
 
     print("NOT ELIF!")
     print("NOT ELSE!")
@@ -417,8 +417,8 @@ def convert_if_statement(if_statement):
     cstatements = convert_statements(if_statement.block)
     if if_statement.else_clause:
         cextended_clause = convert_extended_clause(if_statement.else_clause)
-        return["if_statement", crepr_condition, cstatements, cextended_clause ]
-    return ["if_statement", crepr_condition, cstatements ]
+        return["if_statement", crepr_condition, cstatements, cextended_clause]
+    return ["if_statement", crepr_condition, cstatements]
 
 def convert_pass_statement(pass_statement):
     return ["pass_statement"]
@@ -481,19 +481,19 @@ def convert_statements(AST):
 def ast_to_cst(program_name, AST):
     cst = {}
 
-    ast_includes = [ x.replace("#include ","") for x in AST.includes ]
+    ast_includes = [x.replace("#include ","") for x in AST.includes]
     print("AST.includes = ", ast_includes)
     # Extract and handle variables
     pvariables = find_variables(AST)
     cvariables = []
     ctypes = {}
     # includes = []
-    includes = [ x.replace("#include ","") for x in AST.includes ]
+    includes = [x.replace("#include ","") for x in AST.includes]
     names = pvariables.keys()
     names.sort()
     for name in names:
         ctype = python_type_to_c_type(pvariables[name])
-        identifier = [ "identifier", ctype, name ]
+        identifier = ["identifier", ctype, name]
         cvariables.append(identifier)
         ctypes[ctype] = True
 

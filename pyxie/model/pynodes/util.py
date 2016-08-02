@@ -63,3 +63,10 @@ def warn(message):
         raise Exception(message)
     else:
         print(message)
+
+def depth_walk(root_node):
+    "Return a generator that is a depth first walk of the tree"
+    for node in root_node.children:
+        for child in depth_walk(node):
+            yield child
+    yield root_node

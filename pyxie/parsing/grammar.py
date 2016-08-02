@@ -22,7 +22,6 @@ import ply.yacc as yacc
 
 from pyxie.model.pynode import *
 from pyxie.parsing.lexer import tokens
-from pyxie.parsing.context import *
 
 class Grammar(object):
     precedence = (

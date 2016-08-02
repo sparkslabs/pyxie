@@ -24,7 +24,6 @@ from .statements import PyEmptyStatement
 
 from pyxie.parsing.context import Context
 
-
 class PyProgram(PyNode):
     tag = "program"
     def __init__(self, statements):
@@ -53,7 +52,8 @@ class PyProgram(PyNode):
         print("ANALYSING PROGRAM")
 
         global_context = Context()
-        for node in self.depth_walk():
+#        for node in self.depth_walk():
+        for node in depth_walk(self):
             if node.tag == "identifier":
                 node.context = global_context
                 print("NODE", node)
