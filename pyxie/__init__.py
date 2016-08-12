@@ -234,7 +234,7 @@ inspired heavily by python introspection) That's quite some time off.
 
 Release History:
 
-* 0.0.20 - UNRELEASED - TBD
+* 0.0.20 - 2016-08-12 - Mainly internal changes. Adds WIPNOTES, updates arduino examples
 * 0.0.19 - 2016-01-31 - Continued work on arduino profile and initial Python3 support
 * 0.0.18 - 2016-01-10 - Grammar changes to support object attributes and methods, start of servo support in arduino profile.
 * 0.0.17 - 2015-08-12 - Add pass statement, enable "for" on arduino, update documentation, refactor pyxie harness
@@ -384,7 +384,7 @@ based on current rate of progress.
 
 Keeping it for now also simplifies "yield" later
 
-Michael Sparks, February 2016
+Michael Sparks, August 2016
 
 
 """

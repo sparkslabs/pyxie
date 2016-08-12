@@ -3,7 +3,7 @@ template: mainpage
 source_form: markdown
 name: Changelog
 title: Changelog
-updated: February 2016
+updated: August 2016
 ---
 ## Change Log
 
@@ -13,18 +13,47 @@ reason.
 
 ### In progress
 
-## [0.0.20] - UNRELEASED
+## [0.0.20] - 2016-08-12
+
+Bulk of changes for this release are internal - various refactoring and so
+on. This isn't particularly exciting, but a release made just to say "yes
+the project is still progressing".
+
+Probably the most interesting addition is actually the creation of "WIPNOTES"
+designed to support ongoing (ie WIP) development. You can also now see the
+next target for the arduino profile - to support servos. This requires a
+fair collection of (useful) improvements to the python type inference which
+is not yet complete. As a result while the servo example *parses* it does not
+yet *analyse* or *compile*.
+
+Indeed, that's required a fair amount of rethinking about internal structure,
+hence the new WIPNOTES :-)
 
 ### New
 
-*
+* Update arduino examples; servo target example started
+* Introduces a collection of WIPNOTES
 
-### Other
+### Internal
 
-*
+* Bump packaging for release
+* Sync website updates
+* Trello/doc sync
+* Prettify generated C++ files
+* Sync release info
+* Add newsletter subscription to site info
+* Changes to support debugging analysis -- 
+* Version bumps 0.0.20
+* Add comment to indenting logger
+* Removed use of indenting logger :-)
+* Use func_label to refer to the callable, not callable_
+* Experimental addition to look at name of thing, not value
+* Better python 3 compatibility
+* Shorten names in profile definitions for clarity
+* Subsume tree functionality into core
+* Update changelog
 
 ## [0.0.19] - 2016-01-31
-
 
 ### Fixes
 
