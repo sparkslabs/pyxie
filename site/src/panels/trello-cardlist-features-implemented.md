@@ -2,11 +2,28 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Features Implemented
-updated: February 2016
+updated: August 2016
 title: Trello Cardlist Features Implemented
 ---
 ### Features Implemented
 
+* 0\.0.20 = = = = = = = = = =
+* Subsume tree functionality into core
+* Shorten names in profile definitions for clarity
+* Better python 3 compatibility
+* Experimental addition to look at name of thing, not value
+* Use func_label to refer to the callable, not callable_
+* Removed use of indenting logger :-)
+* Add comment to indenting logger
+* Changes to support debugging analysis
+* Prettify generated C++ files
+* Bump packaging for release
+* 194\. Docs on pyxie-dev usage
+* 0\.0.19 = = = = = = = = = =
+* 207\. Arduino profile supports constants "HIGH", "LOW", "OUTPUT"
+* 202\. Arduino profile supports digitalWrite
+* 204\. Arduino profile supports pinMode
+* 209\. Parsing of Servo.attach() method call works as you'd expect
 * 226\. Implementation can analyse a simple call to arduino Servo() from Servo.h
 * 228\. Compiler Runs under Python 3 (and Python 2)
 * 0\.0.18 = = = = = = = = = =

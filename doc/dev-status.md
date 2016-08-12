@@ -10,14 +10,16 @@ commits. _(This is exported from trello)_
 
 * HEADLINE: PRE-ALPHA
 * DEV STATE: WORKING (BARE)
-* DEV VERSION: 0.0.20
-* RELEASED: 0.0.19 (31 Jan 2016)
+* DEV VERSION: 0.0.21
+* RELEASED: 0.0.20 (12 Aug 2016)
 * LANGUAGE STATE: BARE*
 * FOCUS: Practicalities (Arduino Profile real example)
+* Newsletter created at http://tinyletter.com/sparkslabs
 
 
 ### WIP
 
+* 231\. PyAttribute(PyNode) needs to have a reference to the thing it's an attribute of when it's being accessed via PyAttributeAccess
 * 229\. Implementation can analyse call to myservo.attach(pin)
 
 
@@ -27,36 +29,24 @@ commits. _(This is exported from trello)_
 
 ### Backlog: Arising
 
-* 230\. PyNode PyAttribute needs to have a reference to the thing it's an attribute of when it's being accessed via PyAttributeAccess
 
 
 ### Release Backlog: Features
 
-* 0\.0.19 = = = = = = = = = =
+* 0\.0.21 = = = = = = = = = =
 * 230\. Implementation can generate code for myservo.attach(pin)
 * 227\. .get_type() should be delegated, not rely on internal pynode details.
-* 225\. Implementation of attribute access is sufficient for arduino profile.
 * 201\. Arduino profile supports Servos
-* 221\. Initial spike support for function definitions. (no args, no return values)
-* 222\. Spike support for functions which use local variables
-* 223\. Spike support for functions with basic arguments.
-* 3\.5 Analysis code looks for an arduino profile file describing c-types appropriately.
-* 207\. Arduino profile supports constants "HIGH", "LOW", "OUTPUT"
-* 202\. Arduino profile supports digitalWrite
-* 203\. Arduino profile supports delayMicroseconds
-* 204\. Arduino profile supports pinMode
-* 205\. Arduino profile supports analogRead
-* 206\. Arduino profile supports millis()
-* 209\. Parsing of Servo.attach() method call works as you'd expect
 * 210\. Parsing of Servo.writeMicroseconds() method call works as you'd expect
-* 213\. v0 Playful Puppy code analyses
-* 214\. v0 Playful Puppy code generates code
-* 215\. v0 Playful Puppy code compiles, and runs on device correctly
+* 225\. Implementation of attribute access is sufficient for arduino profile.
+* Flesh out a micro:bit profile.
 
 
 ### Release Backlog: Tasks
 
-* 0\.0.19 - - - - - (tasks)
+* 0\.0.21 - - - - - (tasks)
+* 238\. Update grammar on website/in docs to match current grammar.
+* 239\. 0.0.20 Release tasks
 
 
 ### Known Bugs / Anti-features
@@ -65,21 +55,30 @@ commits. _(This is exported from trello)_
 
 ### Backlog: Proposed Next
 
-* 9\. Add the manpage to the distributed files, into the right places #docs
-* 8\. Add updating man page to the makefile #docs
-* 196\. Batch Compiler
-* 197\. Web Editor
-* 195\. Functionality of bin/pyxie-dev is in core, not a script
+* 3\.5 Analysis code looks for an arduino profile file describing c-types appropriately.
+* 203\. Arduino profile supports delayMicroseconds
+* 205\. Arduino profile supports analogRead
 * 3\.8 Arduino compiled programs can use values returned from functions.
-* 4\. Compilation profiles are pluggable
+* 206\. Arduino profile supports millis()
+* 221\. Initial spike support for function definitions. (no args, no return values)
+* 223\. Spike support for functions with basic arguments.
+* 222\. Spike support for functions which use local variables
+* 213\. v0 Playful Puppy code analyses
+* 214\. v0 Playful Puppy code generates code
+* 215\. v0 Playful Puppy code compiles, and runs on device correctly
+* 196\. Batch Compiler
+* 195\. Functionality of bin/pyxie-dev is in core, not a script
 * 3\.6 arduino profile file is propogated with something relating to core functions that read values, to avoid forcing types "manually"
-* 194\. Docs on pyxie-dev usage
-* 11\. MBed compatible compilation profile? (Seeedstudio Arch)
-* 12\. MSP430 compatible compilation profile?
 
 
 ### Backlog: Features
 
+* 9\. Add the manpage to the distributed files, into the right places #docs
+* 8\. Add updating man page to the makefile #docs
+* 197\. Web Editor
+* 4\. Compilation profiles are pluggable
+* 11\. MBed compatible compilation profile? (Seeedstudio Arch)
+* 12\. MSP430 compatible compilation profile?
 * 13\. Pyxie compile harness supports custom working directories #practicalities
 * 14\. Code Cleanups #refactor #internals
 * 15\. Refactor code generation #refactor #internals
@@ -120,8 +119,6 @@ commits. _(This is exported from trello)_
 
 ### Backlog: Tasks
 
-* 30\. Should we allow comments on website? #website
-* 50\. Link current test programs on the website, maybe #website
 * 52\. Review whether context should check types of ALL expressions, rather than just first, and whether we can should try to detect type mismatches #reflect
 * 53\. Use https://travis-ci.org/ ? #reflect
 * 54\. Review pypi packaging for things we should be doing #reflect #practicalities
@@ -130,14 +127,35 @@ commits. _(This is exported from trello)_
 
 ### Backlog: Website, docs, etc
 
+* 232\. Would be nice to have a prettier website
+* 233\. Some sort of Logo would be nice
 * 57\. Blog post: Pyxie structure #website
 * 58\. Blog Post: Pyxie Decisions #website
 * 59\. Start thoughts on pyxie-web #reflect #website
 * 60\. Start thoughts on pyxie-gui #reflect
+* 30\. Should we allow comments on website? #website
+* 50\. Link current test programs on the website, maybe #website
 
 
 ### Features Implemented
 
+* 0\.0.20 = = = = = = = = = =
+* Subsume tree functionality into core
+* Shorten names in profile definitions for clarity
+* Better python 3 compatibility
+* Experimental addition to look at name of thing, not value
+* Use func_label to refer to the callable, not callable_
+* Removed use of indenting logger :-)
+* Add comment to indenting logger
+* Changes to support debugging analysis
+* Prettify generated C++ files
+* Bump packaging for release
+* 194\. Docs on pyxie-dev usage
+* 0\.0.19 = = = = = = = = = =
+* 207\. Arduino profile supports constants "HIGH", "LOW", "OUTPUT"
+* 202\. Arduino profile supports digitalWrite
+* 204\. Arduino profile supports pinMode
+* 209\. Parsing of Servo.attach() method call works as you'd expect
 * 226\. Implementation can analyse a simple call to arduino Servo() from Servo.h
 * 228\. Compiler Runs under Python 3 (and Python 2)
 * 0\.0.18 = = = = = = = = = =
@@ -263,6 +281,14 @@ commits. _(This is exported from trello)_
 
 ### Tasks Done
 
+* 0\.0.20 - - - - - (tasks)
+* Update changelog
+* Add newsletter subscription to site info
+* 234\. Replicate *target* release issues for 0.0.20 into github
+* 235\. Newsletter for sparkslabs projects exists.
+* 236\. Re-order trello lists by left to right order to make more usable
+* 237\. Tweak git repo
+* 0\.0.19 - - - - - (tasks)
 * 0\.0.18 - - - - - (tasks)
 * Package for release and release (DONE)
 * Cleanup clib packaging

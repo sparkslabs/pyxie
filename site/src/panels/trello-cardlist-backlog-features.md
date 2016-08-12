@@ -2,11 +2,17 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Backlog: Features
-updated: February 2016
+updated: August 2016
 title: Trello Cardlist Backlog: Features
 ---
 ### Backlog: Features
 
+* 9\. Add the manpage to the distributed files, into the right places #docs
+* 8\. Add updating man page to the makefile #docs
+* 197\. Web Editor
+* 4\. Compilation profiles are pluggable
+* 11\. MBed compatible compilation profile? (Seeedstudio Arch)
+* 12\. MSP430 compatible compilation profile?
 * 13\. Pyxie compile harness supports custom working directories #practicalities
 * 14\. Code Cleanups #refactor #internals
 * 15\. Refactor code generation #refactor #internals

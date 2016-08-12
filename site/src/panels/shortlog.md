@@ -2,7 +2,7 @@
 template: mainpanel
 source_form: markdown
 name: Shortlog
-updated: July 2015
+updated: August 2016
 title: Shortlog
 ---
 * 0.0.20 - 2016-08-12 - Mainly internal changes. Adds WIPNOTES, updates arduino examples

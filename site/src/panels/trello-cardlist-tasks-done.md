@@ -2,11 +2,19 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Tasks Done
-updated: February 2016
+updated: August 2016
 title: Trello Cardlist Tasks Done
 ---
 ### Tasks Done
 
+* 0\.0.20 - - - - - (tasks)
+* Update changelog
+* Add newsletter subscription to site info
+* 234\. Replicate *target* release issues for 0.0.20 into github
+* 235\. Newsletter for sparkslabs projects exists.
+* 236\. Re-order trello lists by left to right order to make more usable
+* 237\. Tweak git repo
+* 0\.0.19 - - - - - (tasks)
 * 0\.0.18 - - - - - (tasks)
 * Package for release and release (DONE)
 * Cleanup clib packaging
