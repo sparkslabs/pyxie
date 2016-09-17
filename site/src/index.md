@@ -7,7 +7,7 @@ updated: August 2016
 ---
 ## Pyxie -- A Little Python to C++ Compiler
 
-**Latest Release:** [0.0.20](changelog.html) (12/Aug/2016)
+**Latest Release:** [0.0.21](changelog.html) (17/Sept/2016)
 
 {% whatjobdoesthisdo = panel("panels/what-job-does-this-do.md") %}
 
@@ -19,6 +19,8 @@ that looks like this into an equivalent (simple) C++ program.
 {% exampleprogram = panel("panels/example-program.md") %}
 
 {% examplearduinoprogram = panel("panels/example-arduino-program.md") %}
+
+{% examplearduinoservoprogram = panel("panels/example-arduino-servo-program.md") %}
 
 {% whatdoesthisdo = panel("panels/what-does-this-do.md") %}
 

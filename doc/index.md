@@ -1,6 +1,6 @@
 ## Pyxie -- A Little Python to C++ Compiler
 
-**Latest Release:** [0.0.20](changelog.html) (12/Aug/2016)
+**Latest Release:** [0.0.21](changelog.html) (17/Sept/2016)
 
 ### What job does / will this do?
 
@@ -9,7 +9,10 @@ familiar high level language that can then be compiled to run on an arbitrary
 embedded system - that is devices with very low power CPUs and very little memory.
 (ie devices too small to host a python interpreter/runtime) 
 
-It's pre-alpha at the moment.
+It's pre-alpha at the moment. However, as of Sept 2016, it's beginning to be
+usable for compiling very simple python programs that can run directly on an
+arduino, starting with those that can control servos.  This means small
+python powered robots :)
 
 It will be useful in supporting things like the The Scout Association's "Digital
 Maker" badge. That's a fair way off though.
@@ -137,6 +140,84 @@ void setup()
 &nbsp;
 void loop()
 {
+}
+</pre>
+</div>
+</div>
+
+
+
+
+Example Arduino Program using Servos
+<div class="columnpanel">
+<div class="column col2_5">
+<b>Source:</b> servo-test-target.pyxie
+
+<pre>
+
+    #include <Servo.h>
+
+    myservo = Servo()
+    pos = 0
+    pin=11
+
+    myservo.attach(pin)
+    while True:
+        for pos in range(180):
+            myservo.write(pos)
+            delay(15)
+
+        for pos in range(180):
+            myservo.write(179-pos)
+            delay(15)
+</pre>
+</div>
+<div class="column col3_5">
+<b>Generated:</b> servo-test-target.ino
+<pre>
+\#include <Servo.h>
+&nbsp;
+\#include "iterators.cpp"
+&nbsp;
+void setup() {
+    Servo myservo;
+    int pin;
+    int pos;
+    range range_iter_1;
+    range range_iter_2;
+
+    pos = 0;
+    pin = 11;
+    (myservo).attach(pin);
+    while (true) {
+
+        range_iter_1 = range(180);
+        while (true) {
+            pos = range_iter_1.next();
+            if (range_iter_1.completed())
+                break;
+
+
+            (myservo).write(pos);
+            delay(15);          // Itself uses pos
+        }
+        ;
+
+        range_iter_2 = range(180);
+        while (true) {
+            pos = range_iter_2.next();
+            if (range_iter_2.completed())
+                break;
+
+
+            (myservo).write((179 - pos));
+            delay(15);          // Itself uses pos
+        }
+        ;
+    };
+}
+&nbsp;
+void loop() {
 }
 </pre>
 </div>
