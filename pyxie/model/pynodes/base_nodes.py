@@ -14,17 +14,12 @@
 # limitations under the License.
 #
 
-# from pyxie.model.tree import Tree
-
-# class PyNode(Tree):
 class PyNode(object):
     """Representation of a python node"""
     tag = "node"
     ntype = None # Type for this node
     def __init__(self, *args):
-        # Initialise the tree
         self.children = [] # Children are ordered
-#        super(PyNode,self).__init__()
 
     def add_child(self, node):
         self.children.append(node)
@@ -39,13 +34,14 @@ class PyNode(object):
     def __info__(self):
         return { self.tag : {"type":self.ntype} }
 
+
 class PyOperation(PyNode):
     tag = "operation"
     def __init__(self, *args):
         super(PyOperation,self).__init__()
 
+
 class PyStatement(PyNode):
     tag = "statement"
     def __init__(self, *args):
         super(PyStatement,self).__init__()
-

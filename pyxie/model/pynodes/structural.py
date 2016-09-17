@@ -52,7 +52,6 @@ class PyProgram(PyNode):
         print("ANALYSING PROGRAM")
 
         global_context = Context()
-#        for node in self.depth_walk():
         for node in depth_walk(self):
             if node.tag == "identifier":
                 node.context = global_context
@@ -85,21 +84,10 @@ class PyBlock(PyNode):
         # have a new context. Commenting that out for the moment.
         info = super(PyBlock, self).__info__()
         info[self.tag].update(self.statements.__info__())
-#        contexts = Context.contexts
-#        contexts_info = []
-#        for context in contexts:
-#            contexts_info.append(contexts[context].__json__())
-#        info[self.tag]["contexts"] = contexts_info
         return info
 
     def analyse(self):
         print("ANALYSING BLOCK")
-
-#        global_context = Context()
-#        for node in self.depth_walk():
-#            if node.tag == "identifier":
-#                node.context = global_context
-
         self.ntype = None
         self.statements.analyse() # Descend through the tree
 
