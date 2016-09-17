@@ -211,8 +211,12 @@ def convert_value_literal(arg):
     if arg.tag == "attributeaccess":
         expression = convert_value_literal(arg.expression)
         attribute = convert_value_literal(arg.attribute)
+        return ["attributeaccess", expression, attribute]
 
-        return ["attributeaccess", arg]
+    if arg.tag == "attribute":
+        x = convert_value_literal(arg.value)
+        return x
+
     tag, value, vtype, line = arg.tag, arg.value, arg.get_type(), arg.lineno
 
     if tag == "identifier":
