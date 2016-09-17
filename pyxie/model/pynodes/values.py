@@ -17,6 +17,8 @@
 from __future__ import print_function
 from __future__ import absolute_import
 
+import inspect
+
 from .util import *
 from .base_nodes import PyNode
 
@@ -96,6 +98,7 @@ class PyIdentifier(PyValueLiteral):
     def name(self):
         return self.value
 
+
 class PyAttribute(PyNode):
     tag = "attribute"
     def __init__(self, lineno, value):
@@ -111,6 +114,13 @@ class PyAttribute(PyNode):
 
     def name(self):
         return self.value.name()
+
+    def get_type(self):
+        print("CALLER:", inspect.stack()[1][3])
+        print("ATTRIBUTE:", self.value)
+        print(self.context)
+        raise AttributeError("'PyAttribute' object has no attribute 'get_type'")
+
 
 class PyAttributeAccess(PyNode):
     tag = "attributeaccess"
