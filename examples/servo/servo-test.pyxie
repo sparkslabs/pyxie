@@ -1,4 +1,3 @@
-
 #include <Servo.h>
 
 myservo = Servo()
@@ -6,3 +5,4 @@ pos = 0
 pin=11
 
 myservo.attach(pin)
+myservo.write(pos)
