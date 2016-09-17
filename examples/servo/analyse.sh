@@ -2,4 +2,5 @@
 
 cd ../..
 export PYTHONPATH=.
-./bin/pyxie --profile arduino analyse examples/servo/servo-test.pyxie
+
+./bin/pyxie --profile arduino analyse examples/servo/servo-test-target.pyxie
