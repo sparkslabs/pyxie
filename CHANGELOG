@@ -6,7 +6,7 @@ reason.
 
 ### In progress
 
-## [0.0.21] - UNRELEASED
+## [0.0.21] - 2016-09-17
 
 Various small changes that result in the abilty to generate C++ code
 for a python arduino program that looks like this:

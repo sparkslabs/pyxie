@@ -13,15 +13,52 @@ reason.
 
 ### In progress
 
-## [0.0.21] - UNRELEASED
+## [0.0.21] - 2016-09-17
+
+Various small changes that result in the abilty to generate C++ code
+for a python arduino program that looks like this:
+
+    #include <Servo.h>
+
+    myservo = Servo()
+    pos = 0
+    pin=11
+
+    myservo.attach(pin)
+    while True:
+        for pos in range(180):
+            myservo.write(pos)
+            delay(15)
+
+        for pos in range(180):
+            myservo.write(179-pos)
+            delay(15)
+
+This isn't complete because reading arduino sensors won't work like this
+yet and so on, but this is a start. The generated code doesn't seek to make
+optimisations and aims to be accurate, so the above creates two iterators - one
+for each range and runs those.
+
+Internal improvements to contexts also suggest better mechanisms for handling
+profiles.
 
 ### New
 
-*
+* Code generation for object methods. Allows things like myservo.attach(pin) and myservo.write(pos)
+* Started changes regarding how contexts will be managed/accessed by pynodes
+* Global context handling improved
+* Internals supported for code generation of functions extended to include attribute access
 
 ### Other
 
-*
+* Improved notes on how context nodes will operate
+* Minimal servo tests extended slightly to support moving servos
+
+### Internal
+
+* Simplified pynode internals (removed explicit tree type)
+* Cleaned up/removed extraneous code
+* Bump for release
 
 ## [0.0.20] - 2016-08-12
 
