@@ -323,8 +323,21 @@ class FunctionCall(object):
         return ["function_call", self.identifier ] + self.arg_list.json()
 
     def code(self):
-        return self.identifier[1] + "(" + ", ".join(self.arg_list.code_list())+ ")"
-#         return "cout << " + " << \" \" << ".join(self.arg_list.code_list()) + " << endl"
+        identifier = self.identifier[1]
+
+        if self.identifier[0] == "attributeaccess":
+            expression = self.identifier[1]
+            attribute = self.identifier[2]
+
+            c_expression = "(" + expression[1] + ")"
+            c_attribute = attribute[1]
+
+            identifier = c_expression + "." + c_attribute
+
+        else:
+            identifier = self.identifier[1]
+
+        return identifier + "(" + ", ".join(self.arg_list.code_list())+ ")"
 
 
 class PrintStatement(object):
