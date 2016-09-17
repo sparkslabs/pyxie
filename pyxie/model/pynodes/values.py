@@ -75,7 +75,6 @@ class PyIdentifier(PyValueLiteral):
     tag = "identifier"
     def __init__(self, *args):
         super(PyIdentifier, self).__init__(*args)
-        self.context = None
         self.types = []
 
     def add_rvalue(self, expression):

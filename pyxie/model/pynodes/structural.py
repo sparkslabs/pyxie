@@ -31,6 +31,7 @@ class PyProgram(PyNode):
         self.statements = statements
         self.includes = None
         self.add_children(statements)
+        self.context = Context() # Global context
 
     def __repr__(self):
         return "PyProgram(%s)" % (repr(self.statements), )
@@ -50,20 +51,21 @@ class PyProgram(PyNode):
 
     def analyse(self):
         print("ANALYSING PROGRAM")
-
-        global_context = Context()
-        for node in depth_walk(self):
-            if node.tag == "identifier":
-                node.context = global_context
-                print("NODE", node)
+        # Add global context to child nodes before we start the analysis
+        for child in self.children:
+            child.add_context(self.context)
 
         self.ntype = self.get_type()
         self.statements.analyse() # Descend through the tree
 
+        # print("CONTEXT: ================================================================================")
+        # import pprint
+        # pprint.pprint(self.context.__json__())
+        # print("CONTEXT: ================================================================================")
+
     def get_type(self):
         # Program has no value so no type
         return None
-
 
 class PyBlock(PyNode):
     tag = "block"

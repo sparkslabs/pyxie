@@ -20,6 +20,16 @@ class PyNode(object):
     ntype = None # Type for this node
     def __init__(self, *args):
         self.children = [] # Children are ordered
+        self.context = None # Default to no context initially
+
+    def add_context(self, context):
+        # Default is to Inherit the context of the container of this
+        # PyNode. Some pynodes may override this behaviour - in particular
+        # this behaviour may be overridden in function definitions for
+        # example, it will also be overridden by nodes with children
+        self.context = context
+        for child in self.children:
+            child.add_context(context)
 
     def add_child(self, node):
         self.children.append(node)
