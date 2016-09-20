@@ -6,6 +6,16 @@ reason.
 
 ### In progress
 
+## [0.0.22] - UNRELEASED
+
+### New
+
+*
+
+### Other
+
+*
+
 ## [0.0.21] - 2016-09-17
 
 Various small changes that result in the abilty to generate C++ code
