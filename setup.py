@@ -48,7 +48,7 @@ packages = find_packages(".")
 package_names = packages.keys()
 
 setup(name = "pyxie",
-      version = "0.0.21",
+      version = "0.0.22",
       description = "Little Python to C++ Compiler",
       url='http://www.sparkslabs.com/pyxie/',
       author='Michael Sparks (sparkslabs)',
@@ -302,6 +302,7 @@ Release History
 
 Release History:
 
+-  0.0.22 - UNRELEASED - TBD
 -  0.0.21 - 2016-09-17 - Adds ability to control Arduino servo objects.
    Quite a lot of internal changes to support that
 -  0.0.20 - 2016-08-12 - Mainly internal changes. Adds WIPNOTES, updates
