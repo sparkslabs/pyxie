@@ -13,6 +13,16 @@ reason.
 
 ### In progress
 
+## [0.0.23] - UNRELEASED
+
+### New
+
+*
+
+### Other
+
+*
+
 ## [0.0.22] - 2016-09-25
 
 This release sees a practicality change - specifically to allow the user
