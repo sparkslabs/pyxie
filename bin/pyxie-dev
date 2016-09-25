@@ -364,6 +364,17 @@ def make_release():
     lines = x.split("\n")
     shortlog = lines[4].strip()
 
+    while True:
+        print("Proposed shortlog is this:", shortlog)
+        print("Are you happy with this?")
+        answer = raw_input("> ")
+        answer = answer.lower()
+        if answer.startswith("y"):
+            break
+        print("OK, enter a new shortlog")
+        shortlog = raw_input("> ")
+        shortlog = shortlog.strip()
+
     # Update shortlog
     update_current_shortlog(shortlog)
 
