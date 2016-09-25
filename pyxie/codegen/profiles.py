@@ -76,7 +76,13 @@ def default_result_filename(build_dir, cname):
 
 def arduino_result_filename(build_dir, cname):
     hexfile = None
-    cbuild_dir = os.path.join(build_dir, "build-leonardo")
+    print(os.listdir(build_dir))
+    build_sub_dir = "build-leonardo"         # default
+    for entry in os.listdir(build_dir):
+        if entry.startswith("build-"):
+            build_sub_dir = entry
+            break
+    cbuild_dir = os.path.join(build_dir, build_sub_dir)
 
     for filename in os.listdir(cbuild_dir):
         if filename.endswith(".hex"):
