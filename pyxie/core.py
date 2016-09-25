@@ -37,6 +37,13 @@ testdir = "test-data"
 testprogs_dir = os.path.join(testdir, "progs")
 
 
+def copy_file(source, dest):
+    f = open(source, "rb")
+    g = open(dest, "wb")
+    g.write(f.read())
+    f.close()
+    g.close()
+
 def remove_directory(build_dir):
     for filename in os.listdir(build_dir):
         try:
@@ -172,6 +179,36 @@ def build_program(source, work_dir, name, profile):
         makefile_tmpl = profiles.makefile_templates["default"]
 
     makefile = makefile_tmpl % {"filename": name }
+
+    # This is hideously inefficient. It's simple though
+    if os.path.exists(os.path.join(work_dir,"Makefile.in")):
+        # MAKEFILE.IN EXISTS
+        # Parse it into a dictionary
+        f = open(os.path.join(work_dir,"Makefile.in"))
+        lines = f.readlines()
+        f.close()
+        r = {}
+        for line in lines:
+            p = line.find("=")
+            key, value = line[:p].strip(), line[p+1:].strip()
+            r[key] = value
+
+        # Loop through default makefile and replace values in it with overrides
+        makefile_ = []
+        makefile = makefile.split("\n")
+        for line in makefile:
+            if "=" in line:
+                p = line.find("=")
+                key, value = line[:p].strip(), line[p+1:].strip()
+                if key in r:
+                    makefile_.append( key + " = " + r[key])
+                else:
+                    makefile_.append(line)
+            else:
+                    makefile_.append(line)
+
+        makefile = "\n".join(makefile_)
+
     f = open(os.path.join(work_dir,"Makefile"), "w")
     f.write(makefile)
     f.close()
@@ -222,6 +259,10 @@ def compile_file(filename, profile, result_filename=None):
     except OSError as e:
        if e.errno != 17: # Directory exists
            raise
+
+    if (os.path.exists(result_filename+".Makefile.in")):
+        # USER OPTIONS FOR COMPILING DETECTED - copy into build directory
+        copy_file(result_filename+".Makefile.in", os.path.join(build_dir, "Makefile.in"))
 
     build_program(c_code, build_dir, cname, profile)
 
