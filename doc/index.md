@@ -155,7 +155,7 @@ Example Arduino Program using Servos
 
 <pre>
 
-    #include <Servo.h>
+    #include &lt;Servo.h&gt;
 
     myservo = Servo()
     pos = 0
@@ -175,7 +175,7 @@ Example Arduino Program using Servos
 <div class="column col3_5">
 <b>Generated:</b> servo-test-target.ino
 <pre>
-\#include <Servo.h>
+\#include &lt;Servo.h&gt;
 &nbsp;
 \#include "iterators.cpp"
 &nbsp;
@@ -219,7 +219,7 @@ void setup() {
 &nbsp;
 void loop() {
 }
-</pre>
+<[5~/pre>
 </div>
 </div>
 

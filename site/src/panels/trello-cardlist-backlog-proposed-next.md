@@ -2,14 +2,12 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Backlog: Proposed Next
-updated: August 2016
+updated: September 2016
 title: Trello Cardlist Backlog: Proposed Next
 ---
 ### Backlog: Proposed Next
 
 * 3\.5 Analysis code looks for an arduino profile file describing c-types appropriately.
-* 203\. Arduino profile supports delayMicroseconds
-* 205\. Arduino profile supports analogRead
 * 3\.8 Arduino compiled programs can use values returned from functions.
 * 206\. Arduino profile supports millis()
 * 221\. Initial spike support for function definitions. (no args, no return values)

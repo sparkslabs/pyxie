@@ -2,11 +2,19 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Features Implemented
-updated: August 2016
+updated: September 2016
 title: Trello Cardlist Features Implemented
 ---
 ### Features Implemented
 
+* 0\.0.21 = = = = = = = = = =
+* 203\. Arduino profile supports delayMicroseconds
+* 225\. Implementation of attribute access is sufficient for arduino profile.
+* 210\. Parsing of Servo.writeMicroseconds() method call works as you'd expect
+* 201\. Arduino profile supports Servos
+* 230\. Implementation can generate code for myservo.attach(pin)
+* 231\. PyAttribute(PyNode) needs to have a reference to the thing it's an attribute of when it's being accessed via PyAttributeAccess
+* 229\. Implementation can analyse call to myservo.attach(pin)
 * 0\.0.20 = = = = = = = = = =
 * Subsume tree functionality into core
 * Shorten names in profile definitions for clarity

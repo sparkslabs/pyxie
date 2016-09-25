@@ -10,8 +10,8 @@ commits. _(This is exported from trello)_
 
 * HEADLINE: PRE-ALPHA
 * DEV STATE: WORKING (BARE)
-* DEV VERSION: 0.0.21
-* RELEASED: 0.0.20 (12 Aug 2016)
+* DEV VERSION: 0.0.22
+* RELEASED: 0.0.21 (17 Sep 2016)
 * LANGUAGE STATE: BARE*
 * FOCUS: Practicalities (Arduino Profile real example)
 * Newsletter created at http://tinyletter.com/sparkslabs
@@ -19,8 +19,6 @@ commits. _(This is exported from trello)_
 
 ### WIP
 
-* 231\. PyAttribute(PyNode) needs to have a reference to the thing it's an attribute of when it's being accessed via PyAttributeAccess
-* 229\. Implementation can analyse call to myservo.attach(pin)
 
 
 ### Paused
@@ -33,20 +31,16 @@ commits. _(This is exported from trello)_
 
 ### Release Backlog: Features
 
-* 0\.0.21 = = = = = = = = = =
-* 230\. Implementation can generate code for myservo.attach(pin)
+* 205\. Arduino profile supports analogRead
+* 0\.0.22 = = = = = = = = = =
 * 227\. .get_type() should be delegated, not rely on internal pynode details.
-* 201\. Arduino profile supports Servos
-* 210\. Parsing of Servo.writeMicroseconds() method call works as you'd expect
-* 225\. Implementation of attribute access is sufficient for arduino profile.
 * Flesh out a micro:bit profile.
 
 
 ### Release Backlog: Tasks
 
-* 0\.0.21 - - - - - (tasks)
+* 0\.0.22 - - - - - (tasks)
 * 238\. Update grammar on website/in docs to match current grammar.
-* 239\. 0.0.20 Release tasks
 
 
 ### Known Bugs / Anti-features
@@ -56,8 +50,6 @@ commits. _(This is exported from trello)_
 ### Backlog: Proposed Next
 
 * 3\.5 Analysis code looks for an arduino profile file describing c-types appropriately.
-* 203\. Arduino profile supports delayMicroseconds
-* 205\. Arduino profile supports analogRead
 * 3\.8 Arduino compiled programs can use values returned from functions.
 * 206\. Arduino profile supports millis()
 * 221\. Initial spike support for function definitions. (no args, no return values)
@@ -139,6 +131,14 @@ commits. _(This is exported from trello)_
 
 ### Features Implemented
 
+* 0\.0.21 = = = = = = = = = =
+* 203\. Arduino profile supports delayMicroseconds
+* 225\. Implementation of attribute access is sufficient for arduino profile.
+* 210\. Parsing of Servo.writeMicroseconds() method call works as you'd expect
+* 201\. Arduino profile supports Servos
+* 230\. Implementation can generate code for myservo.attach(pin)
+* 231\. PyAttribute(PyNode) needs to have a reference to the thing it's an attribute of when it's being accessed via PyAttributeAccess
+* 229\. Implementation can analyse call to myservo.attach(pin)
 * 0\.0.20 = = = = = = = = = =
 * Subsume tree functionality into core
 * Shorten names in profile definitions for clarity
@@ -281,6 +281,8 @@ commits. _(This is exported from trello)_
 
 ### Tasks Done
 
+* 0\.0.21 - - - - - (tasks)
+* 239\. 0.0.20 Release tasks
 * 0\.0.20 - - - - - (tasks)
 * Update changelog
 * Add newsletter subscription to site info
