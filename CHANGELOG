@@ -6,7 +6,7 @@ reason.
 
 ### In progress
 
-## [0.0.22] - UNRELEASED
+## [0.0.22] - 2016-09-25
 
 This release sees a practicality change - specifically to allow the user
 to specify which arduino board they want their code compiled for. The way

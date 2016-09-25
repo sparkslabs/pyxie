@@ -13,15 +13,35 @@ reason.
 
 ### In progress
 
-## [0.0.22] - UNRELEASED
+## [0.0.22] - 2016-09-25
+
+This release sees a practicality change - specifically to allow the user
+to specify which arduino board they want their code compiled for. The way
+this works is to override the arduino-mk process.
+
+As a result, in order to compile (say) examples/servo/servo-test-target.pyxie
+for the arduino Uno, you change the file examples/servo/servo-test-target.Makefile.in
+to contain the following:
+
+    BOARD_TAG    = uno
+    ARDUINO_PORT = /dev/ttyACM0
+
+This generates the appropriate file. If you had a Dagi Mini, you might change
+the contents to this:
+
+    BOARD_TAG    = atmega8
+    ARDUINO_PORT = /dev/ttyACM0
+
+Full documentation will come later but this should be sufficient to get started
+with.
 
 ### New
 
-*
+* Ability to override which arduino board you're working with.
 
 ### Other
 
-*
+* Minor cleanups
 
 ## [0.0.21] - 2016-09-17
 
