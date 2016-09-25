@@ -284,7 +284,7 @@ inspired heavily by python introspection) That's quite some time off.
 
 Release History:
 
-* 0.0.22 - UNRELEASED - TBD
+* 0.0.22 - 2016-09-25 - Enable ability to use a variety of Arduino boards by using an Makefile.in file
 * 0.0.21 - 2016-09-17 - Adds ability to control Arduino servo objects. Quite a lot of internal changes to support that
 * 0.0.20 - 2016-08-12 - Mainly internal changes. Adds WIPNOTES, updates arduino examples
 * 0.0.19 - 2016-01-31 - Continued work on arduino profile and initial Python3 support
