@@ -90,12 +90,32 @@ class PyIdentifier(PyValueLiteral):
         return self.ntype
 
     def analyse(self):
+        print("PyIdentifier.analyse", self.value, self, dir(self))
+        for i in dir(self):
+            if i.startswith("__") and i.endswith("__"):
+                continue
+            if "bound method" in repr(getattr(self, i)):
+                continue
+            print("attr", i, repr(getattr(self, i)), getattr(self, i) )
         expression = self.context.lookup(self.value)
         self.ntype = expression.get_type()
 
     # FIXME: This name is created to allow attribute access lookup
     def name(self):
         return self.value
+
+class ProfilePyNode(PyIdentifier):
+    """Representation of something in the python code that's external to it - from a profile"""
+    tag = "identifier"
+    def __init__(self, name, value_type):
+        self.lineno = 0
+        self.value = name
+        #super(ProfilePyNode,self).__init__()
+        self.ntype = value_type # Logical type of this virtual valie
+    def analyse(self):
+        self.ntype = expression.get_type()
+    def get_type(self):
+        return self.ntype
 
 
 class PyAttribute(PyNode):
