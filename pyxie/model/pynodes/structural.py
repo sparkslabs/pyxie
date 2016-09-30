@@ -32,6 +32,7 @@ class PyProgram(PyNode):
         self.includes = None
         self.add_children(statements)
         self.context = Context() # Global context
+        self.context.tag = self.tag
 
     def __repr__(self):
         return "PyProgram(%s)" % (repr(self.statements), )
