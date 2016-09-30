@@ -8,13 +8,37 @@ reason.
 
 ## [0.0.23] - UNRELEASED
 
+Aims in this release are to start enabling more functions inside an enclosing
+profile. Specifically to start enabling more arduino programs using default
+pin names (eg A0) and the ability to read from analog pins. (Which requires
+implementing analysis of return values of functions)
+
+In order to make this work/work better, work on improving how contexts (mappings
+of names to types) are handled has taken place, in particular nested lookups
+now work (This will simplify scoping later on too).
+
 ### New
 
 *
 
 ### Other
 
-*
+* Clarify source of logging messages
+
+* Add recursive lookup through context stacks. This allows us effectively to
+  manage scope, to be able to treate profiles as an enclosing scope, and a step
+  towards being able to generate better error messages.
+
+* Simplify cruftiness/verbosity of logging from parser
+
+* Initial tests with profile nodes (for context)
+
+* Help with debugging
+  * Add tags to contexts
+  * Tag global context as program context
+  * Tag (test) arduino profile context as "arduino"
+
+
 
 ## [0.0.22] - 2016-09-25
 
