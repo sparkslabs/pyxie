@@ -62,17 +62,20 @@ from __future__ import absolute_import
 class UndefinedValue(Exception):
     pass
 
-class Context(object):
 
+profile_context = None # REVIEW: Initial test location for a global profile context.
+
+class Context(object):
     contexts = {}
     def __init__(self, parent=None):
         self.names = {} # Stores the type against the name.
         self.parent = parent
+        self.tag = None  # Tag has been added to allow us to identify in what linguistic contruct this context has been created.
         if id(self) not in self.contexts:
             self.contexts[id(self)] = self
 
     def store(self, name, expression):
-        print("Context.store NAME", name, "VALUE", expression)
+        print("Context.store NAME", name, repr(name), "VALUE", expression)
         if name in self.names:
             print("WARNING: Name %s already exists in names, this may be OK. Storing expression %s" % (repr(name), repr(expression)))
         try:
@@ -81,14 +84,44 @@ class Context(object):
             self.names[name] = [ expression ]
         print("CONTEXT", self.names)
 
+    def complete_context(self):
+        search_list = []
+        search_list.append( ( self.tag, self.names ) )
+        if self.parent:
+            search_list = search_list + (self.parent.complete_context())
+        else:
+            if self != profile_context:
+                # Don't recurse if at end
+                search_list = search_list + (profile_context.complete_context())
+        return search_list
+
     def lookup(self, name):
+        print("Context.lookup -pc ", profile_context)
+        if self.tag:
+            print("Context.TAG ", self.tag)
+        print("Context.lookup", name)
+
+        print("Context.lookup",self.complete_context())
         if name in self.names:
             values = self.names[name]
             return values[0]
         if self.parent:
             values = self.parent.lookup(name)
             return values[0]
-        raise UndefinedValue("Cannot find name %s in current context stack" % name)
+        if profile_context: # Check class global context
+            if profile_context != self: # Check we're not recursing(!)
+                try:
+                    return profile_context.lookup(name)
+                except UndefinedValue:
+                    # We failed the lookup, so allow the final lookup to be the actual error
+                    # So we deliberately suppress the lookup error here.
+                    pass
+
+        print(self.complete_context())
+        raise UndefinedValue("Cannot find name %s in current context stack" % name, str(self.complete_context()) )
+
+    def __str__(self):
+        return str(self.__json__())
 
     def __repr__(self):
         return repr(id(self))
@@ -100,5 +133,13 @@ class Context(object):
                 names_info[name] = self.names[name]
             else:
                 names_info[name] = self.names[name] # .__info__()
-        return {"id": id(self), "parent": id(self.parent) if self.parent is not None else None, "names": names_info}
+        result = {}
+        result["id"] = id(self)
+        result["parent"] = id(self.parent) if self.parent is not None else None
+        result["names"] =  names_info
+        if profile_context:
+            result["profile_context"] =  profile_context
+        if self.tag:
+            result["tag"] =  self.tag
+        return result
 
