@@ -91,24 +91,22 @@ def parse_file(somefile):
     data = open(somefile).read() + "\n#\n"
     AST = parse(data, lexer)
     AST.includes = lexer.includes
-    print("AST includes", AST.includes)
-    print("PRINT AST ----------------------------------")
+    print()
+    print("parse_file: AST includes", AST.includes)
+    print()
+    print("parse_file: Raw Parsed AST ----------------------------------")
     print(AST)
-    print("---------------------------------- PRINT AST")
+    print("----------------------------------")
+    print()
     return AST
 
 
 def analyse_file(filename):
     try:
         AST = parse_file(filename)
-        print("HERE 3------------")
-        pprint.pprint(AST.__json__())
-        print("HERE 4------------")
-        AST.analyse()
-        print("HERE 5------------")
-        pprint.pprint(AST.__info__())
-        print("HERE 6------------")
+        print("analyse_file: parse_file success------------")
     except:
+        print("***** FAILED TO PARSE FILE *****")
         from pyxie.parsing.context import Context
         for cid in Context.contexts:
             context = Context.contexts[cid]
@@ -116,10 +114,30 @@ def analyse_file(filename):
         raise
 
 
+    print("analyse_file: parse_file - AST json form follows ------------")
+    pprint.pprint(AST.__json__())
+    print("------------")
+    print("")
+
+    try:
+        AST.analyse()
+        print("analyse_file: Analysis success------------")
+    except:
+        print("***** FAILED TO ANALYSE FILE *****")
+        from pyxie.parsing.context import Context
+        for cid in Context.contexts:
+            context = Context.contexts[cid]
+            print("CONTEXT",context.names)
+        raise
+
+    print("analyse_file: Analysis results follow ------------")
+    pprint.pprint(AST.__info__())
+    print("------------")
+
 def generate_code(cname, AST, profile, debug=False):
     CST = ast_to_cst(cname, AST)
     if debug:
-        print("CONCRETE C SYNTAX TREE: - - - - - - - - - - - - - - - - - - - -")
+        print("generate_code: CONCRETE C SYNTAX TREE: - - - - - - - - - - - - - - - - - - - -")
         print(pprint.pformat(CST))
         print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
     program = C_Program.fromjson(CST)
@@ -134,22 +152,22 @@ def codegen_phase(filename, result_filename, profile):
 
     AST = parse_file(filename)
     AST.analyse()
-    print("_______________________________________________________________")
-    print("GENERATING CODE")
+    print("codegen_phase: _______________________________________________________________")
+    print("codegen_phase: GENERATING CODE")
     print()
     c_code = generate_code(cname, AST, profile, debug=True)  # Need the C NAME TO DO THIS
-    print("_______________________________________________________________")
-    print("Generated Program")
+    print("codegen_phase: _______________________________________________________________")
+    print("codegen_phase: Generated Program")
     print("\n".join(c_code))
     print("_______________________________________________________________")
     return c_code
 
 
 def build_program(source, work_dir, name, profile):
-    print("_______________________________________________________________")
-    print("BUILDING", work_dir)
+    print("build_program: _______________________________________________________________")
+    print("build_program: BUILDING", work_dir)
     print()
-    print("Program to build:")
+    print("build_program: Program to build:")
     pprint.pprint(source, width=200)
     print()
 
@@ -166,12 +184,12 @@ def build_program(source, work_dir, name, profile):
 
     if os.path.exists("/usr/bin/indent"):
         try:
-            print("TIDYING")
-            print("/usr/bin/indent %s" % source_filename)
+            print("build_program: TIDYING")
+            print("build_program: /usr/bin/indent %s" % source_filename)
             os.system("/usr/bin/indent -npcs -brf -br -npsl -l120 -i4 -nut %s" % source_filename)
         except Exception as e:
-            print("TIDYING Failed - continuing anyway")
-            print("TIDYING error: %s %s" % (str(e), repr(e)))
+            print("build_program: TIDYING Failed - continuing anyway")
+            print("build_program: TIDYING error: %s %s" % (str(e), repr(e)))
 
     try:
         makefile_tmpl = profiles.makefile_templates[profile]
@@ -219,7 +237,7 @@ def build_program(source, work_dir, name, profile):
             # Skip main programs to avoid confusing profiles
             continue
         if filename in exclusions:
-            print("Skipping", filename, "for profile", profile)
+            print("build_program: Skipping", filename, "for profile", profile)
             continue
 
         f = open( os.path.join(work_dir,filename), "w")
@@ -229,7 +247,7 @@ def build_program(source, work_dir, name, profile):
     os.chdir(work_dir)
     os.system("make")
     print()
-    print("Done!")
+    print("build_program: Done!")
     print()
 
 
@@ -247,11 +265,11 @@ def compile_file(filename, profile, result_filename=None):
 
     c_code  = codegen_phase(filename, result_filename, profile)
 
-    print("COMPILING", filename)
-    print("IN", base_dir)
-    print("SOURCEFILE", base_filename)
-    print("cname", cname)
-    print("result_filename", result_filename)
+    print("compile_file: COMPILING", filename)
+    print("compile_file: IN", base_dir)
+    print("compile_file: SOURCEFILE", base_filename)
+    print("compile_file: cname", cname)
+    print("compile_file: result_filename", result_filename)
 
     build_dir = os.path.join(base_dir, "build-"+str(int(time.time())))
     try:
@@ -272,10 +290,10 @@ def compile_file(filename, profile, result_filename=None):
 
     result_filename = (profiles.modify_result_file[profile])(result_filename)
 
-    print("BUILD DIR", build_dir)
-    print("RESULT FILE", actual_result_file)
-    print("DEST FILE", result_filename)
-    print("CWD", os.getcwd())
+    print("compile_file: BUILD DIR", build_dir)
+    print("compile_file: RESULT FILE", actual_result_file)
+    print("compile_file: DEST FILE", result_filename)
+    print("compile_file: CWD", os.getcwd())
 
     os.rename(actual_result_file,result_filename)
     clean = False
@@ -288,8 +306,8 @@ def compile_file(filename, profile, result_filename=None):
 
 
 def parse_testfile(testprogs_dir, testfile, debug=False):
-    print("_______________________________________________________________")
-    print("PARSING", os.path.join(testprogs_dir,testfile))
+    print("parse_testfile: _______________________________________________________________")
+    print("parse_testfile: PARSING", os.path.join(testprogs_dir,testfile))
     print()
     AST = parse_file(os.path.join(testprogs_dir,testfile))
     if debug:
@@ -306,13 +324,13 @@ def compile_testfile(testprogs_dir, testfile, profile):
 
     AST = parse_testfile(testprogs_dir, testfile, debug=True)
 
-    print("_______________________________________________________________")
-    print("ANALYSING", os.path.join(testprogs_dir,testfile))
+    print("compile_testfile: _______________________________________________________________")
+    print("compile_testfile: ANALYSING", os.path.join(testprogs_dir,testfile))
     print()
     AST.analyse()
 
-    print("_______________________________________________________________")
-    print("COMPILING", os.path.join(testprogs_dir,testfile))
+    print("compile_testfile: _______________________________________________________________")
+    print("compile_testfile: COMPILING", os.path.join(testprogs_dir,testfile))
     print()
 
     c_code = generate_code(cname, AST, profile, debug=True)
@@ -357,7 +375,7 @@ def compilation_tests(profile):
     # Compilation Tests
     rootdir = os.getcwd()
     testprogs = get_test_programs(".pyxie")
-    print("TEST PROGS", testprogs)
+    print("compilation_tests: TEST PROGS", testprogs)
 
     for testfile in testprogs:
         build_fail = True
@@ -366,15 +384,15 @@ def compilation_tests(profile):
             build_fail = False
         except:
             if testfile.endswith("shouldfail.pyxie"):
-                print("AS EXPECTED, COMPILE FAILED FOR", testfile)
+                print("compilation_tests: AS EXPECTED, COMPILE FAILED FOR", testfile)
             else:
-                print("UNEXPECTED FAILURE FOR FILE", testfile)
+                print("compilation_tests: UNEXPECTED FAILURE FOR FILE", testfile)
                 raise
 
         if not build_fail and testfile.endswith("shouldfail.pyxie"):
-            print("UNEXPECTED BUILD SUCCESS FOR FILE", testfile)
-            raise Exception("UNEXPECTED BUILD SUCCESS FOR FILE %s" % testfile )
+            print("compilation_tests: UNEXPECTED BUILD SUCCESS FOR FILE", testfile)
+            raise Exception("compilation_tests: UNEXPECTED BUILD SUCCESS FOR FILE %s" % testfile )
 
         os.chdir(rootdir)
 
-    print("COMPILING DONE", testprogs)
+    print("compilation_tests: COMPILING DONE", testprogs)
