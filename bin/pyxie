@@ -118,14 +118,17 @@ def main(argv):
     if len(argv) < 2:
         raise BadArguments()
 
+    # Create a default profile - whether or not it is used.
+    print("CREATING A CONTEXT")
+    context = pyxie.parsing.context.Context()
+    context.tag = "PROFILE: (default/None)"
+
     # If a profile is pulled in/defined, use that
     if argv[1] == "--profile" and len(argv)> 2:
         profile = argv[2]
         argv[1:3] = []
 
         print("USING PROFILE: ", profile)
-        print("CREATING A CONTEXT")
-        context = pyxie.parsing.context.Context()
         context.tag = "PROFILE:"+profile
 
         if profile == "arduino": # TODO: Delete me, this is a test 
@@ -133,9 +136,8 @@ def main(argv):
             A0 = ProfilePyNode("A0", "integer")
             context.store("A0", A0)
 
-        print("CREATED", context)
-        # context = pyxie.parsing.context.Context()
-        pyxie.parsing.context.profile_context = context
+    print("CREATED", context)
+    pyxie.parsing.context.profile_context = context
 
     if argv[1] == "--test":
         command = argv[2]
