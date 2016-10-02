@@ -1,0 +1,16 @@
+analogInPin = A0
+analogOutPin = 9
+sensorValue = 0
+outputValue = 0
+Serial.begin(9600)
+
+while True:
+    sensorValue = analogRead(analogInPin)
+    outputValue = map(sensorValue, 0, 1023, 0, 255)
+    analogWrite(analogOutPin, outputValue)
+    Serial.print("sensor = ")
+    Serial.print(sensorValue)
+    Serial.print("\t output = ")
+    Serial.println(outputValue)
+    delay(2)
+
