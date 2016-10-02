@@ -38,7 +38,9 @@ now work (This will simplify scoping later on too).
   * Tag global context as program context
   * Tag (test) arduino profile context as "arduino"
 
+* Start of support for analogRead, analogWrite, (arduino) map, and Serial object
 
+* Added README.md for the analog example
 
 ## [0.0.22] - 2016-09-25
 
