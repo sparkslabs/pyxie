@@ -50,10 +50,6 @@ class Grammar(object):
         "statement : assignment_statement"
         p[0] = p[1]
 
-    def p_statement_2(self, p):
-        "statement : print_statement"
-        p[0] = p[1]
-
     def p_statement_3(self, p):
         "statement : general_expression"
         p[0] = PyExpressionStatement(p[1])
@@ -99,10 +95,17 @@ class Grammar(object):
         "continue_statement : CONTINUE"
         p[0] = PyContinueStatement()
 
-    def p_print_statement_1(self, p):
-        "print_statement : PRINT expr_list"
-        p[0] = PyPrintStatement(p[2])
 
+# DISABLED, due to removal of print statement in favour of print function
+# DISABLED, LEFT IN CODE TO ASSIST WITH yield implementation later.
+
+#    def p_statement_2(self, p):
+#        "statement : print_statement"
+#        p[0] = p[1]
+#
+#    def p_print_statement_1(self, p):
+#        "print_statement : PRINT expr_list"
+#        p[0] = PyPrintStatement(p[2])
 
     def p_while_statement_1(self, p):
         "while_statement : WHILE general_expression COLON EOL statement_block"
