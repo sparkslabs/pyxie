@@ -433,32 +433,34 @@ class PyContinueStatement(PyStatement):
     def __json__(self):
         return [ self.tag ]
 
-
-class PyPrintStatement(PyStatement):
-    tag = "print_statement"
-    def __init__(self, expr_list):
-        super(PyPrintStatement,self).__init__()
-        self.expr_list = expr_list
-        self.add_children(expr_list)
-
-    def __repr__(self):
-        return "PyPrintStatement(%s)" % (repr(self.expr_list), )
-
-    def __json__(self):
-        return [ self.tag, jdump(self.expr_list) ]
-
-    def __info__(self):
-        info = super(PyPrintStatement, self).__info__()
-        info[self.tag]["args"] = [ x.__info__() for x in self.expr_list ]
-        return info
-
-    def analyse(self):
-        print("ANALYSING PRINT STATEMENT")
-        for expr in self.expr_list:
-            expr.analyse() # Descend through the tree
-
-        self.ntype = self.get_type()
-
-    def get_type(self):
-        # Print statement has no return value or default value
-        return None
+# DISABLED, due to removal of print statement in favour of print function
+# DISABLED, LEFT IN CODE TO ASSIST WITH yield implementation later.
+#
+#class PyPrintStatement(PyStatement):
+#    tag = "print_statement"
+#    def __init__(self, expr_list):
+#        super(PyPrintStatement,self).__init__()
+#        self.expr_list = expr_list
+#        self.add_children(expr_list)
+#
+#    def __repr__(self):
+#        return "PyPrintStatement(%s)" % (repr(self.expr_list), )
+#
+#    def __json__(self):
+#        return [ self.tag, jdump(self.expr_list) ]
+#
+#    def __info__(self):
+#       info = super(PyPrintStatement, self).__info__()
+#       info[self.tag]["args"] = [ x.__info__() for x in self.expr_list ]
+#       return info
+#
+#    def analyse(self):
+#        print("ANALYSING PRINT STATEMENT")
+#        for expr in self.expr_list:
+#            expr.analyse() # Descend through the tree
+#
+#        self.ntype = self.get_type()
+#
+#    def get_type(self):
+#        # Print statement has no return value or default value
+#        return None
