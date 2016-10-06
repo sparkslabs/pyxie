@@ -228,6 +228,7 @@ def todo(*args):
 class ArgumentList(object):
     def __init__(self, *args):
         self.args = args
+
     def json(self):
         return list(self.args[:])
 
@@ -308,6 +309,7 @@ class ArgumentList(object):
         for arg in self.args:
             c_str = self.code_arg(arg)
             cargs.append(c_str)
+
         return cargs
 
     def code(self):
@@ -337,7 +339,15 @@ class FunctionCall(object):
         else:
             identifier = self.identifier[1]
 
-        return identifier + "(" + ", ".join(self.arg_list.code_list())+ ")"
+            # FUDGE: The following would need to be profile specific
+            #
+            # It probably also needs reviewing/revising later on
+            if identifier == "print":
+                X = PrintStatement(*self.args)
+                return X.code()
+
+        arglist = ", ".join(self.arg_list.code_list())
+        return identifier + "(" + arglist + ")"
 
 
 class PrintStatement(object):
@@ -349,7 +359,7 @@ class PrintStatement(object):
         return ["print_statement" ] + self.arg_list.json()
 
     def code(self):
-        return "cout << " + " << \" \" << ".join(self.arg_list.code_list()) + " << endl"
+        return "( cout << " + " << \" \" << ".join(self.arg_list.code_list()) + " << endl )"
 
 
 class WhileStatement(object):
