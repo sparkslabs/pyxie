@@ -1,7 +1,7 @@
 
 if False:
-    print "ERROR: if/elif should not print this with a True value"
+    print("ERROR: if/elif should not print(this with a True value")
 elif True:
-    print "if/elif working, as long as you see this once, and don't see an error"
+    print("if/elif working, as long as you see this once, and don't see an error")
 
-print "If you see this, *by itself*, 'if/else' is not not compiling correctly"
+print("If you see this, *by itself*, 'if/else' is not not compiling correctly")

@@ -1,5 +1,5 @@
 greeting = "hello"
 name = "world"
 
-print greeting, name
+print(greeting, name)
 

@@ -1,6 +1,6 @@
 countdown = 2147483647
-print "COUNTING DOWN"
+print("COUNTING DOWN")
 while countdown:
     countdown = countdown - 1
 
-print "BLASTOFF"
+print("BLASTOFF")

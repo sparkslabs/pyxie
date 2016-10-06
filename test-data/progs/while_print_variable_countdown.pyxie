@@ -1,7 +1,7 @@
 countdown = 10
-print "COUNTING DOWN"
+print("COUNTING DOWN")
 while countdown:
-    print "COUNTDOWN", countdown
+    print("COUNTDOWN", countdown)
     countdown = countdown - 1
 
-print "BLASTOFF"
+print("BLASTOFF")

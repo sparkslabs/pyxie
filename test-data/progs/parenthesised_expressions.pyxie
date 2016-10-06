@@ -1,9 +1,9 @@
 x = 1+(10-9)
-print "1+(10-9)", x, 2, x == 2
+print("1+(10-9)", x, 2, x == 2)
 
 x = (1+(10/2))*3
-print "(1+(10/2))*3", x, 18, x == 18
+print("(1+(10/2))*3", x, 18, x == 18)
 
 y = (not False or not True) and (not True or not True)
-print "(not False or not True) and (not True or not True)", y, 0, y == 0
+print("(not False or not True) and (not True or not True)", y, 0, y == 0)
 

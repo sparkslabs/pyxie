@@ -1,5 +1,5 @@
 
 while False:
-    print "If you see this, while loops are not compiling correctly"
+    print("If you see this, while loops are not compiling correctly")
 
-print "while False working, as long as you see this ONCE"
+print("while False working, as long as you see this ONCE")

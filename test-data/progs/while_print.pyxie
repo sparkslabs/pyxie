@@ -1,5 +1,5 @@
 
 while True:
-    print "while True working, as long as you see this lots"
+    print("while True working, as long as you see this lots")
 
-print "If you see this, while loops are not compiling correctly"
+print("If you see this, while loops are not compiling correctly")

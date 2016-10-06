@@ -1,6 +1,6 @@
 
 while True:
-    print "while True working, as long as you see this ONE"
+    print("while True working, as long as you see this ONE")
     break
 
-print "If you see this AND the previous line, while True/break is compiling correctly"
+print("If you see this AND the previous line, while True/break is compiling correctly")

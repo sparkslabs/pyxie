@@ -3,6 +3,6 @@ failure = "If you see this, while loops are not compiling correctly"
 condition = True
 
 while True:
-    print success
+    print(success)
 
-print failure
+print(failure)

@@ -1,9 +1,9 @@
 
 if False:
-    print "ERROR: This line should NOT be printed"
+    print("ERROR: This line should NOT be printed")
 elif False:
-    print "ERROR: This line should NOT be printed"
+    print("ERROR: This line should NOT be printed")
 else:
-    print "SUCCESS: This line should be printed"
+    print("SUCCESS: This line should be printed")
 
-print "If you see this, *by itself*, 'if/else' is not not compiling correctly"
+print("If you see this, *by itself*, 'if/else' is not not compiling correctly")

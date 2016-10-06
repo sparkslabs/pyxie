@@ -9,5 +9,5 @@ foobar = foo + bar
 foo = "Hello"
 bar = "World"
 
-print foo, bar, foobar
-print age, new_age, new_age_too, new_age_three 
+print(foo, bar, foobar)
+print(age, new_age, new_age_too, new_age_three )

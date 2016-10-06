@@ -1,179 +1,179 @@
-print "Or tests"
+print("Or tests")
 
 x = False or False or False
-print 0, x, 0 == x
+print(0, x, 0 == x)
 
 x = False or False or True
-print 1, x, 1 == x
+print(1, x, 1 == x)
 
 x = False or True or False
-print 1, x, 1 == x
+print(1, x, 1 == x)
 
 x = False or True or True
-print 1, x, 1 == x
+print(1, x, 1 == x)
 
 x = True or False or False
-print 1, x, 1 == x
+print(1, x, 1 == x)
 
 x = True or False or True
-print 1, x, 1 == x
+print(1, x, 1 == x)
 
 x = True or True or False
-print 1, x, 1 == x
+print(1, x, 1 == x)
 
 x = True or True or True
-print 1, x, 1 == x
+print(1, x, 1 == x)
 
-print ""
-print "And tests"
+print(""
+print("And tests"
 
 x = False and False and False
-print 0, x, 0 == x
+print(0, x, 0 == x)
 
 x = False and False and True
-print 0, x, 0 == x
+print(0, x, 0 == x)
 
 x = False and True and False
-print 0, x, 0 == x
+print(0, x, 0 == x)
 
 x = False and True and True
-print 0, x, 0 == x
+print(0, x, 0 == x)
 
 x = True and False and False
-print 0, x, 0 == x
+print(0, x, 0 == x)
 
 x = True and False and True
-print 0, x, 0 == x
+print(0, x, 0 == x)
 
 x = True and True and False
-print 0, x, 0 == x
+print(0, x, 0 == x)
 
 x = True and True and True
-print 1, x, 1 == x
+print(1, x, 1 == x)
 
-print ""
-print "Mixed and .. or expressions"
+print("")
+print("Mixed and .. or expressions")
 
 x = False and False or False
-print "False and False or False", 0, x, 0 == x
+print("False and False or False", 0, x, 0 == x)
 
 x = False and False or True
-print "False and False or True", 1, x, 1 == x
+print("False and False or True", 1, x, 1 == x)
 
 x = False and True or False
-print "False and True or False", 0, x, 0 == x
+print("False and True or False", 0, x, 0 == x)
 
 x = False and True or True
-print "False and True or True", 1, x, 1 == x
+print("False and True or True", 1, x, 1 == x)
 
 x = True and False or False
-print "True and False or False", 0, x, 0 == x
+print("True and False or False", 0, x, 0 == x)
 
 x = True and False or True
-print "True and False or True", 1, x, 1 == x
+print("True and False or True", 1, x, 1 == x)
 
 x = True and True or False
-print "True and True or False", 1, x, 1 == x
+print("True and True or False", 1, x, 1 == x)
 
 x = True and True or True
-print "True and True or True",1, x, 1 == x
+print("True and True or True",1, x, 1 == x)
 
-print ""
-print "Mixed or .. and expressions"
+print("")
+print("Mixed or .. and expressions")
 
 x = False or False and False
-print "False or False and False", 0, x, 0 == x
+print("False or False and False", 0, x, 0 == x)
 
 x = False or False and True
-print "False or False and True", 0, x, 0 == x
+print("False or False and True", 0, x, 0 == x)
 
 x = False or True and False
-print "False or True and False", 0, x, 0 == x
+print("False or True and False", 0, x, 0 == x)
 
 x = False or True and True
-print "False or True and True", 1, x, 1 == x
+print("False or True and True", 1, x, 1 == x)
 
 x = True or False and False
-print "True or False and False", 1, x, 1 == x
+print("True or False and False", 1, x, 1 == x)
 
 x = True or False and True
-print "True or False and True", 1, x, 1 == x
+print("True or False and True", 1, x, 1 == x)
 
 x = True or True and False
-print "True or True and False", 1, x, 1 == x
+print("True or True and False", 1, x, 1 == x)
 
 x = True or True and True
-print "True or True and True", 1, x, 1 == x
+print("True or True and True", 1, x, 1 == x)
 
-print "Mixed not/and"
+print("Mixed not/and")
 
 x = False
 y = False
 t = not x and not y
-print "not False and not False", t, 1, 1 == t
+print("not False and not False", t, 1, 1 == t)
 
 x = False
 y = True
 t = not x and not y
-print "not False and not True", t, 0, 0 == t
+print("not False and not True", t, 0, 0 == t)
 
 x = True
 y = False
 t = not x and not y
-print "not True and not False", t, 0, 0 == t
+print("not True and not False", t, 0, 0 == t)
 
 x = True
 y = True
 t = not x and not y
-print "not True and not True", t, 0, 0 == t
+print("not True and not True", t, 0, 0 == t)
 
-print ""
-print "Mixed chain not/and not/or"
+print("")
+print("Mixed chain not/and not/or")
 
 x = False
 y = False
 z = False
 t = not x and not y or not z
-print "not False and not False or not False", t, 1, 1 == t
+print("not False and not False or not False", t, 1, 1 == t)
 
 x = False
 y = False
 z = True
 t = not x and not y or not z
-print "not False and not False or not True", t, 1, 1 == t
+print("not False and not False or not True", t, 1, 1 == t)
 
 x = False
 y = True
 z = False
 t = not x and not y or not z
-print "not False and not True or not False", t, 1, 1 == t
+print("not False and not True or not False", t, 1, 1 == t)
 
 x = False
 y = True
 z = True
 t = not x and not y or not z
-print "not False and not True or not True", t, 0, 0 == t
+print("not False and not True or not True", t, 0, 0 == t)
 
 x = True
 y = False
 z = False
 t = not x and not y or not z
-print "not True and not False or not False", t, 1, 1 == t
+print("not True and not False or not False", t, 1, 1 == t)
 
 x = True
 y = False
 z = True
 t = not x and not y or not z
-print "not True and not False or not True", t, 0, 0 == t
+print("not True and not False or not True", t, 0, 0 == t)
 
 x = True
 y = True
 z = False
 t = not x and not y or not z
-print "not True and not True or not False", t, 1, 1 == t
+print("not True and not True or not False", t, 1, 1 == t)
 
 x = True
 y = True
 z = True
 t = not x and not y or not z
-print "not True and not True or not True", t, 0, 0 == t
+print("not True and not True or not True", t, 0, 0 == t)
