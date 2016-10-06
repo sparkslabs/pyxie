@@ -48,7 +48,7 @@ packages = find_packages(".")
 package_names = packages.keys()
 
 setup(name = "pyxie",
-      version = "0.0.23",
+      version = "0.1.23",
       description = "Little Python to C++ Compiler",
       url='http://www.sparkslabs.com/pyxie/',
       author='Michael Sparks (sparkslabs)',
@@ -305,7 +305,7 @@ Release History
 
 Release History:
 
--  0.0.23 - UNRELEASED - TBD
+-  0.1.23 - UNRELEASED - TBD
 -  0.0.22 - 2016-09-25 - Enable ability to use a variety of Arduino
    boards by using an Makefile.in file
 -  0.0.21 - 2016-09-17 - Adds ability to control Arduino servo objects.

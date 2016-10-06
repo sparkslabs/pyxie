@@ -6,7 +6,7 @@ reason.
 
 ### In progress
 
-## [0.0.23] - UNRELEASED
+## [0.1.23] - UNRELEASED
 
 ### New
 
