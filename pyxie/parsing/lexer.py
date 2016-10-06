@@ -38,7 +38,8 @@ keywords = [ "and", "not", "or",
              "while", "for", "in", "if", "elif", "else", "break", "continue",
              "from", "import",
              "pass",
-             "print"
+#             "print"   # DISABLED, due to removal of print statement in favour of print function
+#                       # DISABLED, LEFT IN CODE TO ASSIST WITH yield implementation later.
             ]
 
 tokens = [
