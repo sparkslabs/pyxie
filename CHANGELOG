@@ -98,6 +98,12 @@ This is in addition to:
 * Start of support for analogRead, analogWrite, (arduino) map, and Serial object
   - Example added exercising these
 
+* Update site/src/panels/current-grammar.md to match current grammar...
+  - remove print_statement
+  - minor cleanups
+  - Expression syntax supports expression molecules - object method access
+
+
 ## [0.0.22] - 2016-09-25
 
 This release sees a practicality change - specifically to allow the user
