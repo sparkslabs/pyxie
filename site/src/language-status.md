@@ -2,13 +2,13 @@
 template: mainpage
 source_form: markdown
 name: Language Status
-updated: August 2015
-reviewed: 12 August 2015
+updated: October 2016
+reviewed: October 2016
 title: Language Status for Pyxie
 ---
 ## Language Status
 
-Last updated for version: **0.0.17**
+Last updated for version: **0.1.23**
 
 {% compilation = panel("panels/direct-compilation.md") %}
 
@@ -53,7 +53,7 @@ chosen to capture such #include lines, and pass them through to the C++ side.
 This naturally enables a wide selection of functionality to start making
 Pyxie useful.
 
-### Very Nearly Bare Minimum Support
+### Bare Minimum Support
 
 Now supports control structures, key statements
 
@@ -96,24 +96,26 @@ implementation of language at present.
 ### Profile related
 
 * Linux host profile:
- * Support for output (print) needs to be matched by (raw_)input support
- * Needs to support input/output from files
+    * Support for output (print) needs to be matched by (raw_)input support
+    * Needs to support input/output from files
 
-* Arduino profile:
- * Need to support the following things at minimum:
- * Constants:
-  * OUTPUT, INPUT (pinModes)
-  * HIGH, LOW (general pin values)
- * functions/etc
-  * digitalWrite
-  * delayMicroseconds
-  * pinMode
-  * analogRead
-  * millis
- * Hardware devices/libraries etc
-  * Servo
-  * IOToy
-  * prototype microbit
+* Arduino profile - supports:
+    * functions/etc
+        * digitalWrite
+        * delayMicroseconds
+        * pinMode
+        * analogRead
+        * millis
+    * Servo
+    * Arduino Constants:
+        * OUTPUT, INPUT (pinModes)
+        * A0, A1, A2, A3, A4, A5, A6, A7
+        * HIGH, LOW (general pin values)
+
+* Arduino profile - todo:
+    * Hardware devices/libraries etc
+        * IOToy
+        * prototype microbit
 
 ## Grammar Currently Supported
 
@@ -135,9 +137,9 @@ does not as yet use them, so this summary does not list them.
 The compiler consists of the following parts:
 
 * A lexical analyser. This is a simple parse with 3 modes. These modes are essentially:
-  * NORMAL - this is used most of the time and is regular parsing
-  * BLOCKS - entered at end of line, and used to check whether to start/finish a BLOCK
-  * ENDBLOCKS - this is used to close off 1 or more blocks
+    * NORMAL - this is used most of the time and is regular parsing
+    * BLOCKS - entered at end of line, and used to check whether to start/finish a BLOCK
+    * ENDBLOCKS - this is used to close off 1 or more blocks
 
 * A grammar parser - this constructs an abstract syntax tree for the python code. This
   uses Pynodes - which form a tree. This process does as little as possible beyond
@@ -148,11 +150,11 @@ The compiler consists of the following parts:
   for specific tasks.
 
 * Analysis Phase - WIP. This performs the following tasks:
-  * Works down through the AST, DEPTH FIRST, adding context to identifier nodes. This
-    is to allow type identification/capture.
-    * This idea here is that if you pass into an AST node that represents a syntactic
-      scoped namespace - such as a function, class/etc, that we can stack the scopes
-      with regard to names, values and especially types
+    * Works down through the AST, DEPTH FIRST, adding context to identifier nodes. This
+      is to allow type identification/capture.
+        * This idea here is that if you pass into an AST node that represents a syntactic
+          scoped namespace - such as a function, class/etc, that we can stack the scopes
+          with regard to names, values and especially types
 
   * Open issues:
     * We need logical values of some kind to be avilable for use in contexts, to be
@@ -161,23 +163,23 @@ The compiler consists of the following parts:
       represented as expressions, but it's a bit more subtle than that - we want to
       represent expression results.
 
-    * Working down through the AST currently trees the AST as a flat tree - in terms
-      of namespaces - a single global one. To determine scoping rules we need to be
-      able to differentiate where a tree/subtree starts/finishes in a traversal.
-       * Probably requires a custom traversal to be honest
+    * Namespaces have been improved, and are now nested - which simplifies profiles,
+      and will simplify scoping implementation later.
 
   * The analysis phase decorates the AST with additional data
 
 * Code generation phase:
-  * Takes a JSON description from the AST and uses that to create a C-Syntax Tree.
-    This syntax tree kinda mirrors the sort of tree that you'd expect to get out
-    of the semantic analysis phases of a simplistic C compiler.
-  * This is then walked to generate simple C++ code
+    * Takes a JSON description from the AST and uses that to create a C-Syntax Tree.
+      This syntax tree kinda mirrors the sort of tree that you'd expect to get out
+      of the semantic analysis phases of a simplistic C compiler.
+    * This is then walked to generate simple C++ code
+    * Open issue: As time goes on it becomes clearer and clearer that this would be
+      better using actual objects for nodes rather than a JSON description.
 
 * Compilation
-  * The next step is to take the generated code and compile it. For the moment, this
-    operates on the code generated, and compiles it as a linux standalone. This will
-    switch over to allowing arduino as a target at some point.
+    * The next step is to take the generated code and compile it. For the moment, this
+      operates on the code generated, and compiles it as a linux standalone. This will
+      switch over to allowing arduino as a target at some point.
 
 Analysis phase now picks up on the use of a variable before it's definition in code.
 This is the start of useful error states and therefore useful error messages!
@@ -186,11 +188,8 @@ This is the start of useful error states and therefore useful error messages!
 
 Create the node tree.
 
-**DONE**
 
-* Traverse down the tree adding a context object to all identifiers. **DONE**
-
-**WIP**
+* Traverse down the tree adding a context object to all NODES. **DONE**
 
 * Then when we do types, we search inside the object and set it inside the object. **DONE**
 
@@ -205,6 +204,3 @@ Create the node tree.
 It's simple, but should work and has stopping criteria.
 
 And can build on what we have now
-
-Before we do that though, let's fix the code generation for identifiers, since it's gone screwy!
-
