@@ -1,11 +1,13 @@
 ---
 template: mainpanel
 source_form: markdown
-name: Example Arduino Program
-updated: August 2015
-title: Representative Pyxie Program
+name: Example Arduino Servo Control Program
+updated: October 2016
+title: Example Arduino Servo Control Pyxie Program
+reviewed: October 2016
 ---
 Example Arduino Program using Servos
+
 <div class="columnpanel">
 <div class="column col2_5">
 <b>Source:</b> servo-test-target.pyxie
@@ -32,9 +34,9 @@ Example Arduino Program using Servos
 <div class="column col3_5">
 <b>Generated:</b> servo-test-target.ino
 <pre>
-\#include &lt;Servo.h&gt;
+#include &lt;Servo.h&gt;
 &nbsp;
-\#include "iterators.cpp"
+#include "iterators.cpp"
 &nbsp;
 void setup() {
     Servo myservo;
@@ -76,7 +78,7 @@ void setup() {
 &nbsp;
 void loop() {
 }
-<[5~/pre>
+</pre>
 </div>
 </div>
 
