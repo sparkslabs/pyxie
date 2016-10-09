@@ -20,7 +20,8 @@ Overall standard ethos:
 ### Target Language states
 
 * BARE-LEVEL - does the absolute minimum to be useful
-* ROUNDED-BARE- does just that little bit more that you'd expect to work
+* USABLE - does just that little bit more that you'd expect to work
+* USABLE_CONTAINERS - includes some level of support for lists/dictionaries
 * BETTER - sufficient for actually being useful in doing things with an arduino, mbed or MSP430 - should include mappings between "import" and "include" - even just basic ones.
 * USER FUNCTIONS - As the name says, should support user functions
 * CLASSES - Should support user classes
