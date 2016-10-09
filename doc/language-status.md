@@ -1,6 +1,6 @@
 ## Language Status
 
-Last updated for version: **0.0.17**
+Last updated for version: **0.1.23**
 
 ### Direct Compilation
 
@@ -43,17 +43,17 @@ foo = "Hello"
 bar = "World"
 foobar = foo + bar
 
-print 10-1-2,7
-print 1+2*3*4-5/7,25
-print age, new_age, new_age_too
-print foo, bar, foobar
+print(10-1-2,7)
+print(1+2*3*4-5/7,25)
+print(age, new_age, new_age_too)
+print(foo, bar, foobar)
 
 countdown = 2147483647
-print "COUNTING DOWN"
+print("COUNTING DOWN")
 while countdown:
     countdown = countdown - 1
 
-print "BLASTOFF"
+print("BLASTOFF")
 </pre>
 </div>
 <div class="column col3_5">
@@ -134,7 +134,7 @@ chosen to capture such #include lines, and pass them through to the C++ side.
 This naturally enables a wide selection of functionality to start making
 Pyxie useful.
 
-### Very Nearly Bare Minimum Support
+### Bare Minimum Support
 
 Now supports control structures, key statements
 
@@ -177,24 +177,26 @@ implementation of language at present.
 ### Profile related
 
 * Linux host profile:
- * Support for output (print) needs to be matched by (raw_)input support
- * Needs to support input/output from files
+    * Support for output (print) needs to be matched by (raw_)input support
+    * Needs to support input/output from files
 
-* Arduino profile:
- * Need to support the following things at minimum:
- * Constants:
-  * OUTPUT, INPUT (pinModes)
-  * HIGH, LOW (general pin values)
- * functions/etc
-  * digitalWrite
-  * delayMicroseconds
-  * pinMode
-  * analogRead
-  * millis
- * Hardware devices/libraries etc
-  * Servo
-  * IOToy
-  * prototype microbit
+* Arduino profile - supports:
+    * functions/etc
+        * digitalWrite
+        * delayMicroseconds
+        * pinMode
+        * analogRead
+        * millis
+    * Servo
+    * Arduino Constants:
+        * OUTPUT, INPUT (pinModes)
+        * A0, A1, A2, A3, A4, A5, A6, A7
+        * HIGH, LOW (general pin values)
+
+* Arduino profile - todo:
+    * Hardware devices/libraries etc
+        * IOToy
+        * prototype microbit
 
 ## Grammar Currently Supported
 
@@ -209,7 +211,6 @@ necessarily imply code generation, differences will be noted below.
     statement_block : INDENT statements DEDENT
 
     statement : assignment_statement
-              | print_statement
               | general_expression
               | EOL
               | while_statement
@@ -219,7 +220,7 @@ necessarily imply code generation, differences will be noted below.
               | if_statement
               | for_statement
 
-    assignment_statement -> IDENTIFIER ASSIGN general_expression # ASSIGN is currently limited to "="
+    assignment_statement : IDENTIFIER ASSIGN general_expression # ASSIGN is currently limited to "="
 
     while_statement : WHILE general_expression COLON EOL statement_block
 
@@ -240,9 +241,9 @@ necessarily imply code generation, differences will be noted below.
     elif_clause : ELIF general_expression COLON EOL statement_block
                 | ELIF general_expression COLON EOL statement_block extended_if_clauses
 
-    print_statement : 'print' expr_list # Temporary - to be replaced by python 3 style function
+    # NOTE: print_statement has been removed and replaced by python 3 style function
 
-    for_statement | FOR IDENTIFIER IN general_expression COLON EOL statement_block
+    for_statement : FOR IDENTIFIER IN general_expression COLON EOL statement_block
 
     expr_list : general_expression
               | general_expression COMMA expr_list
@@ -271,19 +272,28 @@ necessarily imply code generation, differences will be noted below.
                      | arith_expression '/' negatable_expression_atom
 
 
-    negatable_expression_atom : "-" negatable_expression_atom 
-                              | expression_atom
+    negatable_expression_atom : "-" negatable_expression_atom
+                              | expression_molecule
+
+    expression_molecule : expression_atom
+                        | bracketed_expression
 
     expression_atom : value_literal
-                    | IDENTIFIER '(' ')' # Function call, with no arguments
-                    | IDENTIFIER '(' expr_list ')' # Function call
-                    | '(' general_expression ')'
+                    | expression_atom '(' expr_list ')' # Function call
+                    | expression_atom '(' ')' # Function call, with no arguments
+
+    bracketed_expression : PARENL general_expression PARENR
 
     value_literal : number
                   | STRING
                   | CHARACTER
                   | BOOLEAN
-                  | IDENTIFIER
+                  | identifiable
+
+    identifiable : IDENTIFIER
+                 | expression_molecule dotexpression
+
+    dotexpression : DOT IDENTIFIER
 
     number : NUMBER
            | FLOAT
@@ -319,26 +329,25 @@ combinations which are valid are directly supported yet. Notable ones:
 * Combinations of strings with numbers 
 
 
-## Why a python 2 print statement?
+## print statement?
 
-Python 2 has print statement with special notation; python 3's version is
-a function call. The reason why this grammar currently has a python-2 style
-print statement with special notation is to specifically avoid implementing
-general function calls yet. Once those are implemented, special cases - like
-implementing print - can be implemented, and this python 2 style print
-statement WILL be removed. I expect this will occur around version 0.0.15,
-based on current rate of progress.
+Python 2 has a print statement. Python 3 doesn't. In early days of Pyxie,
+Pyxie supported a python 2 statement to make life easier before function calls
+were implemented, with a note to say that "print" as a statement would disappear.
 
-Keeping it for now also simplifies "yield" later
+As of 0.1.23, the print_statement has been removed. As well as being simplifying
+the syntax, it also means that Arudino statements like Serial.print now become
+legal statements.
+
 
 ## Compilation process strategy
 
 The compiler consists of the following parts:
 
 * A lexical analyser. This is a simple parse with 3 modes. These modes are essentially:
-  * NORMAL - this is used most of the time and is regular parsing
-  * BLOCKS - entered at end of line, and used to check whether to start/finish a BLOCK
-  * ENDBLOCKS - this is used to close off 1 or more blocks
+    * NORMAL - this is used most of the time and is regular parsing
+    * BLOCKS - entered at end of line, and used to check whether to start/finish a BLOCK
+    * ENDBLOCKS - this is used to close off 1 or more blocks
 
 * A grammar parser - this constructs an abstract syntax tree for the python code. This
   uses Pynodes - which form a tree. This process does as little as possible beyond
@@ -349,11 +358,11 @@ The compiler consists of the following parts:
   for specific tasks.
 
 * Analysis Phase - WIP. This performs the following tasks:
-  * Works down through the AST, DEPTH FIRST, adding context to identifier nodes. This
-    is to allow type identification/capture.
-    * This idea here is that if you pass into an AST node that represents a syntactic
-      scoped namespace - such as a function, class/etc, that we can stack the scopes
-      with regard to names, values and especially types
+    * Works down through the AST, DEPTH FIRST, adding context to identifier nodes. This
+      is to allow type identification/capture.
+        * This idea here is that if you pass into an AST node that represents a syntactic
+          scoped namespace - such as a function, class/etc, that we can stack the scopes
+          with regard to names, values and especially types
 
   * Open issues:
     * We need logical values of some kind to be avilable for use in contexts, to be
@@ -361,24 +370,24 @@ The compiler consists of the following parts:
       read at a specific point in time. In traditional terms this are literally
       represented as expressions, but it's a bit more subtle than that - we want to
       represent expression results.
-
-    * Working down through the AST currently trees the AST as a flat tree - in terms
-      of namespaces - a single global one. To determine scoping rules we need to be
-      able to differentiate where a tree/subtree starts/finishes in a traversal.
-       * Probably requires a custom traversal to be honest
+    
+    * Namespaces have been improved, and are now nested - which simplifies profiles,
+      and will simplify scoping implementation later.
 
   * The analysis phase decorates the AST with additional data
 
 * Code generation phase:
-  * Takes a JSON description from the AST and uses that to create a C-Syntax Tree.
-    This syntax tree kinda mirrors the sort of tree that you'd expect to get out
-    of the semantic analysis phases of a simplistic C compiler.
-  * This is then walked to generate simple C++ code
+    * Takes a JSON description from the AST and uses that to create a C-Syntax Tree.
+      This syntax tree kinda mirrors the sort of tree that you'd expect to get out
+      of the semantic analysis phases of a simplistic C compiler.
+    * This is then walked to generate simple C++ code
+    * Open issue: As time goes on it becomes clearer and clearer that this would be
+      better using actual objects for nodes rather than a JSON description.
 
 * Compilation
-  * The next step is to take the generated code and compile it. For the moment, this
-    operates on the code generated, and compiles it as a linux standalone. This will
-    switch over to allowing arduino as a target at some point.
+    * The next step is to take the generated code and compile it. For the moment, this
+      operates on the code generated, and compiles it as a linux standalone. This will
+      switch over to allowing arduino as a target at some point.
 
 Analysis phase now picks up on the use of a variable before it's definition in code.
 This is the start of useful error states and therefore useful error messages!

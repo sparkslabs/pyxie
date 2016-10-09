@@ -36,17 +36,17 @@ foo = "Hello"
 bar = "World"
 foobar = foo + bar
 
-print 10-1-2,7
-print 1+2*3*4-5/7,25
-print age, new_age, new_age_too
-print foo, bar, foobar
+print(10-1-2,7)
+print(1+2*3*4-5/7,25)
+print(age, new_age, new_age_too)
+print(foo, bar, foobar)
 
 countdown = 2147483647
-print "COUNTING DOWN"
+print("COUNTING DOWN")
 while countdown:
     countdown = countdown - 1
 
-print "BLASTOFF"
+print("BLASTOFF")
 </pre>
 </div>
 <div class="column col3_5">
@@ -92,7 +92,8 @@ int main(int argc, char *argv[])
 </div>
 
 
-Example Arduino Program
+Basic Arduino Example
+
 <div class="columnpanel">
 <div class="column col2_5">
 <b>Source:</b> arduino-for-blink.pyxie
@@ -114,7 +115,7 @@ Example Arduino Program
 <div class="column col3_5">
 <b>Generated:</b> arduino-for-blink.ino
 <pre>
-\#include "iterators.cpp"
+#include "iterators.cpp"
 &nbsp;
 void setup()
 {
@@ -147,8 +148,8 @@ void loop()
 
 
 
-
 Example Arduino Program using Servos
+
 <div class="columnpanel">
 <div class="column col2_5">
 <b>Source:</b> servo-test-target.pyxie
@@ -175,9 +176,9 @@ Example Arduino Program using Servos
 <div class="column col3_5">
 <b>Generated:</b> servo-test-target.ino
 <pre>
-\#include &lt;Servo.h&gt;
+#include &lt;Servo.h&gt;
 &nbsp;
-\#include "iterators.cpp"
+#include "iterators.cpp"
 &nbsp;
 void setup() {
     Servo myservo;
@@ -219,11 +220,91 @@ void setup() {
 &nbsp;
 void loop() {
 }
-<[5~/pre>
+</pre>
 </div>
 </div>
 
 
+
+
+Analog, serial demo Arduino program:
+
+<div class="columnpanel">
+<div class="column col2_5">
+<b>Source:</b> analog/analog-serial.pyxie
+
+<pre>
+    analogInPin = A0
+    analogOutPin = 9
+    sensorValue = 0
+    outputValue = 0
+    Serial.begin(9600)
+    randomTest = 0
+    randomSeed(analogRead(0))
+
+    while True:
+        sensorValue = analogRead(analogInPin)
+        sensorValue = constrain(sensorValue, 10, 150);
+        outputValue = map(sensorValue, 0, 1023, 0, 255)
+        randomTest = random(300)
+        analogWrite(analogOutPin, outputValue)
+        Serial.print(millis())
+        Serial.print(" : ")
+        Serial.print("sensor:- ")
+        Serial.print(sensorValue)
+        Serial.print(" output:- ")
+        Serial.print(outputValue)
+        Serial.print(" random:- ")
+        Serial.print(randomTest)
+        Serial.println("--------")
+        delay(2)
+</pre>
+</div>
+<div class="column col3_5">
+<b>Generated:</b> analog-serial.ino
+<pre>
+#include "iterators.cpp"
+&nbsp;
+#include "iterators.cpp"
+&nbsp;
+void setup() {
+    int analogInPin;
+    int analogOutPin;
+    int outputValue;
+    int randomTest;
+    int sensorValue;
+
+    analogInPin = A0;
+    analogOutPin = 9;
+    sensorValue = 0;
+    outputValue = 0;
+    (Serial).begin(9600);
+    randomTest = 0;
+    randomSeed(analogRead(0));
+    while (true) {
+        sensorValue = analogRead(analogInPin);
+        sensorValue = constrain(sensorValue, 10, 150);
+        outputValue = map(sensorValue, 0, 1023, 0, 255);
+        randomTest = random(300);
+        analogWrite(analogOutPin, outputValue);
+        (Serial).print(millis());
+        (Serial).print(" : ");
+        (Serial).print("sensor:- ");
+        (Serial).print(sensorValue);
+        (Serial).print(" output:- ");
+        (Serial).print(outputValue);
+        (Serial).print(" random:- ");
+        (Serial).print(randomTest);
+        (Serial).println("--------");
+        delay(2);
+    };
+}
+&nbsp;
+void loop() {
+}
+</pre>
+</div>
+</div>
 
 
 ### What does it do?

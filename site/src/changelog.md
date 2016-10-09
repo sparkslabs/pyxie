@@ -3,26 +3,114 @@ template: mainpage
 source_form: markdown
 name: Changelog
 title: Changelog
-updated: September 2016
+updated: October 2016
 ---
 ## Change Log
 
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/), within
-reason.
+reason. (Prior to a 1.0.0 release minor version increases may be backwards
+incompatible)
 
 ### In progress
 
 ## [0.1.23] - UNRELEASED
 
+Not backwards compatible due to changes to "print"
+
+#### print
+
+print is no longer a python 2 style print statement, but rather a python 3 style
+print function. The reason for this is primarily down to the fact that things
+like Serial.print - necessary for arduino support - are not valid python if you
+have print as a statement.
+
+It's for this reason that the new version is 0.1.23
+
+#### Overview
+
+Aims in this release are to start enabling more functions inside an enclosing
+profile. Specifically to start enabling more arduino programs using default
+pin names (eg A0) and the ability to read from analog pins. (Which requires
+implementing analysis of return values of functions)
+
+In order to make this work/work better, work on improving how contexts (mappings
+of names to types) are handled has taken place, in particular nested lookups
+now work (This will simplify scoping later on too).
+
 ### New
 
-*
+* Lots of internal changes to switch print from being a statement
+  to a function call
+    - Update all tests to use print as function, not as statement
+    - Lexer - remove keyword
+    - Disable "print" as statement type in the grammar
+    - Disable "print" as a pynode in the AST model
+    - Transform bare function calls to "print" (not method accesses)
+      into print statements internally. This will need improving
+      later, but for now is enough. It will need improving once we
+      implement custom function support.
+
+* Handle emitting identifiers as rvalues in assignments correctly
+
+* Enable use of function calls as rvalues in assignments (eg enable "analogRead")
+
+* Added README.md for the analog example
+
+* Update examples/README.md overview of the various examples.
+
+### Arduino Support
+
+Specific set of functionality checked/added in this release:
+
+* Serial support - .begin(), .print(), .println()
+* constrain
+* map
+* random
+* analogWrite
+* analogRead
+* millis
+
+This is in addition to:
+
+* Servos
+* DigitalWrite
+* pinMode
+* delay
 
 ### Other
 
-*
+* Some extra scripts in test-data - designed to support quick turn around testing of
+  specific language features.
 
+* Clarify source of logging messages
+
+* Add recursive lookup through context stacks. This allows us effectively to
+  manage scope, to be able to treate profiles as an enclosing scope, and a step
+  towards being able to generate better error messages.
+
+* Created a default (empty) global context stack - may provide a better hook for things
+  like print-as-function later on.
+
+* Simplify cruftiness/verbosity of logging from parser
+
+* Initial tests with profile nodes (for context). Tag is profile_identifier. Purpose is
+  primarily to support analysis. 
+
+* Help with debugging
+  * Add tags to contexts
+  * Tag global context as program context
+  * Tag (test) arduino profile context as "arduino"
+
+* Start of support for analogRead, analogWrite, (arduino) map, and Serial object
+  - Example added exercising these
+
+* Update site/src/panels/current-grammar.md to match current grammar...
+  - remove print_statement
+  - minor cleanups
+  - Expression syntax supports expression molecules - object method access
+
+  
 ## [0.0.22] - 2016-09-25
 
 This release sees a practicality change - specifically to allow the user

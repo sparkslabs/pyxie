@@ -48,17 +48,17 @@ Example program:
     bar = "World"
     foobar = foo + bar
 
-    print 10-1-2,7
-    print 1+2*3*4-5/7,25
-    print age, new_age, new_age_too
-    print foo, bar, foobar
+    print(10-1-2,7)
+    print(1+2*3*4-5/7,25)
+    print(age, new_age, new_age_too)
+    print(foo, bar, foobar)
 
     countdown = 2147483647
-    print "COUNTING DOWN"
+    print("COUNTING DOWN")
     while countdown:
         countdown = countdown - 1
 
-    print "BLASTOFF"
+    print("BLASTOFF")
 
 Example results:
 
@@ -271,7 +271,6 @@ Release History:
     statement_block : INDENT statements DEDENT
 
     statement : assignment_statement
-              | print_statement
               | general_expression
               | EOL
               | while_statement
@@ -281,7 +280,7 @@ Release History:
               | if_statement
               | for_statement
 
-    assignment_statement -> IDENTIFIER ASSIGN general_expression # ASSIGN is currently limited to "="
+    assignment_statement : IDENTIFIER ASSIGN general_expression # ASSIGN is currently limited to "="
 
     while_statement : WHILE general_expression COLON EOL statement_block
 
@@ -302,9 +301,9 @@ Release History:
     elif_clause : ELIF general_expression COLON EOL statement_block
                 | ELIF general_expression COLON EOL statement_block extended_if_clauses
 
-    print_statement : 'print' expr_list # Temporary - to be replaced by python 3 style function
+    # NOTE: print_statement has been removed and replaced by python 3 style function
 
-    for_statement | FOR IDENTIFIER IN general_expression COLON EOL statement_block
+    for_statement : FOR IDENTIFIER IN general_expression COLON EOL statement_block
 
     expr_list : general_expression
               | general_expression COMMA expr_list
@@ -333,19 +332,28 @@ Release History:
                      | arith_expression '/' negatable_expression_atom
 
 
-    negatable_expression_atom : "-" negatable_expression_atom 
-                              | expression_atom
+    negatable_expression_atom : "-" negatable_expression_atom
+                              | expression_molecule
+
+    expression_molecule : expression_atom
+                        | bracketed_expression
 
     expression_atom : value_literal
-                    | IDENTIFIER '(' ')' # Function call, with no arguments
-                    | IDENTIFIER '(' expr_list ')' # Function call
-                    | '(' general_expression ')'
+                    | expression_atom '(' expr_list ')' # Function call
+                    | expression_atom '(' ')' # Function call, with no arguments
+
+    bracketed_expression : PARENL general_expression PARENR
 
     value_literal : number
                   | STRING
                   | CHARACTER
                   | BOOLEAN
-                  | IDENTIFIER
+                  | identifiable
+
+    identifiable : IDENTIFIER
+                 | expression_molecule dotexpression
+
+    dotexpression : DOT IDENTIFIER
 
     number : NUMBER
            | FLOAT
@@ -378,19 +386,18 @@ combinations which are valid are directly supported yet. Notable ones:
 * Combinations of strings with numbers 
 
 
-## Why a python 2 print statement?
+## print statement?
 
-Python 2 has print statement with special notation; python 3's version is
-a function call. The reason why this grammar currently has a python-2 style
-print statement with special notation is to specifically avoid implementing
-general function calls yet. Once those are implemented, special cases - like
-implementing print - can be implemented, and this python 2 style print
-statement WILL be removed. I expect this will occur around version 0.0.15,
-based on current rate of progress.
+Python 2 has a print statement. Python 3 doesn't. In early days of Pyxie,
+Pyxie supported a python 2 statement to make life easier before function calls
+were implemented, with a note to say that "print" as a statement would disappear.
 
-Keeping it for now also simplifies "yield" later
+As of 0.1.23, the print_statement has been removed. As well as being simplifying
+the syntax, it also means that Arudino statements like Serial.print now become
+legal statements.
 
-Michael Sparks, September 2016
+
+Michael Sparks, October 2016
 
 
 """

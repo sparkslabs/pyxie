@@ -93,7 +93,6 @@ Harder:
 
     statement            : EOL
                          | assignment_statement
-                         | print_statement // This is really just a function call now
                          | general_expression  **[PARTIAL]**
                          | while_statement
                          | break_statement
@@ -106,6 +105,8 @@ Harder:
                          | return_statement  **[TBD]**
                          | yield_statement  **[TBD]**
                          | pass_statement 
+
+**NB** Previously this included a print_statement. This is now a function call, ala python 3.
 
 Note: general_expression  **[PARTIAL]** means we have parsing of general
 expressions but not all types have appropriate functionality yet
@@ -120,11 +121,6 @@ assert would be useful though, but more useful if try/except were implemented)
 
 ### non-specific statements
 
-NOTE: print is currently python 2 like, should be python 3 like.  Should be
-made that once function calls are integrated.  In the meantime, printing
-without having to implement general function calls is simpler.
-
-    print_statement      : PRINT general_expression 
     pass_statement       : PASS
 
 ### Support for class definition  **[TBD]**
@@ -296,6 +292,8 @@ Lexical analyser has the following states:
 <hr>
 
 ## Informal done list
+(The changelog is a better place to look as to what specifically has been done)
+
 * Statements are separated by NEWLINES
 * Block structure generates INDENT/DEDENT tokens
 * Value literals: Integers, String, Boolean
@@ -321,20 +319,20 @@ Lexical analyser has the following states:
 * break / continue statements
 * Partial comment support (check)
 * Internals of implementation for generators (for implementing builtins first)
+* print replace as python 3 style statements
 
 ## Informal todo list
 
 * Comments are started with a # character [*]   **[TBD]**
+* Lists, list literals   **[TBD]**
+* Dictionaries, dictionary literals   **[TBD]**
+
 * function definitions with an optional argument list  **[TBD]**
-* print replace as python 3 style statements  **[WIP]**
 * Iterator version/expression of for_statement is tided up, and pluggable **[TBD]**
 * parsing of yield statements   **[TBD]**
 * parsing of import statements, parsing of from...import... statements   **[TBD]**
 * Expressions - bitwise operators, logical operators, boolean operators   **[TBD]**
-* Lists, list literals   **[TBD]**
 * doc strings   **[TBD]**
-* comments   **[TBD]**
-* Dictionaries, dictionary literals   **[TBD]**
 * Objects / object attribute access   **[TBD]**
 * return statement   **[TBD]**
 * The parser is line oriented, should be logical lines   **[TBD]**
