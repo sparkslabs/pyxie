@@ -18,27 +18,53 @@ things like Serial.print. This is a little frustrating because I'd hoped to
 deal with this later, but it's such an important change, it needs to happen
 sooner rather than later.
 
-Current issues:
 
-* print is not a function, but a syntactic structure. This causes
-  Serial.print to be invalid syntax.
+### Current Source
 
-* We can define variables like A0 in the profile context, but it is
-  currently generating a *string* "A0" in the generated code. This
-  is unintentional and undesirable.
+    analogInPin = A0
+    analogOutPin = 9
+    sensorValue = 0
+    outputValue = 0
+    Serial.begin(9600)
 
-* It would be nice to not generate extraneous brackets around expressions
-  if we could avoid it.
+    while True:
+        sensorValue = analogRead(analogInPin)
+        outputValue = map(sensorValue, 0, 1023, 0, 255)
+        analogWrite(analogOutPin, outputValue)
+        Serial.print("sensor:- ")
+        Serial.print(sensorValue)
+        Serial.print("output:- ")
+        Serial.print(outputValue)
+        Serial.println("--------")
+        delay(2)
 
-Positive points:
+### Generated C++
 
-* If we change print to _print, code is generated. In the output code,
-  if we manually change _print to print, the build succeeds.
+    #include "iterators.cpp"
 
-* If we change in the generated code the strings incorrectly generated,
-  that is "A0" to Ao - then the build succeeds.
+    void setup() {
+        int analogInPin;
+        int analogOutPin;
+        int outputValue;
+        int sensorValue;
 
-This suggests that the code changes required for analysis are minimal,
-which is something.
+        analogInPin = A0;
+        analogOutPin = 9;
+        sensorValue = 0;
+        outputValue = 0;
+        (Serial).begin(9600);
+        while (true) {
+            sensorValue = analogRead(analogInPin);
+            outputValue = map(sensorValue, 0, 1023, 0, 255);
+            analogWrite(analogOutPin, outputValue);
+            (Serial).print("sensor:- ");
+            (Serial).print(sensorValue);
+            (Serial).print("output:- ");
+            (Serial).print(outputValue);
+            (Serial).println("--------");
+            delay(2);
+        };
+    }
 
-
+    void loop() {
+    }
