@@ -19,7 +19,6 @@ title: Grammar support targetted by Pyxie
 
     statement            : EOL
                          | assignment_statement
-                         | print_statement // This is really just a function call now
                          | general_expression  **[PARTIAL]**
                          | while_statement
                          | break_statement
@@ -32,6 +31,8 @@ title: Grammar support targetted by Pyxie
                          | return_statement  **[TBD]**
                          | yield_statement  **[TBD]**
                          | pass_statement 
+
+**NB** Previously this included a print_statement. This is now a function call, ala python 3.
 
 Note: general_expression  **[PARTIAL]** means we have parsing of general
 expressions but not all types have appropriate functionality yet
@@ -46,11 +47,6 @@ assert would be useful though, but more useful if try/except were implemented)
 
 ### non-specific statements
 
-NOTE: print is currently python 2 like, should be python 3 like.  Should be
-made that once function calls are integrated.  In the meantime, printing
-without having to implement general function calls is simpler.
-
-    print_statement      : PRINT general_expression 
     pass_statement       : PASS
 
 ### Support for class definition  **[TBD]**
