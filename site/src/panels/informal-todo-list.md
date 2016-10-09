@@ -2,11 +2,13 @@
 template: mainpanel
 source_form: markdown
 name: Informal todo list
-updated: July 2015
-reviewed: 18 July 2015
+updated: October 2016
+reviewed: October 2016
 title: Informal todo list
 ---
 ## Informal done list
+(The changelog is a better place to look as to what specifically has been done)
+
 * Statements are separated by NEWLINES
 * Block structure generates INDENT/DEDENT tokens
 * Value literals: Integers, String, Boolean
@@ -32,20 +34,20 @@ title: Informal todo list
 * break / continue statements
 * Partial comment support (check)
 * Internals of implementation for generators (for implementing builtins first)
+* print replace as python 3 style statements
 
 ## Informal todo list
 
 * Comments are started with a # character [*]   **[TBD]**
+* Lists, list literals   **[TBD]**
+* Dictionaries, dictionary literals   **[TBD]**
+
 * function definitions with an optional argument list  **[TBD]**
-* print replace as python 3 style statements  **[WIP]**
 * Iterator version/expression of for_statement is tided up, and pluggable **[TBD]**
 * parsing of yield statements   **[TBD]**
 * parsing of import statements, parsing of from...import... statements   **[TBD]**
 * Expressions - bitwise operators, logical operators, boolean operators   **[TBD]**
-* Lists, list literals   **[TBD]**
 * doc strings   **[TBD]**
-* comments   **[TBD]**
-* Dictionaries, dictionary literals   **[TBD]**
 * Objects / object attribute access   **[TBD]**
 * return statement   **[TBD]**
 * The parser is line oriented, should be logical lines   **[TBD]**
