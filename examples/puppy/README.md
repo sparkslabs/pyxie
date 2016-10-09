@@ -1,10 +1,24 @@
+Puppy
+-----
+
 The Dagu playful puppy is a simple, fun, dog shaped robot.
 
 This directory will contain example Pyxie code for programming this device.
 
-The current status is that this code does not yet compile, however, it is a
-first cut of something that *could* be compiled by Pyxie for a real world
-device.
+Current status is that the TARGET versions of this code do not work yet.
+
+HOWEVER as of October 2016, the minimal version - which allows the robot
+to read it's sensors and move around, DOES work.
+
+This is a huge step forward, since we have the start of making autonomous
+robots using Pyxie.
+
+puppy/target
+------------
+
+The current status is that this TAREGT code does not yet compile, however,
+it is a first cut of something that *could* be compiled by Pyxie for a real
+world device.
 
 This is a device that is powered by an Atmel 8A arduino.
 
