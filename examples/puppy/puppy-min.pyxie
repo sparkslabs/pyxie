@@ -1,0 +1,136 @@
+#include <Servo.h>
+
+FLHpin = 6
+FRHpin = 11
+RLHpin = 5
+RRHpin = 4
+
+FLKpin = 12
+FRKpin = 13
+RLKpin = 2
+RRKpin = 3
+
+PANpin = 14
+TILpin = 15
+
+IRleft = 2
+IRright = 4
+IRup = 3
+IRdown = 5
+IRleds = 8
+
+Speed = 40
+Stepsize = 250
+Boredom = 6000
+
+LRscalefactor = 2
+UDscalefactor = 2
+distancemax = 200
+bestdistance = 500
+
+FLHcenter = 1500
+FRHcenter = 1500
+RLHcenter = 1500
+RRHcenter = 1500
+
+FLKcenter = 1500
+FRKcenter = 1500
+RLKcenter = 1500
+RRKcenter = 1500
+
+PANcenter = 1500
+TILcenter = 1500
+
+LRmax = 2300
+LRmin = 700
+UDmax = 2000
+UDmin = 700
+
+IRdelay = 200
+
+time = 0l
+sit = 0l
+trick = 0l
+
+LShift = 0
+RShift = 0
+Raise = 0
+cycle = 0
+
+pan=PANcenter
+tilt=TILcenter
+
+distance = 0
+temp = 0L
+
+leftIRvalue = 0
+rightIRvalue = 0
+upIRvalue = 0
+downIRvalue = 0
+
+FLHservo = Servo()
+FRHservo = Servo()
+RLHservo = Servo()
+RRHservo = Servo()
+
+FLKservo = Servo()
+FRKservo = Servo()
+RLKservo = Servo()
+RRKservo = Servo()
+
+PANservo = Servo()
+TILservo = Servo()
+
+FLHservo.attach(FLHpin)
+FRHservo.attach(FRHpin)
+RLHservo.attach(RLHpin)
+RRHservo.attach(RRHpin)
+
+FLKservo.attach(FLKpin)
+FRKservo.attach(FRKpin)
+RLKservo.attach(RLKpin)
+RRKservo.attach(RRKpin)
+
+PANservo.attach(PANpin)
+TILservo.attach(TILpin)
+
+FLHservo.writeMicroseconds(FLHcenter)
+FRHservo.writeMicroseconds(FRHcenter)
+RLHservo.writeMicroseconds(RLHcenter)
+RRHservo.writeMicroseconds(RRHcenter)
+FLKservo.writeMicroseconds(FLKcenter)
+FRKservo.writeMicroseconds(FRKcenter)
+RLKservo.writeMicroseconds(RLKcenter)
+RRKservo.writeMicroseconds(RRKcenter)
+PANservo.writeMicroseconds(PANcenter)
+TILservo.writeMicroseconds(TILcenter)
+
+pinMode(IRleds,OUTPUT)
+
+while True:
+    digitalWrite(IRleds,HIGH)
+    delayMicroseconds(IRdelay)
+    
+    leftIRvalue  = 0+ analogRead(IRleft)
+    rightIRvalue = 0+ analogRead(IRright)
+    upIRvalue    = 0+ analogRead(IRup)
+    downIRvalue  = 0+ analogRead(IRdown)
+
+    digitalWrite(IRleds, LOW)
+    delayMicroseconds(IRdelay)
+
+    leftIRvalue  = leftIRvalue - analogRead(IRleft)
+    rightIRvalue = rightIRvalue - analogRead(IRright)
+    upIRvalue    = upIRvalue - analogRead(IRup)
+    downIRvalue  = downIRvalue - analogRead(IRdown)
+    distance = (leftIRvalue + rightIRvalue + upIRvalue + downIRvalue) / 4
+
+    if distance < distancemax:
+        if pan>PANcenter:
+            pan = pan - 5
+        if pan<PANcenter:
+            pan = pan + 5
+        if tilt>TILcenter:
+            tilt = tilt - 3
+        if tilt < TILcenter:
+            tilt = tilt + 3
