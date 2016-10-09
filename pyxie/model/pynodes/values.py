@@ -106,7 +106,7 @@ class PyIdentifier(PyValueLiteral):
 
 class ProfilePyNode(PyIdentifier):
     """Representation of something in the python code that's external to it - from a profile"""
-    tag = "identifier"
+    tag = "profile_identifier"
     def __init__(self, name, value_type):
         self.lineno = 0
         self.value = name
