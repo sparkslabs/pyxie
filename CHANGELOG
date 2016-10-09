@@ -52,6 +52,25 @@ now work (This will simplify scoping later on too).
 
 * Update examples/README.md overview of the various examples.
 
+### Arduino Support
+
+Specific set of functionality checked/added in this release:
+
+* Serial support - .begin(), .print(), .println()
+* constrain
+* map
+* random
+* analogWrite
+* analogRead
+* millis
+
+This is in addition to:
+
+* Servos
+* DigitalWrite
+* pinMode
+* delay
+
 ### Other
 
 * Some extra scripts in test-data - designed to support quick turn around testing of
