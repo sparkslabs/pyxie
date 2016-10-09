@@ -2,8 +2,8 @@
 template: mainpanel
 source_form: markdown
 name: Pyxie Grammar
-updated: Aug 2015
-reviewed: 2 Aug 2015
+updated: Oct 2016
+reviewed: 9 Oct 2016
 title: Current Grammar support by Pyxie
 ---
     program : statements
@@ -13,7 +13,6 @@ title: Current Grammar support by Pyxie
     statement_block : INDENT statements DEDENT
 
     statement : assignment_statement
-              | print_statement
               | general_expression
               | EOL
               | while_statement
@@ -23,7 +22,7 @@ title: Current Grammar support by Pyxie
               | if_statement
               | for_statement
 
-    assignment_statement -> IDENTIFIER ASSIGN general_expression # ASSIGN is currently limited to "="
+    assignment_statement : IDENTIFIER ASSIGN general_expression # ASSIGN is currently limited to "="
 
     while_statement : WHILE general_expression COLON EOL statement_block
 
@@ -44,9 +43,9 @@ title: Current Grammar support by Pyxie
     elif_clause : ELIF general_expression COLON EOL statement_block
                 | ELIF general_expression COLON EOL statement_block extended_if_clauses
 
-    print_statement : 'print' expr_list # Temporary - to be replaced by python 3 style function
+    # NOTE: print_statement has been removed and replaced by python 3 style function
 
-    for_statement | FOR IDENTIFIER IN general_expression COLON EOL statement_block
+    for_statement : FOR IDENTIFIER IN general_expression COLON EOL statement_block
 
     expr_list : general_expression
               | general_expression COMMA expr_list
@@ -75,19 +74,28 @@ title: Current Grammar support by Pyxie
                      | arith_expression '/' negatable_expression_atom
 
 
-    negatable_expression_atom : "-" negatable_expression_atom 
-                              | expression_atom
+    negatable_expression_atom : "-" negatable_expression_atom
+                              | expression_molecule
+
+    expression_molecule : expression_atom
+                        | bracketed_expression
 
     expression_atom : value_literal
-                    | IDENTIFIER '(' ')' # Function call, with no arguments
-                    | IDENTIFIER '(' expr_list ')' # Function call
-                    | '(' general_expression ')'
+                    | expression_atom '(' expr_list ')' # Function call
+                    | expression_atom '(' ')' # Function call, with no arguments
+
+    bracketed_expression : PARENL general_expression PARENR
 
     value_literal : number
                   | STRING
                   | CHARACTER
                   | BOOLEAN
-                  | IDENTIFIER
+                  | identifiable
+
+    identifiable : IDENTIFIER
+                 | expression_molecule dotexpression
+
+    dotexpression : DOT IDENTIFIER
 
     number : NUMBER
            | FLOAT
