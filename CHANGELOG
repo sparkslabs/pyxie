@@ -63,6 +63,7 @@ Specific set of functionality checked/added in this release:
 * analogWrite
 * analogRead
 * millis
+* Support for constants/ids : A0-A7, HIGH, LOW, INPUT, OUTPUT
 
 This is in addition to:
 
@@ -103,6 +104,7 @@ This is in addition to:
   - minor cleanups
   - Expression syntax supports expression molecules - object method access
 
+* Updated docs
 
 ## [0.0.22] - 2016-09-25
 
