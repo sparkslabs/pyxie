@@ -22,6 +22,8 @@ that looks like this into an equivalent (simple) C++ program.
 
 {% examplearduinoservoprogram = panel("panels/example-arduino-servo-program.md") %}
 
+{% examplearduinoanalogdemo = panel("panels/example-arduino-analog-demo.md") %}
+
 {% whatdoesthisdo = panel("panels/what-does-this-do.md") %}
 
 {% micropython_ref = panel("panels/why-not-micropython.md") %}
