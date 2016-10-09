@@ -133,8 +133,22 @@ def main(argv):
 
         if profile == "arduino": # TODO: Delete me, this is a test 
             from pyxie.model.pynodes.values import ProfilePyNode
-            A0 = ProfilePyNode("A0", "integer")
-            context.store("A0", A0)
+
+            for i in range(8):
+                a_pin_name = "A" + str(a_pin)
+                a_pin = ProfilePyNode(a_pin_name, "integer")
+                context.store(a_pin_name, a_pin)
+
+            a_pin = ProfilePyNode("HIGH", "integer")
+            context.store("HIGH", a_pin)
+
+            a_pin = ProfilePyNode("LOW", "integer")
+            context.store("LOW", a_pin)
+
+            a_pin = ProfilePyNode("INPUT", "integer")
+            context.store("INPUT", a_pin)
+            a_pin = ProfilePyNode("OUTPUT", "integer")
+            context.store("OUTPUT", a_pin)
 
     print("CREATED", context)
     pyxie.parsing.context.profile_context = context
