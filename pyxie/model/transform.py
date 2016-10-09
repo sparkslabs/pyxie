@@ -182,10 +182,11 @@ def convert_assignment(assignment):
     if not (isinstance(assignment.rvalue, nodes.PyOperator) or
             isinstance(assignment.rvalue, nodes.PyValueLiteral) or
             isinstance(assignment.rvalue, nodes.PyComparisonOperator) or
-            isinstance(assignment.rvalue, nodes.PyBoolOperator)):
+            isinstance(assignment.rvalue, nodes.PyBoolOperator) or
+            isinstance(assignment.rvalue, nodes.PyFunctionCall)):
 
-        todo("assignment where the rvalue is not a value_literal or operator")
-        raise CannotConvert("Cannot convert assignment where the rvalue is not a value_literal")
+        todo("assignment where the rvalue is not a value_literal, operator, or function call")
+        raise CannotConvert("Cannot convert assignment where the rvalue is not a value_literal, operator, or function call")
 
     # print(rvalue)
     clvalue = lvalue.value # FIXME: This is only valid for identifiers
@@ -206,6 +207,20 @@ def convert_assignment(assignment):
 
     elif isinstance(assignment.rvalue, nodes.PyComparisonOperator):
         crvalue = convert_comparison(rvalue)
+
+    elif isinstance(assignment.rvalue, nodes.PyFunctionCall):
+        arg = assignment.rvalue
+        print("NEED TO CONVERT FUNCTION CALL TO SOMETHING THE C CODE GENERATOR CAN HANDLE")
+        cargs = []
+        if arg.expr_list:
+            for expr in arg.expr_list:
+                #print(arg)
+                #print("We need to convert the arg", arg)
+                crepr = convert_arg(expr)
+                carg = crepr
+                cargs.append(carg)
+
+        crvalue = ["function_call", convert_value_literal(arg.func_label), cargs] # FIXME: func_label may not be an identifier...
 
     return ["assignment", clvalue, "=", crvalue]
 
