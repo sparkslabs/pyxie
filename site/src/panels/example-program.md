@@ -2,8 +2,9 @@
 template: mainpanel
 source_form: markdown
 name: Example Program
-updated: July 2015
+updated: October 2015
 title: Representative Pyxie Program
+reviewed: October 2016
 ---
 <div class="columnpanel">
 <div class="column col2_5">
@@ -18,17 +19,17 @@ foo = "Hello"
 bar = "World"
 foobar = foo + bar
 
-print 10-1-2,7
-print 1+2*3*4-5/7,25
-print age, new_age, new_age_too
-print foo, bar, foobar
+print(10-1-2,7)
+print(1+2*3*4-5/7,25)
+print(age, new_age, new_age_too)
+print(foo, bar, foobar)
 
 countdown = 2147483647
-print "COUNTING DOWN"
+print("COUNTING DOWN")
 while countdown:
     countdown = countdown - 1
 
-print "BLASTOFF"
+print("BLASTOFF")
 </pre>
 </div>
 <div class="column col3_5">
