@@ -2,11 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/), within
-reason.
+reason. (Prior to a 1.0.0 release minor version increases may be backwards
+incompatible)
 
 ### In progress
 
 ## [0.1.23] - UNRELEASED
+
+Not backwards compatible due to changes to "print"
 
 #### print
 
@@ -41,6 +44,13 @@ now work (This will simplify scoping later on too).
       later, but for now is enough. It will need improving once we
       implement custom function support.
 
+* Handle emitting identifiers as rvalues in assignments correctly
+
+* Enable use of function calls as rvalues in assignments (eg enable "analogRead")
+
+* Added README.md for the analog example
+
+* Update examples/README.md overview of the various examples.
 
 ### Other
 
@@ -58,7 +68,8 @@ now work (This will simplify scoping later on too).
 
 * Simplify cruftiness/verbosity of logging from parser
 
-* Initial tests with profile nodes (for context)
+* Initial tests with profile nodes (for context). Tag is profile_identifier. Purpose is
+  primarily to support analysis. 
 
 * Help with debugging
   * Add tags to contexts
@@ -67,8 +78,6 @@ now work (This will simplify scoping later on too).
 
 * Start of support for analogRead, analogWrite, (arduino) map, and Serial object
   - Example added exercising these
-
-* Added README.md for the analog example
 
 ## [0.0.22] - 2016-09-25
 
