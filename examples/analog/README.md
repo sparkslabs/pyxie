@@ -26,15 +26,23 @@ sooner rather than later.
     sensorValue = 0
     outputValue = 0
     Serial.begin(9600)
+    randomTest = 0
+    randomSeed(analogRead(0))
 
     while True:
         sensorValue = analogRead(analogInPin)
+        sensorValue = constrain(sensorValue, 10, 150);
         outputValue = map(sensorValue, 0, 1023, 0, 255)
+        randomTest = random(300)
         analogWrite(analogOutPin, outputValue)
+        Serial.print(millis())
+        Serial.print(" : ")
         Serial.print("sensor:- ")
         Serial.print(sensorValue)
-        Serial.print("output:- ")
+        Serial.print(" output:- ")
         Serial.print(outputValue)
+        Serial.print(" random:- ")
+        Serial.print(randomTest)
         Serial.println("--------")
         delay(2)
 
@@ -46,6 +54,7 @@ sooner rather than later.
         int analogInPin;
         int analogOutPin;
         int outputValue;
+        int randomTest;
         int sensorValue;
 
         analogInPin = A0;
@@ -53,14 +62,22 @@ sooner rather than later.
         sensorValue = 0;
         outputValue = 0;
         (Serial).begin(9600);
+        randomTest = 0;
+        randomSeed(analogRead(0));
         while (true) {
             sensorValue = analogRead(analogInPin);
+            sensorValue = constrain(sensorValue, 10, 150);
             outputValue = map(sensorValue, 0, 1023, 0, 255);
+            randomTest = random(300);
             analogWrite(analogOutPin, outputValue);
+            (Serial).print(millis());
+            (Serial).print(" : ");
             (Serial).print("sensor:- ");
             (Serial).print(sensorValue);
-            (Serial).print("output:- ");
+            (Serial).print(" output:- ");
             (Serial).print(outputValue);
+            (Serial).print(" random:- ");
+            (Serial).print(randomTest);
             (Serial).println("--------");
             delay(2);
         };
