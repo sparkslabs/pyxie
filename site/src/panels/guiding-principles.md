@@ -2,8 +2,9 @@
 template: mainpanel
 source_form: markdown
 name: Guiding principles for language features
-updated: July 2015
+updated: October 2015
 title: Guiding principles for language features
+reviewed: October 2016
 ---
 ### Guiding Principles for implementation
 
@@ -40,5 +41,23 @@ This leaves lots of things that people use which might well be left out:
 * Metaclasses
 * dict based onjects
 * Generalised \_\_getattr\_\_ / \_\_setattr\_\_ (feels very wrong to say that :-) )
+
+This is still an awful lot of work so the real guiding principles are:
+
+* Can I use this for writing programs for arduino based robots (and similar)
+* Can this be used for teaching introductory programming? Often introductory python
+  courses use a subset of python. The focus of subsets here is something like this:
+    - Values
+    - Assignment
+    - Math Operators
+    - Conditional Selection
+    - Loops
+    - Use of external libraries
+    - Basic IO
+* Followed by
+    - Use of internal functions and datatypes - lists/dictionaries/
+    - User defined functions
+    - Objects
+    - Classes
 
 **These items are up for discussion, which is why they're here, not in the language-spec**
