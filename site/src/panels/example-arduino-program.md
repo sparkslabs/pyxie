@@ -2,10 +2,12 @@
 template: mainpanel
 source_form: markdown
 name: Example Arduino Program
-updated: August 2015
-title: Representative Pyxie Program
+updated: October 2016
+title: Example Arduino Pyxie Program
+reviewed: October 2016
 ---
-Example Arduino Program
+Basic Arduino Example
+
 <div class="columnpanel">
 <div class="column col2_5">
 <b>Source:</b> arduino-for-blink.pyxie
@@ -27,7 +29,7 @@ Example Arduino Program
 <div class="column col3_5">
 <b>Generated:</b> arduino-for-blink.ino
 <pre>
-\#include "iterators.cpp"
+#include "iterators.cpp"
 &nbsp;
 void setup()
 {
@@ -57,5 +59,4 @@ void loop()
 </pre>
 </div>
 </div>
-
 
