@@ -189,16 +189,22 @@ def convert_assignment(assignment):
 
     # print(rvalue)
     clvalue = lvalue.value # FIXME: This is only valid for identifiers
-    if isinstance(assignment.rvalue, nodes.PyValueLiteral):
+
+    # If the rvalue is a PyIdentifier, it should pass through as the identifier
+    if isinstance(assignment.rvalue, nodes.PyIdentifier):
+        crvalue = rvalue.value
+
+    elif isinstance(assignment.rvalue, nodes.PyValueLiteral):
+        print("nodes.PyValueLiteral", assignment.rvalue)
         crvalue = crepr_literal(rvalue)
 
-    if isinstance(assignment.rvalue, nodes.PyOperator):
+    elif isinstance(assignment.rvalue, nodes.PyOperator):
         crvalue = convert_operator_function(rvalue)
 
-    if isinstance(assignment.rvalue, nodes.PyBoolOperator):
+    elif isinstance(assignment.rvalue, nodes.PyBoolOperator):
         crvalue = convert_bool_operator_function(rvalue)
 
-    if isinstance(assignment.rvalue, nodes.PyComparisonOperator):
+    elif isinstance(assignment.rvalue, nodes.PyComparisonOperator):
         crvalue = convert_comparison(rvalue)
 
     return ["assignment", clvalue, "=", crvalue]
