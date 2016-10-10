@@ -370,7 +370,7 @@ The compiler consists of the following parts:
       read at a specific point in time. In traditional terms this are literally
       represented as expressions, but it's a bit more subtle than that - we want to
       represent expression results.
-    
+
     * Namespaces have been improved, and are now nested - which simplifies profiles,
       and will simplify scoping implementation later.
 
@@ -396,11 +396,8 @@ This is the start of useful error states and therefore useful error messages!
 
 Create the node tree.
 
-**DONE**
 
-* Traverse down the tree adding a context object to all identifiers. **DONE**
-
-**WIP**
+* Traverse down the tree adding a context object to all NODES. **DONE**
 
 * Then when we do types, we search inside the object and set it inside the object. **DONE**
 
@@ -415,6 +412,3 @@ Create the node tree.
 It's simple, but should work and has stopping criteria.
 
 And can build on what we have now
-
-Before we do that though, let's fix the code generation for identifiers, since it's gone screwy!
-

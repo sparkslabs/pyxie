@@ -3,11 +3,11 @@ template: mainpage
 source_form: markdown
 name: Overview
 title: Pyxie -- A Little Python to C++ Compiler
-updated: August 2016
+updated: October 2016
 ---
 ## Pyxie -- A Little Python to C++ Compiler
 
-**Latest Release:** [0.0.21](changelog.html) (17/Sept/2016)
+**Latest Release:** [0.1.23](changelog.html) (12/Oct/2016)
 
 {% whatjobdoesthisdo = panel("panels/what-job-does-this-do.md") %}
 

@@ -1,6 +1,6 @@
 ## Pyxie -- A Little Python to C++ Compiler
 
-**Latest Release:** [0.0.21](changelog.html) (17/Sept/2016)
+**Latest Release:** [0.1.23](changelog.html) (12/Oct/2016)
 
 ### What job does / will this do?
 
