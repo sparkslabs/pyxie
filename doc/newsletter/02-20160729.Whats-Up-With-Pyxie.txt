@@ -1,0 +1,53 @@
+# Sparkslabs Update #2 : What's up with Pyxie?
+
+Hi,
+
+
+So, you signed up to a newsletter for Pyxie - a Little Python to C++
+compiler, and you've not receieved any.  What gives?
+
+Well, in short there hasn't been progress, and that's why.  Since it's now
+been quite a while, this leads to two obvious questions:
+
+* Why?
+* Will work continue/restart soon?
+
+### Why?
+ 
+The reason why is simple - Pyxie is developed on my own time outside the day
+job, and due to health issues, I've simply not had the time or energy to do
+this.  Those issues affect bloody oxygen levels which affects concentration,
+and that perhaps explains partly why there's not been progress.
+
+### Will work continue/restart soon?
+
+Yes.  Doctors are getting to the bottom of these issues, and I expect that
+work on Pyxie will start to progress again come September.
+
+In the meantime I couldn't let another month go by without sending out some
+sort of update, and thought it worth mentioning this.
+
+As per the github issues/roadmap on the website, the plans are to enable the
+use of servo motors on arduino devices from a pyxie python program.  There
+are several practical reasons for this, but from a linguistic perspective
+it's about detecting and analysing the types used by object method calls.
+
+My impression is that this requires a re-haul and consolidation of some of
+the internals, and I've already done some of this.
+
+If I could afford to do this as the full time job, work would obviously
+progress quicker, but we don't live in an ideal world.  (I have contemplated
+a kickstarter/indiegogo campaign though, which could be an option if there
+was support.)
+
+In the meantime thank you for your interest & I hope to give a more
+interesting/useful update come mid-late September!
+
+Best Regards,
+
+
+Michael.
+--
+Michael Sparks, http://sparkslabs.com/pyxie, @sparks_rd,
+http://github.com/sparkslabs/pyxie
+

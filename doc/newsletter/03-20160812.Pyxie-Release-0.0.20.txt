@@ -1,0 +1,57 @@
+# Sparkslabs Update #3 : New Pyxie Release 0.0.20
+
+# New Pyxie Release 0.0.20
+
+Released: 12th August 2016
+
+Hi,
+
+
+This release rolls up a collection of changes made (off and on) over the
+past few months.  The majority of them are internal changes/refactors, but a
+few non internal changes:
+
+Firstly the arduino examples now include a target example for handling
+arduino servos in python.  These are forcing a number of changes to the way
+type inference operates.
+
+NOTE: servos do not yet analyse (and therefore don't compile) in the arduino
+profile, so don't be surprised if the compile/analyse scripts in that
+directory fail.
+
+Secondly, in order to for me to track better what I'm planning in various
+areas, what works etc, I've started creating WIPNOTES - that is NOTES
+designed to support current WIP.  They aren't polished/etc but intended to
+be sufficiently up to date to be useful.  Some of these may become actual
+docs later.  Some might not.
+
+Thirdly.  It's a detail, but I like it - the generated C++ code is now
+prettified.  (Assuming you have /usr/bin/indent included)
+
+As mentioned changes are mainly internal.
+ 
+## Changelog
+
+### New
+
+* Update arduino examples; servo target example started
+* Introduces a collection of WIPNOTES
+
+### Internal
+ 
+* Prettify generated C++ files
+* Add newsletter subscription to site info
+* Changes to support debugging analysis
+* Added/removed internal indenting logger
+* Use func_label to refer to the callable, not callable_ (means the name of functions)
+* Experimental addition to look at name of thing, not value
+* Better python 3 compatibility
+* Shorten names in profile definitions for clarity
+* Subsume tree functionality into core
+* various other simple internal changes
+
+The release/updates have been pushed to github, pypi and my ubuntu ppa on
+launchpad.  (The final one will be visible whenever their systems update)
+
+
+Michael.

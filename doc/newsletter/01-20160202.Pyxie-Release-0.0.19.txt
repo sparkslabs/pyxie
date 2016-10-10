@@ -1,0 +1,68 @@
+# Sparkslabs Update #1 : New Pyxie Release 0.0.19
+
+# New Pyxie Release 0.0.19
+
+## Released: 31st January 2016
+
+The main focus of this release is the start of python 3 support and
+continued work on the practicalities of creating C++ for arduinos from
+python, with a primary focus on digital/analog input/output and control of
+servos.
+ 
+## What is Pyxie?
+
+Pyxie is a Python to C++ compiler, targetted specifically at embedded
+systems and microcontroller devices.
+
+The aim is to allow a adults and children to write code in a familiar high
+level language that can then be compiled to run on an arbitrary embedded
+system - that is devices with very low power CPUs and very little memory. 
+(ie devices too small to host a python interpreter/runtime)
+
+It's pre-alpha at the moment, but approaching the stage where it can be
+useful with arduino leonardo style devices.
+
+* Source: https://github.com/sparkslabs/pyxie
+* Project: http://www.sparkslabs.com/pyxie/
+
+
+## Changelog
+
+### What's New?
+
+* Changes to support Python 3
+* Now runs under python 3 as well as python 2 :-)
+* (internals) Pynode docs - very much work in progress
+* Arduino blink test case copied into examples
+* Makes testing easier and usage more obvious
+
+### What's been fixed?
+
+* Fix regression in code generation for function calls
+* This was due to FunctionCalls now assuming they work on a callable which
+  may be an identifier, but can also be other things too
+
+### Internal changes
+
+* Massive reorg of pynodes from single file to categorised files
+* Use annotated tags for releases - makes them show up on github - showing releases
+* Help text for pyxie-dev extended to show release process
+* Bump versions for 0.0.19
+
+### Other
+
+* Work on arduino profile continues with more work on servos (still WIP)
+* Bump copyright notices to 2016(!)
+* Add link to latest release on homepage
+
+## Feedback?
+
+As usual, feedback is welcome.  What would you like to see?  Would you like
+more detail, less detail?  Suggestions for project direction also very
+welcome.
+
+## Finally
+
+Would you consider supporting this project via kickstarter to speed up
+development?  If you would, how much would you consider reasonable to
+pledge?

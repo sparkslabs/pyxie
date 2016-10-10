@@ -1,0 +1,118 @@
+# Sparkslabs Update #5 : Pyxie 0.0.22 - Multiple Arduino Board Support (Uno/etc)
+
+# Pyxie 0.0.22 - Multiple Arduino Board Support (Uno/etc)
+
+### Released: 25th September 2016
+
+ 
+Hi,
+
+This release contains some useful, practical changes made in response to a
+query I received.
+
+To summarise the query was:
+
+> Was wondering if adding support for the Uno would be a big project?
+
+This release provides Uno support ...  and for the rest of the major arduino
+boards!
+
+The bulk of building code for the arduino is handled by the arduino
+project's tools.  The specific board built for is controlled by the
+BOARD_TAG.  This change makes it possible for you to set this for your pyxie
+programs.
+
+In particular, if you program is called my_program.pyxie , you create a file
+with the name my_program.Makefile.in
+
+(Note: If you don't create this file, you get the defaults of leonardo & /dev/ttyACM0)
+
+In this file at present two options are supported:
+
+* BOARD_TAG - this sets the board you're building for
+* ARDUINO_PORT - this sets the specific device it's showing up as on your machine.
+
+So, if you have an Arduino Leonardo showing up on port /dev/ttyACM0, the
+my_program.Makefile.in file contains the following:
+
+    BOARD_TAG    = leonardo
+
+(/dev/ttypACM0 is the default port!)
+
+If you have an Dagu Mini showing up on /dev/ttypACM1, the file looks like this:
+
+    BOARD_TAG    = atmega8
+    ARDUINO_PORT = /dev/ttyACM1
+
+If you have an Arduino Uno, then the file looks like this:
+
+    BOARD_TAG    = uno
+    ARDUINO_PORT = /dev/ttyACM1
+
+The board tags select various options from this file:
+
+    /usr/share/arduino/hardware/arduino/boards.txt
+
+And from that, on my system, I see the following BOARD_TAGs available:
+
+    $ grep = /usr/share/arduino/hardware/arduino/boards.txt|cut -d. -f1|uniq
+    uno
+    atmega328
+    diecimila
+    nano328
+    nano
+    mega2560
+    mega
+    leonardo
+    esplora
+    micro
+    mini328
+    mini
+    ethernet
+    fio
+    bt328
+    bt
+    LilyPadUSB
+    lilypad328
+    lilypad
+    pro5v328
+    pro5v
+    pro328
+    pro
+    atmega168
+    atmega8
+    robotControl
+    robotMotor
+
+This was a relatively small change, but hopefully one that will have a neat
+impact, since the above devices can now all run pyxie's
+subset/incomplete/not-yet-finished flavour of python :-)
+
+I wanted to get this out quickly though because the aim of Pyxie is to be
+useful and practical.  (And this struck me as particularly useful) If there
+are any further requests for specific things you'd find *useful* sooner
+rather than later, please let me know.  I can't guarantee any particular
+timescale - this is done on my own time after all, but the feedback is very
+welcome.
+
+## Changelog
+
+### New
+
+* Ability to override/define which arduino board you're working with.
+
+### Other
+
+* Minor cleanups
+
+This release is available on github, pypi and my ubuntu ppa on launchpad.
+
+* https://github.com/sparkslabs/pyxie
+* https://pypi.python.org/pypi/pyxie/
+* https://launchpad.net/~sparkslabs/+archive/ubuntu/packages
+
+As usual, and and all feedback welcome!
+
+Michael. (@sparks_rd)
+
+

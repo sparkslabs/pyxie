@@ -1,0 +1,118 @@
+# Sparkslabs Update #4 : Pyxie 0.0.21 - Arduino Servo control support
+
+# Pyxie 0.0.21 - Arduino Servo control support
+
+### Released: 17th September 2016
+
+
+Hi,
+
+
+This release is a bit of a milestone.  One of the things that I want to
+Pyxie to be able to control is small arduino based robots.  For this to
+work, we need to be able to analyse sufficiently complex programs including
+the ability to control servo objects.  This needs the ability to call
+methods on servo objects.
+
+This release adds that ability where we wish to move things.  We can attach
+servos to pins, and control them.  Since we can't capture results of
+function calls yet, we can't detect button presses, or read analog data
+values yet.  So there is a way to go.
+
+It does mean that programs like the following now parse, analyse, code
+generate C++ and compile properly.
+
+    #include <Servo.h>
+
+    myservo = Servo()
+    pos = 0
+    pin=11
+
+    myservo.attach(pin)
+    while True:
+        for pos in range(180):
+            myservo.write(pos)
+            delay(15)
+
+        for pos in range(180):
+            myservo.write(179-pos)
+            delay(15)
+
+For the curious, the generated code is also tidied and looks like this:
+
+    #include <Servo.h>
+
+    #include "iterators.cpp"
+
+    void setup() {
+        Servo myservo;
+        int pin;
+        int pos;
+        range range_iter_1;
+        range range_iter_2;
+
+        pos = 0;
+        pin = 11;
+        (myservo).attach(pin);
+        while (true) {
+
+            range_iter_1 = range(180);
+            while (true) {
+                pos = range_iter_1.next();
+                if (range_iter_1.completed())
+                    break;
+
+                (myservo).write(pos);
+                delay(15);          // Itself uses pos
+            }
+            ;
+
+            range_iter_2 = range(180);
+            while (true) {
+                pos = range_iter_2.next();
+                if (range_iter_2.completed())
+                    break;
+
+
+                (myservo).write((179 - pos));
+                delay(15);          // Itself uses pos
+            }
+            ;
+        };
+    }
+
+    void loop() {
+    }
+
+Next step is obviously to start adding support for reading arduino sensors
+(after all the focus of pyxie is on utility).
+
+## Changelog
+
+### New
+
+* Code generation for object methods. Allows things like myservo.attach(pin) and myservo.write(pos)
+* Started changes regarding how contexts will be managed/accessed by pynodes
+* Global context handling improved
+* Internals supported for code generation of functions extended to include attribute access
+
+### Other
+
+* Improved notes on how context nodes will operate
+* Minimal servo tests extended slightly to support moving servos
+
+### Internal
+
+* Simplified pynode internals (removed explicit tree type)
+* Cleaned up/removed extraneous code
+
+This release is available on github, pypi and my ubuntu ppa on launchpad.
+
+* https://github.com/sparkslabs/pyxie
+* https://pypi.python.org/pypi/pyxie/
+* https://launchpad.net/~sparkslabs/+archive/ubuntu/packages
+
+Michael. (@sparks_rd)
+ 
+
+
