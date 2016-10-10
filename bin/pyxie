@@ -135,7 +135,7 @@ def main(argv):
             from pyxie.model.pynodes.values import ProfilePyNode
 
             for i in range(8):
-                a_pin_name = "A" + str(a_pin)
+                a_pin_name = "A" + str(i)
                 a_pin = ProfilePyNode(a_pin_name, "integer")
                 context.store(a_pin_name, a_pin)
 
