@@ -111,7 +111,7 @@ def process_directives(source_data):
 try:
     import build_site_local
     from build_site_local import pre_run
-    
+
     pre_run()
     print("LOCAL PRE RUN")
 
@@ -168,9 +168,9 @@ for filename in files("src"):
     out = open("site/"+ result_file,"w")
     out.write(result_html)
     out.close()
-    
+
     result_filemd = result_file.replace(".html", ".md")
-    
+
     out2 = open("../doc/" + result_filemd, "w")
     out2.write(source_data)
     out2.close()
