@@ -4,7 +4,7 @@
 
 ### Released: 25th September 2016
 
- 
+
 Hi,
 
 This release contains some useful, practical changes made in response to a
