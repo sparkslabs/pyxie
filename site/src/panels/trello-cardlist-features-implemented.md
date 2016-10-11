@@ -2,11 +2,37 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Features Implemented
-updated: September 2016
+updated: October 2016
 title: Trello Cardlist Features Implemented
 ---
 ### Features Implemented
 
+* 258\. Improve Arduino profile documentation
+* 260\. Arduino Profile supports HIGH,LOW,INPUT,OUTPUT,A0-A7
+* 238\. Update grammar on website/in docs to match current grammar.
+* 206\. Arduino profile supports millis()
+* 241\. Arduino: Support "constrain"
+* 242\. Arduino: Support "random"
+* 247\. Arduino: Support "Serial.println"
+* 243\. Arduino: Support "analogWrite"
+* 246\. Arduino: Support "Serial.print"
+* 244\. Arduino: Support "Serial" object
+* 245\. Arduino: Support "Serial.begin"
+* 240\. Arduino: Support arduino "map"
+* 205\. Arduino: Support "analogRead"
+* 257\. Arduino Analog sample compiles
+* 256\. Arduino Analog sample analyses
+* 3\.8 Arduino compiled programs can use values returned from functions.
+* 250\. Profile Context is usable for defining external predefined/preinitialised variables
+* 249\. Profile Context is usable for defining types of external identifiers
+* 248\. Identifiers as rvalues should codegen as names not strings
+* 255\. Arduino Analog sample parses
+* 254\. Create Analog arduino sample
+* 252\. MAJOR CHANGE print must be a function (to enable Serial.print to be valid syntax)
+* 253\. FIXBUG: no default profile context breaks tests
+* 259\. Update various statements on website about utility of Pyxie
+* 0\.0.22 = = = = = = = = = =
+* Add ability to control the arduino model building for
 * 0\.0.21 = = = = = = = = = =
 * 203\. Arduino profile supports delayMicroseconds
 * 225\. Implementation of attribute access is sufficient for arduino profile.

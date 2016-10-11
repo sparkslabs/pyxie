@@ -9,11 +9,11 @@ commits. _(This is exported from trello)_
 ### Project Stage
 
 * HEADLINE: PRE-ALPHA
-* DEV STATE: WORKING (BARE)
-* DEV VERSION: 0.0.22
-* RELEASED: 0.0.21 (17 Sep 2016)
+* DEV STATE: WORKING (USABLE)
+* DEV VERSION: 0.1.23
+* RELEASED: 0.0.22 (25 Sep 2016)
 * LANGUAGE STATE: BARE*
-* FOCUS: Practicalities (Arduino Profile real example)
+* FOCUS: Practicalities (Arduino Profile real example) - Get the Puppy/Kitten Robot working
 * Newsletter created at http://tinyletter.com/sparkslabs
 
 
@@ -23,24 +23,25 @@ commits. _(This is exported from trello)_
 
 ### Paused
 
-
-
-### Backlog: Arising
-
-
-
-### Release Backlog: Features
-
-* 205\. Arduino profile supports analogRead
-* 0\.0.22 = = = = = = = = = =
 * 227\. .get_type() should be delegated, not rely on internal pynode details.
 * Flesh out a micro:bit profile.
 
 
+### Backlog: Arising
+
+* 259\. Would be nice to remove extraneous brackets round generated C++ expressions
+
+
+### Release Backlog: Features
+
+* 0\.1.23 = = = = = = = = = =
+
+
 ### Release Backlog: Tasks
 
-* 0\.0.22 - - - - - (tasks)
-* 238\. Update grammar on website/in docs to match current grammar.
+* 0\.1.23 - - - - - (tasks)
+* 57\. Blog post: Pyxie structure #website
+* Release tasks
 
 
 ### Known Bugs / Anti-features
@@ -49,22 +50,22 @@ commits. _(This is exported from trello)_
 
 ### Backlog: Proposed Next
 
+* 196\. Batch Compiler
+* 59\. Start thoughts on pyxie-web #reflect #website
+* 195\. Functionality of bin/pyxie-dev is in core, not a script
 * 3\.5 Analysis code looks for an arduino profile file describing c-types appropriately.
-* 3\.8 Arduino compiled programs can use values returned from functions.
-* 206\. Arduino profile supports millis()
+* 3\.6 arduino profile file is propogated with something relating to core functions that read values, to avoid forcing types "manually"
+* 213\. v0 no funcs Playful Puppy code analyses
+* 214\. v0 no funcs Playful Puppy code generates code
+* 215\. v0 no funcs Playful Puppy code compiles, and runs on device correctly
 * 221\. Initial spike support for function definitions. (no args, no return values)
 * 223\. Spike support for functions with basic arguments.
 * 222\. Spike support for functions which use local variables
-* 213\. v0 Playful Puppy code analyses
-* 214\. v0 Playful Puppy code generates code
-* 215\. v0 Playful Puppy code compiles, and runs on device correctly
-* 196\. Batch Compiler
-* 195\. Functionality of bin/pyxie-dev is in core, not a script
-* 3\.6 arduino profile file is propogated with something relating to core functions that read values, to avoid forcing types "manually"
 
 
 ### Backlog: Features
 
+* 251\. Profile Context is usable for defining externally defined methods/functions (for typechecking)
 * 9\. Add the manpage to the distributed files, into the right places #docs
 * 8\. Add updating man page to the makefile #docs
 * 197\. Web Editor
@@ -121,9 +122,7 @@ commits. _(This is exported from trello)_
 
 * 232\. Would be nice to have a prettier website
 * 233\. Some sort of Logo would be nice
-* 57\. Blog post: Pyxie structure #website
 * 58\. Blog Post: Pyxie Decisions #website
-* 59\. Start thoughts on pyxie-web #reflect #website
 * 60\. Start thoughts on pyxie-gui #reflect
 * 30\. Should we allow comments on website? #website
 * 50\. Link current test programs on the website, maybe #website
@@ -131,6 +130,32 @@ commits. _(This is exported from trello)_
 
 ### Features Implemented
 
+* 258\. Improve Arduino profile documentation
+* 260\. Arduino Profile supports HIGH,LOW,INPUT,OUTPUT,A0-A7
+* 238\. Update grammar on website/in docs to match current grammar.
+* 206\. Arduino profile supports millis()
+* 241\. Arduino: Support "constrain"
+* 242\. Arduino: Support "random"
+* 247\. Arduino: Support "Serial.println"
+* 243\. Arduino: Support "analogWrite"
+* 246\. Arduino: Support "Serial.print"
+* 244\. Arduino: Support "Serial" object
+* 245\. Arduino: Support "Serial.begin"
+* 240\. Arduino: Support arduino "map"
+* 205\. Arduino: Support "analogRead"
+* 257\. Arduino Analog sample compiles
+* 256\. Arduino Analog sample analyses
+* 3\.8 Arduino compiled programs can use values returned from functions.
+* 250\. Profile Context is usable for defining external predefined/preinitialised variables
+* 249\. Profile Context is usable for defining types of external identifiers
+* 248\. Identifiers as rvalues should codegen as names not strings
+* 255\. Arduino Analog sample parses
+* 254\. Create Analog arduino sample
+* 252\. MAJOR CHANGE print must be a function (to enable Serial.print to be valid syntax)
+* 253\. FIXBUG: no default profile context breaks tests
+* 259\. Update various statements on website about utility of Pyxie
+* 0\.0.22 = = = = = = = = = =
+* Add ability to control the arduino model building for
 * 0\.0.21 = = = = = = = = = =
 * 203\. Arduino profile supports delayMicroseconds
 * 225\. Implementation of attribute access is sufficient for arduino profile.
@@ -281,8 +306,10 @@ commits. _(This is exported from trello)_
 
 ### Tasks Done
 
-* 0\.0.21 - - - - - (tasks)
-* 239\. 0.0.20 Release tasks
+* 0\.0.22 - - - - - (tasks)
+* 239\. 0.0.22 Release tasks
+* 0\.0.22 - - - - - (tasks)
+* 239\. 0.0.21 Release tasks
 * 0\.0.20 - - - - - (tasks)
 * Update changelog
 * Add newsletter subscription to site info

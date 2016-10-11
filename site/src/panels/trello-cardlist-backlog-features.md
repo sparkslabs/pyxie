@@ -2,11 +2,12 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Backlog: Features
-updated: September 2016
+updated: October 2016
 title: Trello Cardlist Backlog: Features
 ---
 ### Backlog: Features
 
+* 251\. Profile Context is usable for defining externally defined methods/functions (for typechecking)
 * 9\. Add the manpage to the distributed files, into the right places #docs
 * 8\. Add updating man page to the makefile #docs
 * 197\. Web Editor

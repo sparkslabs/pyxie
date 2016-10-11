@@ -2,13 +2,15 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Tasks Done
-updated: September 2016
+updated: October 2016
 title: Trello Cardlist Tasks Done
 ---
 ### Tasks Done
 
-* 0\.0.21 - - - - - (tasks)
-* 239\. 0.0.20 Release tasks
+* 0\.0.22 - - - - - (tasks)
+* 239\. 0.0.22 Release tasks
+* 0\.0.22 - - - - - (tasks)
+* 239\. 0.0.21 Release tasks
 * 0\.0.20 - - - - - (tasks)
 * Update changelog
 * Add newsletter subscription to site info
