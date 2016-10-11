@@ -7,7 +7,7 @@ incompatible)
 
 ### In progress
 
-## [0.1.23] - UNRELEASED
+## [0.1.23] - 2016-10-11
 
 Not backwards compatible due to changes to "print"
 
