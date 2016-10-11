@@ -33,8 +33,6 @@ now work (This will simplify scoping later on too).
 
 ### New
 
-* Initial user (single page) documentation of how to use the arduino profile
-
 * Lots of internal changes to switch print from being a statement
   to a function call
     - Update all tests to use print as function, not as statement
@@ -53,6 +51,8 @@ now work (This will simplify scoping later on too).
 * Added README.md for the analog example
 
 * Update examples/README.md overview of the various examples.
+
+* Initial user (single page) documentation of how to use the arduino profile
 
 ### Arduino Support
 
