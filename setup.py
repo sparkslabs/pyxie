@@ -48,7 +48,7 @@ packages = find_packages(".")
 package_names = packages.keys()
 
 setup(name = "pyxie",
-      version = "0.1.23",
+      version = "0.1.24",
       description = "Little Python to C++ Compiler",
       url='http://www.sparkslabs.com/pyxie/',
       author='Michael Sparks (sparkslabs)',
@@ -305,6 +305,7 @@ Release History
 
 Release History:
 
+-  0.1.24 - UNRELEASED - TBD
 -  0.1.23 - 2016-10-11 - Major arduino profile improvements,
    print-as-function not statement
 -  0.0.22 - 2016-09-25 - Enable ability to use a variety of Arduino
