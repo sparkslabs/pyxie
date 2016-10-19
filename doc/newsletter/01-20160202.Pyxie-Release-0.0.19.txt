@@ -8,7 +8,7 @@ The main focus of this release is the start of python 3 support and
 continued work on the practicalities of creating C++ for arduinos from
 python, with a primary focus on digital/analog input/output and control of
 servos.
- 
+
 ## What is Pyxie?
 
 Pyxie is a Python to C++ compiler, targetted specifically at embedded

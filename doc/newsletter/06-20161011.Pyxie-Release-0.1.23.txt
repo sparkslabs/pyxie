@@ -14,20 +14,15 @@ release number to 0.1.23, rather than 0.0.23
 
 ## Major Changes
 
-* print is now a function, not a statement. This was always coming, but
-  this has been forced by practicalities. Things like Serial.print - necessary
-  for arduino support - are not valid python if you have print as a statement.
-  It's useful also that this also brings us closer to python 3's syntax.
-
-* Ability to use function calls in assignment statements - such as calls in
-  to arduino libraries.
-
 * The arduino profile is now sufficient for building little robots that are
   made of microcontrollers, servos, sensors and can report data via the serial
   port.
 
-* The arduino profile is now documented - both in docs/ and also on the
-  website.
+* Ability to use function calls in assignment statements - such as calls in
+  to arduino libraries.
+
+* The arduino profile is now documented - both in docs/ and also on the website.
+    * http://www.sparkslabs.com/pyxie/specific-profile-arduino.html
 
 * More examples:
 
@@ -37,6 +32,11 @@ release number to 0.1.23, rather than 0.0.23
     * puppy - this is for controls the Dagu playful puppy (a small quadruped
       robot with 10 servos and IR sensor "eye")
 
+* print is now a function, not a statement. This was always coming, but
+  this has been forced by practicalities. Things like Serial.print - necessary
+  for arduino support - are not valid python if you have print as a statement.
+  It's useful also that this also brings us closer to python 3's syntax.
+
 
 ### Arduino Support
 
@@ -45,7 +45,7 @@ Specific set of functionality checked/added in this release:
 * Serial support - .begin(), .print(), .println()
 * constrain
 * map
-* random
+* random, randomSeed
 * analogWrite
 * analogRead
 * millis
@@ -53,8 +53,9 @@ Specific set of functionality checked/added in this release:
 
 This is in addition to other previous functionality like:  Servos, Digital IO, time delays, etc
 
-## Changelog
 
+
+## Changelog
 
 ### What's New?
 
@@ -130,7 +131,7 @@ more detail, less detail?  Suggestions for project direction also very
 welcome.
 
 
-### Feedback from Feedback
+### Since last release
 
 I had this feedback from the last release:
 
@@ -140,7 +141,7 @@ I didn't, and only one of those was on my radar/to do list at the time. After
 adding support for map, analogRead/etc adding in `random` and `constrain` was
 relatively simple, so I added those as well.
 
-(By contrasting the request asking about support for "is" had a "not for a
+(By contrast the request asking about support for "is" had a "not for a
 while" response, since that requires the implementation of objects and object
 identity  before that makes sense!)
 
@@ -153,14 +154,12 @@ an ideal world.
 
 Would you consider supporting this project via kickstarter/IndieGoGo to
 speed up development?  If you would, how much would you consider reasonable
-to pledge?
+to pledge? (This isn't a call to do so, but really an open question - I do
+see a reasonable amount of traffic to my site from unique users clearly
+looking for a python based mechanism for working with arduinos natively.)
 
 Or alternatively would a web based compiler (or translator) be useful? (Something I
 have mooted on my backlog)
-
-(This isn't a call to do so, but really an open question - I do see a reasonable
-amount of traffic to my site from unique users clearly looking for a python
-based mechanism for working with arduinos natively.)
 
 
 ## Availability
@@ -178,6 +177,6 @@ Dev plans:
 As usual, and and all feedback welcome!
 
 
-Michael. (@sparks_rd)
+Michael. (@sparks_rd - https://twitter.com/sparks_rd)
 
 
