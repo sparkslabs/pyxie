@@ -1,0 +1,8 @@
+pan = 0
+
+if 1< 2:
+    pan = pan - 5
+elif 1>=2:
+    pan = pan - 5
+else:
+    pan = pan + 5
