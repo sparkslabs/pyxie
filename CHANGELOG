@@ -5,17 +5,30 @@ This project adheres to [Semantic Versioning](http://semver.org/), within
 reason. (Prior to a 1.0.0 release minor version increases may be backwards
 incompatible)
 
-### In progress
-
 ## [0.1.24] - UNRELEASED
 
 ### New
 
 *
 
+### What's been fixed?
+
+* Code generation for else/elif was failing when the statements inside contained
+  identifiers. This was due to context not propogating into else/elif. This was
+  caused by neither if nor elif adding else clauses as children. This was done and
+  now this operates correctly.
+
+### Internal Changes
+
+* pyxie-dev - Pyxie's release management tool, has had an overhaul, and
+  transferred into the pyxie package, rather than standalone code. In the
+  process code was improved, such that "dryrun" and "verbose" now mean
+  precisely that. Help text is deliberately verbose to note what the release
+  process is.
+
 ### Other
 
-*
+* 
 
 ## [0.1.23] - 2016-10-11
 
