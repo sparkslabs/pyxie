@@ -96,7 +96,7 @@ class PyIdentifier(PyValueLiteral):
                 continue
             if "bound method" in repr(getattr(self, i)):
                 continue
-            print("attr", i, repr(getattr(self, i)), getattr(self, i) )
+            print("attr", self.tag, self, i, repr(getattr(self, i)), getattr(self, i) )
         expression = self.context.lookup(self.value)
         self.ntype = expression.get_type()
 
@@ -147,6 +147,7 @@ class PyAttributeAccess(PyNode):
         super(PyAttributeAccess,self).__init__()
         self.expression = expression
         self.attribute = attribute
+        # self.addchildren(expression, attribute) # FIXME: This might need to be uncommented. If we get an unusual bug, this might be the issue. (unlikely, but note to help me later)
 
     def __repr__(self):
         return "%s(%s, %s)" % (self.classname(), repr(self.expression), repr(self.attribute))
