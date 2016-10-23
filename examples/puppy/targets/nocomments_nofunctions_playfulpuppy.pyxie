@@ -192,7 +192,7 @@ while True:
             PANservo.writeMicroseconds(1500-(pan-1500))
             TILservo.writeMicroseconds(1500-(tilt-1500))
             RLHservo.writeMicroseconds(RLHcenter-600)
-            RRHservo.writeMicroseconds(RRHcenter+600) 
+            RRHservo.writeMicroseconds(RRHcenter+600)
             FLKservo.writeMicroseconds(FLKcenter-600)
             FRKservo.writeMicroseconds(FRKcenter-600)
             delay(350)
@@ -278,7 +278,6 @@ while True:
 
         if millis() - time > Speed:
             time = millis()
-            WalkingMotion()
 
             cycle = cycle + 1
             if cycle > 9:
