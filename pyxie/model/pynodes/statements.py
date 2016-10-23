@@ -22,7 +22,7 @@ from .base_nodes import PyStatement
 from .values import PyAttributeAccess
 
 from pyxie.model.functions import builtins
-from pyxie.model.functions import arduino_profile_function_calls as arduino
+from pyxie.model.functions import profile_funcs
 
 
 class PyAssignment(PyStatement):
@@ -115,7 +115,7 @@ class PyFunctionCall(PyStatement):
         if expr_list:
             self.add_children(expr_list)
         self.builtin = False
-        self.arduino = False
+        self.profile_func = False
         self.isiterator = False
 
     def __repr__(self):
@@ -150,7 +150,7 @@ class PyFunctionCall(PyStatement):
         if type(self.func_label) == PyAttributeAccess:
             log.print("OK, name is:", func_name)
             log.print("HMMM:", dir(self))
-            log.print("HMMM:", self.arduino)
+            log.print("HMMM:", self.profile_func)
             log.print("HMMM:", self.builtin)
             log.print("HMMM:", self.func_label)
             return
@@ -161,8 +161,8 @@ class PyFunctionCall(PyStatement):
             self.ntype = self.get_type()
             return
 
-        if func_name in arduino:
-            self.arduino = True
+        if func_name in profile_funcs:
+            self.profile_func = True
             self.ntype = self.get_type()
             return
 
@@ -177,8 +177,8 @@ class PyFunctionCall(PyStatement):
             if self.isiterator:
                 return meta.get("values_type", None)
             return meta.get("return_type", None)
-        if self.arduino:
-            meta = arduino[self.func_label.value]
+        if self.profile_func:
+            meta = profile_funcs[self.func_label.value]
             print("META META META", meta)
             print("META META META2", meta.get("return_ctype", None))
             return meta.get("return_ctype", None)

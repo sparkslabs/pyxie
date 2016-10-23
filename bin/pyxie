@@ -132,23 +132,12 @@ def main(argv):
         context.tag = "PROFILE:"+profile
 
         if profile == "arduino": # TODO: Delete me, this is a test 
-            from pyxie.model.pynodes.values import ProfilePyNode
-
-            for i in range(8):
-                a_pin_name = "A" + str(i)
-                a_pin = ProfilePyNode(a_pin_name, "integer")
-                context.store(a_pin_name, a_pin)
-
-            a_pin = ProfilePyNode("HIGH", "integer")
-            context.store("HIGH", a_pin)
-
-            a_pin = ProfilePyNode("LOW", "integer")
-            context.store("LOW", a_pin)
-
-            a_pin = ProfilePyNode("INPUT", "integer")
-            context.store("INPUT", a_pin)
-            a_pin = ProfilePyNode("OUTPUT", "integer")
-            context.store("OUTPUT", a_pin)
+            from pyxie.profile.arduino import initialise_profile
+            initialise_profile(context)
+        else:
+            print("UNKNOWN PROFILE")
+            print("USING PROFILE: ", profile)
+            context.tag = "PROFILE:"+profile
 
     print("CREATED", context)
     pyxie.parsing.context.profile_context = context

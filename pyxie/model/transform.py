@@ -25,7 +25,7 @@ from pyxie.model.pynode import jdump
 import pyxie.model.pynode as nodes
 from pyxie.model.pynode import depth_walk
 from pyxie.model.functions import builtins
-from pyxie.model.functions import arduino_profile_types as arduino
+from pyxie.model.functions import profile_types
 
 iterator_unique_base = 0
 
@@ -100,7 +100,7 @@ def python_type_to_c_type(ptype):
 
     if ptype in builtins: return ptype
 
-    if ptype in arduino: return ptype
+    if ptype in profile_types: return ptype
 
     raise UnknownType("Cannot identify C Type for %s" % ptype)
 

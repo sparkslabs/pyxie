@@ -97,19 +97,10 @@ builtins = {
                      }
             }
 
-# Inside <Servo.h>
-arduino_profile_function_calls = {
-             "Servo": {
-                         "iterator": False,
-                         "return_ctype": "Servo", # C type of the returned value
-                      }
-    }
-
-arduino_profile_types = {
-             "Servo": {
-                 }
-    }
-
+# These two dictionaries get populated by the specific profile (if any) that gets
+# used/loaded
+profile_funcs = {}
+profile_types = {}
 
 templates = { "iterator" : { "declarations" : icvdt,
                              "code" : icact,
