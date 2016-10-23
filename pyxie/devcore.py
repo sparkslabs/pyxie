@@ -161,6 +161,14 @@ changelog_entry_tmpl = """\
 
 *
 
+### What's been fixed?
+
+*
+
+### Internal Changes
+
+*
+
 ### Other
 
 *
