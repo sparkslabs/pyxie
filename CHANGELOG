@@ -9,7 +9,18 @@ incompatible)
 
 ### New
 
-*
+* Profile specific code has been extracted to a specific file. In this case,
+  the iniitial profile made more managable is of course the arduino profile.
+  To configure this/extend this, you now update the file `pyxie/profile/arduino.py`
+  
+  To add more predefined variables/etc that are used in the context (ala A0, etc)
+  you extend the `function populate_profile_context`.
+  
+  If you need to add extra types - ala the `Servo` type - you can use the `Servo`
+  function call as an example. Note that it has a return type of `Servo`. This
+  means of course that the `Servo` function is a constructor. For this to work
+  clearly the type needs to be defined - so you define it below in the variable
+  `types`.
 
 ### What's been fixed?
 
