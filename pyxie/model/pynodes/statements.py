@@ -49,9 +49,11 @@ class PyAssignment(PyStatement):
 
     def analyse(self):
         print("ANALYSING ASSIGNMENT")
-        print("ANALYSE RIGHT")
+        print("**ANALYSE RIGHT**")
         self.rvalue.analyse()
+        print("****ADD R VALUE****")
         self.lvalue.add_rvalue(self.rvalue)
+        print("****ANALYSE LEFT****")
         self.lvalue.analyse()
 
         self.ntype = self.get_type()
@@ -273,6 +275,8 @@ class PyIfStatement(PyStatement):
         self.block = block
         self.else_clause = else_clause
         self.add_children(condition, block)
+        if else_clause:
+            self.add_children(else_clause)
 
     def __repr__(self):
         else_clause = ""
@@ -318,6 +322,8 @@ class PyElIfClause(PyStatement):
         self.block = block
         self.else_clause = else_clause
         self.add_children(condition, block)
+        if else_clause:
+            self.add_children(else_clause)
 
     def __repr__(self):
         else_clause = ""
