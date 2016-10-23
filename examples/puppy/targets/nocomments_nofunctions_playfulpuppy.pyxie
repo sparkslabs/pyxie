@@ -111,6 +111,7 @@ pinMode(IRleds,OUTPUT)
 while True:
     digitalWrite(IRleds,HIGH)
     delayMicroseconds(IRdelay)
+
     leftIRvalue  = analogRead(IRleft)
     rightIRvalue = analogRead(IRright)
     upIRvalue    = analogRead(IRup)
@@ -118,6 +119,7 @@ while True:
 
     digitalWrite(IRleds, LOW)
     delayMicroseconds(IRdelay)
+
     leftIRvalue  = leftIRvalue - analogRead(IRleft)
     rightIRvalue = rightIRvalue - analogRead(IRright)
     upIRvalue    = upIRvalue - analogRead(IRup)
