@@ -44,23 +44,26 @@ def todo(*args):
 
 #
 # Assumes that the analysis phase has taken place
+# TODO: This should really be able to delve inside the context that's been created during analysis
+#
 def find_variables(AST):
     global iterator_unique_base
     variables = {}
     for node in depth_walk(AST):
         if node.tag == "for_statement":
-            lvalue = node.identifier
-            rvalue_source = node.expression
+            for_statement = node
+            lvalue = for_statement.identifier
+            rvalue_source = for_statement.expression
             identifier = lvalue.value
             v_type = lvalue.ntype
             print("FOR LOOP, IDENTIFIER", identifier, "HAS TYPE", v_type)
             variables[identifier] = v_type
-            if node.expression.isiterator:
+            if for_statement.expression.isiterator:
                 print("#####################################################")
                 print("Extracting generator intermediate variable")
-                print(node.expression)
-                if isinstance(node.expression, nodes.PyFunctionCall):
-                    identifier = node.expression.func_label             # FIXME: May not be an identifier...
+                print(for_statement.expression)
+                if isinstance(for_statement.expression, nodes.PyFunctionCall):
+                    identifier = for_statement.expression.func_label             # FIXME: May not be an identifier...
                     print("Bibble", identifier)
                     print("Bibble", identifier.value)
                     iterator_type = identifier.value
@@ -69,7 +72,7 @@ def find_variables(AST):
                     print("iterator_type", iterator_type)
                     print("iterator_name", iterator_name)
                     variables[iterator_name] = iterator_type
-                    node.expression.ivalue_name = iterator_name
+                    for_statement.expression.ivalue_name = iterator_name
 
                 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
