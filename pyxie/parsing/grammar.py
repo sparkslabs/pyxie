@@ -82,6 +82,11 @@ class Grammar(object):
         "statement : pass_statement"
         p[0] = p[1]
 
+    def p_statement_11(self, p):
+        "statement : def_statement"
+        p[0] = p[1]
+
+
     def p_pass_statement_1(self,p):
         "pass_statement : PASS"
         p[0] = PyPassStatement()
@@ -188,6 +193,18 @@ class Grammar(object):
         #print("------------------> COND  :", p[2])
         #print("------------------> BLOCK :", p[5])
         #print("------------------> RESULT :", p[0])
+
+
+    # NOTE: loosely based on for_statement structure due to similarities
+    def p_def_statement_1(self, p):
+        "def_statement : DEF IDENTIFIER PARENL PARENR COLON EOL statement_block"
+
+        identifier = PyIdentifier(p.lineno(1), p[2])
+        params = None
+        statement_block = p[7]
+        p[0] = PyDefStatement(identifier, params, statement_block)
+
+        print("DEF STATEMENT")
 
 
     def p_for_statement_1(self, p):
