@@ -21,6 +21,8 @@
 from __future__ import print_function
 from __future__ import absolute_import
 
+import pprint
+
 from pyxie.model.pynode import jdump
 import pyxie.model.pynode as nodes
 from pyxie.model.pynode import depth_walk
@@ -29,9 +31,18 @@ from pyxie.model.functions import profile_types
 
 iterator_unique_base = 0
 
+class UnknownType(Exception):
+    pass
+
+class CannotConvert(Exception):
+    pass
+
+
+
 def todo(*args):
     print("TODO", " ".join([repr(x) for x in args]))
 
+#
 # Assumes that the analysis phase has taken place
 def find_variables(AST):
     global iterator_unique_base
@@ -81,11 +92,6 @@ def find_variables(AST):
 
     return variables
 
-class UnknownType(Exception):
-    pass
-
-class CannotConvert(Exception):
-    pass
 
 def python_type_to_c_type(ptype):
     if ptype == "string": return "string"
@@ -382,7 +388,6 @@ def convert_while_statement(while_statement):
     cstatements = convert_statements(while_statement.block)
     return ["while_statement", crepr_condition] + cstatements
 
-import pprint
 def convert_for_statement(for_statement):
 
     lvalue = for_statement.identifier
