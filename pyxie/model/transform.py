@@ -423,6 +423,32 @@ def convert_for_statement(for_statement):
     return ["for_statement", clvalue, crvalue_source, cstep, for_statement]
 
 
+def convert_def_statement(def_statement):
+    print("******************************************")
+    print("* CONVERT DEF STATEMENT ******************")
+    print("")
+    print("     :",def_statement)
+    print("NAME:", def_statement.identifier.value)
+    print("PARAMETERS:", def_statement.parameterlist)
+    print("BLOCK:", def_statement.block)
+    print("*******************")
+
+
+#    raise CannotConvert("Statement: def_statement")
+
+    lvalue = def_statement.identifier
+    cidentifer = lvalue.value # FIXME: This is only valid for identifiers
+
+    cparamlist = None # TODO: This needs extending to parameters. This could be tricky...
+
+    block = def_statement.block
+    cblock = convert_statements(block)
+
+
+#    return ["func_defintion", cidentifer, cparamlist , cblock, def_statement]
+    return ["func_defintion", cidentifer, cparamlist , cblock, repr(def_statement) ]
+
+
 def convert_extended_clause(extended_clause):
     if extended_clause.tag == "elif_clause":
         print("WORKING THROUGH ELIF:", extended_clause)
@@ -492,6 +518,9 @@ def convert_statements(AST):
             elif statement.tag == "for_statement":
                 cstatement = convert_for_statement(statement)
                 cstatements.append(cstatement)
+            elif statement.tag == "def_statement":
+                cstatement = convert_def_statement(statement)
+                cstatements.append(cstatement)
             elif statement.tag == "if_statement":
                 cstatement = convert_if_statement(statement)
                 cstatements.append(cstatement)
@@ -505,10 +534,11 @@ def convert_statements(AST):
                 cstatements.append(cstatement)
             else:
                 print("SKIPPING STATEMENT", statement.tag)
+                raise CannotConvert("Statement: "+ statement.tag)
 
         except CannotConvert:
             print("REACHED HERE FOR", statement)
-            pass
+            raise
     return cstatements
 
 def ast_to_cst(program_name, AST):
