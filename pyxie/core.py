@@ -17,6 +17,7 @@
 from __future__ import print_function
 from __future__ import absolute_import
 
+import json
 import os
 import pprint
 import time
@@ -138,7 +139,8 @@ def generate_code(cname, AST, profile, debug=False):
     CST = ast_to_cst(cname, AST)
     if debug:
         print("generate_code: CONCRETE C SYNTAX TREE: - - - - - - - - - - - - - - - - - - - -")
-        print(pprint.pformat(CST))
+        #print(pprint.pformat(CST))
+        print(json.dumps(CST, indent=4))
         print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
     program = C_Program.fromjson(CST)
     program.generate(profile)
