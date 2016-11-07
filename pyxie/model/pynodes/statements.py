@@ -185,6 +185,63 @@ class PyFunctionCall(PyStatement):
 
         return None
 
+#raise TODO("DEF STATEMENT STARTED")
+#raise TODO("BASED ON FOR STATEMENT")
+#raise TODO("NEEDS TO HAVE SIMILARITIES TO IDENTIFER TOO")
+#raise TODO("Empty Parameterlists?")
+#raise TODO("Parameterlists?")
+#raise TODO("Function Type for Context -- self itself? Seems valid") 
+
+class PyDefStatement(PyStatement):
+    tag = "def_statement"
+    def __init__(self, identifier, parameterlist, block):
+
+        #TODO: In later interations, we probably want to add a context here.
+        #TODO: Figure out how this works with chaining
+        #TODO: Figure out how local variables get generated.
+
+        super(PyDefStatement,self).__init__()
+        self.identifier= identifier
+        self.parameterlist= parameterlist
+        self.block = block
+
+        if parameterlist:
+            self.add_children(identifier, parameterlist, block)
+        else:
+            self.add_children(identifier, block)
+
+    def get_type(self):
+        return "char"
+
+    def __repr__(self):
+        return "PyDefStatement(%s, %s, %s)" % (repr(self.identifier), repr(self.parameterlist), repr(self.block) )
+
+    def __json__(self):
+        return [ self.tag, jdump(self.identifier), jdump(self.parameterlist), jdump(self.block) ]
+
+    def __info__(self):
+        info = super(PyDefStatement, self).__info__()
+        info[self.tag]["identifier"] = self.identifier.__info__()
+        if self.parameterlist:
+            info[self.tag]["self.parameterlist"] = self.parameterlist.__info__()
+        else:
+            info[self.tag]["self.parameterlist"] = self.parameterlist
+        info[self.tag]["block"] = self.block.__info__()
+        return info
+
+    def analyse(self):
+        print("ANALYSING DEF STATEMENT")
+
+        print("                ... Update identifier")
+        self.identifier.add_rvalue(self) # The identifier refers to this function - should perhaps mean "callable type" though
+
+        print("                ... Analyse identifier")
+
+        self.identifier.analyse()
+
+    def get_type(self):
+        return "__callable__"
+
 
 class PyForLoop(PyStatement):
     tag = "for_statement"
