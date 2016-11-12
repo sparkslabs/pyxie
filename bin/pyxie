@@ -182,4 +182,4 @@ if __name__ == "__main__":
         print("USAGE ERROR:", e)
         print
         print("Original traceback follows")
-        raise(e)
+        raise 
