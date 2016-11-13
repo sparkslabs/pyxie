@@ -32,7 +32,7 @@ from pyxie.model.pynode import jdump
 from pyxie.model.transform import ast_to_cst
 
 from pyxie.codegen.clib import files as clib_files
-from pyxie.codegen.simple_cpp import C_Program, source, reset_parser
+from pyxie.codegen.simple_cpp import CppProgram, source, reset_parser
 
 testdir = "test-data"
 testprogs_dir = os.path.join(testdir, "progs")
@@ -139,10 +139,10 @@ def generate_code(cname, AST, profile, debug=False):
     CST = ast_to_cst(cname, AST)
     if debug:
         print("generate_code: CONCRETE C SYNTAX TREE: - - - - - - - - - - - - - - - - - - - -")
-        #print(pprint.pformat(CST))
-        print(json.dumps(CST, indent=4))
+        print(pprint.pformat(CST))
+        # print(json.dumps(CST, indent=4))
         print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
-    program = C_Program.fromjson(CST)
+    program = CppProgram.fromjson(CST)
     program.generate(profile)
     return pyxie.codegen.simple_cpp.source[:]
 
