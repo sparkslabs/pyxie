@@ -29,6 +29,33 @@ from pyxie.model.pynode import depth_walk
 from pyxie.model.functions import builtins
 from pyxie.model.functions import profile_types
 
+from pyxie.model.iinodes import mkProgram
+from pyxie.model.iinodes import mkOperator
+from pyxie.model.iinodes import mkAssignment
+from pyxie.model.iinodes import mkFunctionCall
+from pyxie.model.iinodes import mkAttributeAccess
+from pyxie.model.iinodes import mkIdentifier
+from pyxie.model.iinodes import mkString
+from pyxie.model.iinodes import mkInteger
+from pyxie.model.iinodes import mkBoolean
+from pyxie.model.iinodes import mkComparison
+from pyxie.model.iinodes import mkPrintStatement
+from pyxie.model.iinodes import mkWhileStatement
+from pyxie.model.iinodes import mkIterator
+from pyxie.model.iinodes import mkForStatement
+from pyxie.model.iinodes import mkDefStatement
+from pyxie.model.iinodes import mkPassStatement
+from pyxie.model.iinodes import mkBreakStatement
+from pyxie.model.iinodes import mkContinueStatement
+from pyxie.model.iinodes import mkExpressionStatement
+
+from pyxie.model.iinodes import mkIdentifierDeclaration
+
+from pyxie.model.iinodes import mkElifClause
+from pyxie.model.iinodes import mkElseClause
+from pyxie.model.iinodes import mkIfStatement
+
+
 iterator_unique_base = 0
 
 class UnknownType(Exception):
@@ -157,25 +184,12 @@ def crepr_literal(pyliteral):
 
 def crepr_op(py_op):
     assert isinstance(py_op, nodes.PyOperator) or isinstance(py_op, nodes.PyBoolOperator)
-    func = py_op.tag
+    try:
+        result = mkOperator(operator=py_op.tag)
+    except ValueError:
+        raise CannotConvert("Cannot represent operator", py_op.tag)
+    return result
 
-    if func == "op_plus":
-        return ["op", "plus"]
-    if func == "op_minus":
-        return ["op", "minus"]
-    if func == "op_times":
-        return ["op", "times"]
-    if func == "op_divide":
-        return ["op", "divide"]
-    if func == "or_operator":
-        return ["op", "boolean_or"]
-    if func == "and_operator":
-        return ["op", "boolean_and"]
-    if func == "not_operator":
-        return ["op", "boolean_not"]
-    else:
-        todo("Cannot yet convert operators functions other than plus...")
-        raise CannotConvert("Cannot yet convert operators functions other than plus...:" + repr(py_op))
 
 def convert_assignment(assignment):
     lvalue, assign_type, rvalue = assignment.lvalue, assignment.assign_type, assignment.rvalue
@@ -223,15 +237,16 @@ def convert_assignment(assignment):
         cargs = []
         if arg.expr_list:
             for expr in arg.expr_list:
-                #print(arg)
-                #print("We need to convert the arg", arg)
                 crepr = convert_arg(expr)
                 carg = crepr
                 cargs.append(carg)
 
-        crvalue = ["function_call", convert_value_literal(arg.func_label), cargs] # FIXME: func_label may not be an identifier...
+        func_label = convert_value_literal(arg.func_label)  # FIXME: func_label may not be an identifier...
+        crvalue = mkFunctionCall(func_object=func_label, args=cargs)
 
-    return ["assignment", clvalue, "=", crvalue]
+    result = mkAssignment(lvalue=clvalue, assignment_op="=", rvalue=crvalue)
+    return result
+
 
 def convert_value_literal(arg):
     # print(repr(arg), arg)
@@ -241,7 +256,8 @@ def convert_value_literal(arg):
     if arg.tag == "attributeaccess":
         expression = convert_value_literal(arg.expression)
         attribute = convert_value_literal(arg.attribute)
-        return ["attributeaccess", expression, attribute]
+
+        return mkAttributeAccess(expression, attribute)
 
     if arg.tag == "attribute":
         x = convert_value_literal(arg.value)
@@ -250,20 +266,23 @@ def convert_value_literal(arg):
     tag, value, vtype, line = arg.tag, arg.value, arg.get_type(), arg.lineno
 
     if tag == "identifier":
-        return ["identifier", value]
+        return mkIdentifier(identifier=value)
 
     if vtype == "string":
-        return ["string", value]
+        return mkString(the_string=value)
+
     if vtype == "integer":
-        return ["integer", value]
+        return mkInteger(the_integer=value)
+
     if vtype == "float":
-        return ["double", value]
+        return mkFloat(the_float=value)
+
     if vtype == "bool":
         if value == True:
             value = "true"
         else:
             value = "false"
-        return ["boolean", value]
+        return mkBoolean(the_boolean=value)
 
     todo("CONVERSION: Cannot handle other value literals %s" % repr(arg))
     todo("CONVERSION: %s %s %s %d" % (tag, repr(value), repr(vtype), line))
@@ -320,6 +339,7 @@ def convert_operator_function(opfunc):
     #todo("Cannot yet convert operator functions")
     #raise CannotConvert("Cannot convert operator function :" + repr(arg))
 
+
 def convert_comparison_operator(comparison):
     # t_NORMAL_COMPARISON_OPERATOR = r'(in|not +in|is|is +not)'
 
@@ -327,6 +347,7 @@ def convert_comparison_operator(comparison):
         return comparison
 
     raise NotImplementedError(repr(comparison))
+
 
 def convert_comparison(comparison_spec):
     print("CONVERT - convert_comparison", repr(comparison_spec))
@@ -342,10 +363,10 @@ def convert_comparison(comparison_spec):
     print("crepr_arg1", repr(crepr_arg1))
     print("crepr_arg2", repr(crepr_arg2))
 
-    result = ["op", crepr_comparison, crepr_arg1, crepr_arg2]
+    result = mkComparison(comparator=crepr_comparison, left=crepr_arg1, right=crepr_arg2)
+
     print(repr(result))
     return result
-
 
 
 def convert_arg(arg):
@@ -370,10 +391,13 @@ def convert_arg(arg):
                 carg = crepr
                 cargs.append(carg)
 
-        return ["function_call", convert_value_literal(arg.func_label), cargs]    # FIXME: func_label may not be an identifier...
+        func_label = convert_value_literal(arg.func_label) # FIXME: func_label may not be an identifier...
+        return mkFunctionCall(func_object=func_label, args=cargs)
+
     else:
         todo("Handle print for non-value-literals")
         raise CannotConvert("Cannot convert print for non-value-literals")
+
 
 def convert_print(print_statement):
     cstatement = []
@@ -384,12 +408,15 @@ def convert_print(print_statement):
         crepr = convert_arg(arg)
         carg = crepr
         cargs.append(carg)
-    return ["print_statement"] + cargs
+    return mkPrintStatement(args=cargs)
+
 
 def convert_while_statement(while_statement):
     crepr_condition = convert_arg(while_statement.condition)
     cstatements = convert_statements(while_statement.block)
-    return ["while_statement", crepr_condition] + cstatements
+
+    return mkWhileStatement(condition=crepr_condition, statements=cstatements)
+
 
 def convert_for_statement(for_statement):
 
@@ -398,9 +425,11 @@ def convert_for_statement(for_statement):
     step = for_statement.block
 
     clvalue = lvalue.value # FIXME: This is only valid for identifiers
-    crvalue_source = ["iterator", convert_arg(rvalue_source)]
-    cstep = convert_statements(step)
 
+    crvalue_source = convert_arg(rvalue_source)
+    crvalue_source = mkIterator(expression=crvalue_source)
+
+    cstep = convert_statements(step)
 
     print("*******************")
     print(crvalue_source)
@@ -417,10 +446,9 @@ def convert_for_statement(for_statement):
     print("*******************")
     pprint.pprint(for_statement.__info__())
     print("*******************")
-    # crepr_condition = convert_arg(for_statement.condition)
-    # cstatements = convert_statements(while_statement.block)
-#    return ["while_statement", crepr_condition] + cstatements
-    return ["for_statement", clvalue, crvalue_source, cstep, for_statement]
+
+    return mkForStatement(lvalue=clvalue, iterator=crvalue_source,
+                          statements=cstep, for_statement_PyNode=for_statement)
 
 
 def convert_def_statement(def_statement):
@@ -433,9 +461,6 @@ def convert_def_statement(def_statement):
     print("BLOCK:", def_statement.block)
     print("*******************")
 
-
-#    raise CannotConvert("Statement: def_statement")
-
     lvalue = def_statement.identifier
     cidentifer = lvalue.value # FIXME: This is only valid for identifiers
 
@@ -443,10 +468,7 @@ def convert_def_statement(def_statement):
 
     block = def_statement.block
     cblock = convert_statements(block)
-
-
-#    return ["func_defintion", cidentifer, cparamlist , cblock, def_statement]
-    return ["func_defintion", cidentifer, cparamlist , cblock, repr(def_statement) ]
+    return mkDefStatement(name=cidentifer, params=cparamlist, block=cblock, def_statement_PyNode=def_statement)
 
 
 def convert_extended_clause(extended_clause):
@@ -456,13 +478,17 @@ def convert_extended_clause(extended_clause):
         cstatements = convert_statements(extended_clause.block)
         if extended_clause.else_clause:
             cextended_clause = convert_extended_clause(extended_clause.else_clause)
-            return["elif_clause", crepr_condition, cstatements, cextended_clause]
-        return ["elif_clause", crepr_condition, cstatements]
+
+            return mkElifClause(condition=crepr_condition, statements=cstatements,
+                                extended_clause=cextended_clause)
+
+        return mkElifClause(condition=crepr_condition, statements=cstatements)
 
     if extended_clause.tag == "else_clause":
         print("WORKING THROUGH ELSE:", extended_clause)
         cstatements = convert_statements(extended_clause.block)
-        return ["else_clause", cstatements]
+
+        return mkElseClause(statements=cstatements)
 
     print("NOT ELIF!")
     print("NOT ELSE!")
@@ -476,17 +502,23 @@ def convert_if_statement(if_statement):
     cstatements = convert_statements(if_statement.block)
     if if_statement.else_clause:
         cextended_clause = convert_extended_clause(if_statement.else_clause)
-        return["if_statement", crepr_condition, cstatements, cextended_clause]
-    return ["if_statement", crepr_condition, cstatements]
+
+        return mkIfStatement(condition=crepr_condition, statements=cstatements, extended_clause=cextended_clause)
+
+    return mkIfStatement(condition=crepr_condition, statements=cstatements)
+
 
 def convert_pass_statement(pass_statement):
-    return ["pass_statement"]
+    return mkPassStatement()
+
 
 def convert_break_statement(break_statement):
-    return ["break_statement"]
+    return mkBreakStatement()
+
 
 def convert_continue_statement(continue_statement):
-    return ["continue_statement"]
+    return mkContinueStatement()
+
 
 def convert_expression_statement(statement):
     print("CONVERTING EXPRESSION STATEMENTS", statement.value)
@@ -494,7 +526,8 @@ def convert_expression_statement(statement):
     crepr = convert_arg(statement.value)
     print("REACHED HERE")
     print("CONVERTED ", crepr)
-    return ["expression_statement", crepr]
+
+    return mkExpressionStatement(expression=crepr)
 
 
 def convert_statements(AST):
@@ -546,18 +579,23 @@ def ast_to_cst(program_name, AST):
 
     ast_includes = [x.replace("#include ","") for x in AST.includes]
     print("AST.includes = ", ast_includes)
+
     # Extract and handle variables
+
     pvariables = find_variables(AST)
     cvariables = []
     ctypes = {}
+
     # includes = []
     includes = [x.replace("#include ","") for x in AST.includes]
     names = pvariables.keys()
     names.sort()
     for name in names:
         ctype = python_type_to_c_type(pvariables[name])
-        identifier = ["identifier", ctype, name]
-        cvariables.append(identifier)
+
+        identifier_declaration = mkIdentifierDeclaration(name=name, value_type=ctype)
+
+        cvariables.append(identifier_declaration)
         ctypes[ctype] = True
 
     print("cvariables",cvariables)
@@ -578,15 +616,8 @@ def ast_to_cst(program_name, AST):
         if inc:
             includes.append(inc)
 
-    program = {}
-    program["name"] = program_name
-    program["includes"] = sorted(includes)
-    program["main"] = {}
-    program["main"]["c_frame"] = {}
-    program["main"]["c_frame"]["identifiers"] = cvariables
-    program["main"]["c_frame"]["statements"] = cstatements
-
-    return { "PROGRAM" : program }
+    program = mkProgram(name=program_name, includes=includes, identifiers=cvariables, statements=cstatements)
+    return program
 
 
 if __name__ == "__main__":
