@@ -18,129 +18,32 @@
 from __future__ import print_function
 from __future__ import absolute_import
 
-import pprint
 import sys
 
-from pyxie.core import parse_file
-from pyxie.core import analyse_file
-from pyxie.core import compile_file
-from pyxie.core import codegen_phase
-from pyxie.core import compilation_tests
-from pyxie.core import compile_testfile
-from pyxie.core import parsing_tests
-from pyxie.core import parse_testfile
+from pyxie.api import CommandLineDispatcher
+from pyxie.api import TestsLauncher
+from pyxie.api import StandardOptions
+from pyxie.api import PyxieAPI
 
-from pyxie.core import testprogs_dir
+from pyxie.api import initialise_API
 
-import pyxie.parsing.context
-
-# This is to support compilation profiles. This may or may not turn out to
-# be a good approach.  (#3/#3.x)
-profile = "default"
 
 class BadArguments(Exception):
     pass
 
-# The purpose of this command line dispatcher is to simplify options handling at the
-# expense of being a bit pickier about it.
-
-class CommandLineDispatcher(object):
-    @classmethod
-    def handles(klass, command):
-        return  command.replace("-","_") in [ x for x in dir(klass) if not(x.startswith("_"))]
-    #
-    @classmethod
-    def handle(klass, command, *args):
-        f = getattr(klass, command.replace("-","_"))
-        f(*args)
-
-class TestsLauncher(CommandLineDispatcher):
-    @staticmethod
-    def run_tests():
-        """Run all tests"""
-        parsing_tests()
-        compilation_tests(profile)
-
-    @staticmethod
-    def parse_tests():
-        """Just run parse tests"""
-        parsing_tests()
-
-    @staticmethod
-    def compile_tests():
-        """Just run compile tests"""
-        compilation_tests(profile)
-
-    @staticmethod
-    def parse(filename):
-        """Parses a given test given a certain filename"""
-        AST = parse_testfile(testprogs_dir, filename)
-        pprint.pprint(AST)
-        pprint.pprint(AST.__json__())
-
-    @staticmethod
-    def compile(filename):
-        """Parses a given test given a certain filename"""
-        compile_testfile(testprogs_dir, filename, profile)
-
-
-class StandardOptions(CommandLineDispatcher):
-    @staticmethod
-    def parse(filename):
-        """parses the given filename, outputs result to console"""
-        AST = parse_file(filename)
-        pprint.pprint(AST)
-        pprint.pprint(AST.__json__())
-        if 0:
-            import json
-            print("Also writing a copy to ", filename+".json")
-            f = open(filename+".json", "w")
-            f.write(json.dumps(AST.__json__()))
-            f.close()
-
-    @staticmethod
-    def analyse(filename):
-        """parses and analyse the given filename, outputs result to console"""
-        analyse_file(filename)
-
-    @staticmethod
-    def codegen(filename, result_filename=None):
-        """parses, analyse and generate code for the given filename, outputs result to console. Does not attempt compiling"""
-        codegen_phase(filename, result_filename, profile)
-
-    @staticmethod
-    def compile(filename, result_filename=None):
-        """compiles the given file to path/to/filename -- result_filename can be provide an alternative output name"""
-        compile_file(filename, profile, result_filename)
 
 def main(argv):
     global profile
     if len(argv) < 2:
         raise BadArguments()
 
-    # Create a default profile - whether or not it is used.
-    print("CREATING A CONTEXT")
-    context = pyxie.parsing.context.Context()
-    context.tag = "PROFILE: (default/None)"
+    profile = "default"
 
-    # If a profile is pulled in/defined, use that
     if argv[1] == "--profile" and len(argv)> 2:
         profile = argv[2]
-        argv[1:3] = []
+        argv[1:3] = []  # Chop out arguments relating to profile
 
-        print("USING PROFILE: ", profile)
-        context.tag = "PROFILE:"+profile
-
-        if profile == "arduino": # TODO: Delete me, this is a test 
-            from pyxie.profile.arduino import initialise_profile
-            initialise_profile(context)
-        else:
-            print("UNKNOWN PROFILE")
-            print("USING PROFILE: ", profile)
-            context.tag = "PROFILE:"+profile
-
-    print("CREATED", context)
-    pyxie.parsing.context.profile_context = context
+    initialise_API(profile_name=profile)
 
     if argv[1] == "--test":
         command = argv[2]
@@ -154,6 +57,7 @@ def main(argv):
 
     # Not handled by anything
     raise BadArguments("Bad Arguments")
+
 
 def show_help():
     print("""\npyxie -- A little python compiler\nUsage:\n
