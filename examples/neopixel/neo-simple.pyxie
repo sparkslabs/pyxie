@@ -1,0 +1,16 @@
+
+#include <Adafruit_NeoPixel.h>
+
+pin = 6
+number_of_pixels = 16
+delayval = 500
+
+pixels = Adafruit_NeoPixel(number_of_pixels, pin, NEO_GRB + NEO_KHZ800)
+
+pixels.begin()
+
+while True:
+    for i in range(number_of_pixels):
+        pixels.setPixelColor(i, pixels.Color(0,150,0))
+        pixels.show()
+        delay(delayval)

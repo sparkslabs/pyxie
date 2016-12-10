@@ -8,12 +8,16 @@ def initialise_external_function_definitions():
                 "Servo": {
                             "iterator": False,
                             "return_ctype": "Servo", # C type of the returned value
+                        },
+                "Adafruit_NeoPixel": {
+                            "iterator": False,
+                            "return_ctype": "Adafruit_NeoPixel", # C type of the returned value
                         }
         }
 
     types = {
-                "Servo": {
-                    }
+                "Servo": { },
+                "Adafruit_NeoPixel": {}
         }
 
     # Update the actual profile functions/types
@@ -41,6 +45,12 @@ def populate_profile_context(context):
     context.store("INPUT", a_pin)
     a_pin = ProfilePyNode("OUTPUT", "integer")
     context.store("OUTPUT", a_pin)
+
+    a_def= ProfilePyNode("NEO_GRB", "integer")
+    context.store("NEO_GRB", a_pin)
+    a_def = ProfilePyNode("NEO_KHZ800", "integer")
+    context.store("NEO_KHZ800", a_pin)
+
 
 
 def initialise_profile(context):
