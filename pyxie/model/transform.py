@@ -612,6 +612,7 @@ def ast_to_cst(program_name, AST):
     print("INCLUDES::", includes)
     # Based on statements, update includes
     for cstatement in cstatements:
+        print( "GETTING INCLUDES",  cstatement  )
         inc = includes_for_cstatement(cstatement)
         if inc:
             includes.append(inc)
