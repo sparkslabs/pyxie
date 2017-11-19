@@ -13,13 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 """
 This file will contain objects used to represent the independent intermediate
 format of the program.
 
 Initially it's being a bridging/extraction point.
 """
+
 def jsonify(node):
     if isinstance(node, iiNode):
         print "here"
@@ -28,9 +28,14 @@ def jsonify(node):
         return node
     return ValueError("Don't know what to do with this value"+repr(node))
 
-class iiNode:
-    def __json__():
-        raise Exception("No __json__ method defined in this class")
+
+class iiNode(object): # This is to allow intermediate thunk check whether it has an iiNode or not...
+    tag = "iinode"
+    def __init__(self):
+        raise TypeError("Abstract Base class method called")
+    def __json__(self):
+        raise TypeError("Abstract Base class method called")
+
 
 def mkProgram( name, includes, identifiers, statements):
 
