@@ -20,6 +20,17 @@ format of the program.
 
 Initially it's being a bridging/extraction point.
 """
+def jsonify(node):
+    if isinstance(node, iiNode):
+        print "here"
+        return node.__json__()
+    elif isinstance(node, list) or isinstance(node, dict) or isinstance(node, str) or isinstance(node, int) or isinstance(node, float) or isinstance(node, bool):
+        return node
+    return ValueError("Don't know what to do with this value"+repr(node))
+
+class iiNode:
+    def __json__():
+        raise Exception("No __json__ method defined in this class")
 
 def mkProgram( name, includes, identifiers, statements):
 
