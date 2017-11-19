@@ -26,6 +26,9 @@ import pprint
 unique_id = 0 # FIXME: Naming - Used to generate unique ids within for statements. 
               # FIXME: Implies there should be a better way of doing this.
 
+def todo(*args):
+    print("TODO", " ".join([repr(x) for x in args]))
+
 def get_blank_line():
     return pyxie.codegen.simple_cpp.get_blank_line()
 
@@ -325,7 +328,8 @@ class CppArgumentList(CppNode):
             return code_gen.code()
             print("We don't know how to generate code for function calls yet", arg)
             return ""
-        todo("Handle print value types that are more than the basic types")
+
+        todo("Handle print value types that are more than the basic types", arg[0])
         raise NotImplementedError("Handle print value types that are more than the basic types" + repr(arg))
 
     def code_list(self):
@@ -604,3 +608,4 @@ class CppElseClause(CppNode):
             #"CppPrintStatement", "CppWhileStatement", "CppForStatement",
             #"CppIfStatement", "CppElseIfClause", "CppElseClause"
           #]
+
