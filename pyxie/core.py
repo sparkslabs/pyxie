@@ -34,6 +34,8 @@ from pyxie.model.transform import ast_to_cst
 from pyxie.codegen.clib import files as clib_files
 from pyxie.codegen.simple_cpp import CppProgram, source, reset_parser
 
+from pyxie.model.iinodes import jsonify
+
 testdir = "test-data"
 testprogs_dir = os.path.join(testdir, "progs")
 
@@ -146,13 +148,14 @@ def analyse_file(filename):
     print("------------")
 
 def generate_code(cname, AST, profile, debug=False):
-    CST = ast_to_cst(cname, AST)
+    iiNodes = ast_to_cst(cname, AST)
+    iiNodes_json = jsonify(iiNodes)
     if debug:
         print("generate_code: CONCRETE C SYNTAX TREE: - - - - - - - - - - - - - - - - - - - -")
-        print(pprint.pformat(CST))
-        # print(json.dumps(CST, indent=4))
+        print(pprint.pformat(iiNodes_json))
+        # print(json.dumps(iiNodes_json, indent=4))
         print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
-    program = CppProgram.fromjson(CST)
+    program = CppProgram.fromjson(iiNodes_json)
     program.generate(profile)
     return pyxie.codegen.simple_cpp.source[:]
 
@@ -411,3 +414,4 @@ def compilation_tests(profile):
         os.chdir(rootdir)
 
     print("compilation_tests: COMPILING DONE", testprogs)
+

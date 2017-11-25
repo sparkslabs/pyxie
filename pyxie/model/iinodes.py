@@ -417,4 +417,4 @@ def mkOperator(operator):
 
 def mkProgram( name, includes, identifiers, statements):
     program = iiProgram(name, includes, identifiers, statements)
-    return jsonify(program)
+    return program
