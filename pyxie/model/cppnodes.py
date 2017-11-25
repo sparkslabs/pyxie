@@ -84,16 +84,15 @@ class CppProgram(CppNode):
         self.name = ""
 
     @classmethod
-    def fromjson(klass, json):
+    def fromiinodes(klass, iiprogram):
         program = klass()
-        prog_desc = json["PROGRAM"]
-        program.name = prog_desc["name"]
-        program.includes = list(prog_desc["includes"])
-        main_spec = prog_desc["main"]["c_frame"]
-        for identifier in main_spec["identifiers"]:
+        program.name = iiprogram.name
+        program.includes = iiprogram.includes
+
+        for identifier in iiprogram.global_identifiers:
             program.main_cframe.identifiers.append(CppIdentifier(identifier[1], identifier[2]))
 
-        for statement in main_spec["statements"]:
+        for statement in iiprogram.statements:
             conc_statement = mkStatement(statement)
             program.main_cframe.statements.append(conc_statement)
 
