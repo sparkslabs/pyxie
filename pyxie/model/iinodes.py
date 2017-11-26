@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 """
 This file will contain objects used to represent the independent intermediate
 format of the program.
@@ -176,15 +177,6 @@ class iiComparison(iiNode):
 
 
 
-class iiPrintStatement(iiNode):
-    tag = "print_statement"
-    def __init__(self, args):
-        self.args = args
-
-    def __json__(self):
-        return ["print_statement"] + self.args
-
-
 class iiWhileStatement(iiNode):
     tag = "while_statement"
     def __init__(self, condition, statements):
@@ -326,9 +318,6 @@ def mkIdentifierDeclaration(name, value_type):
 
 def mkComparison(comparator, left, right):
     return jsonify( iiComparison(comparator, left, right) )
-
-def mkPrintStatement(args):
-    return jsonify( iiPrintStatement(args) )
 
 def mkWhileStatement(condition, statements):
     return jsonify( iiWhileStatement(condition, statements) )
