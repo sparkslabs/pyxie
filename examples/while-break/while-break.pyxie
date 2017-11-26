@@ -1,0 +1,11 @@
+
+analogInPin = A0
+analogOutPin = 9
+sensorValue = 0
+outputValue = 0
+
+while True:
+    break
+    Serial.println("--------")
+    delay(2)
+
