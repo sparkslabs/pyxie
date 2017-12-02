@@ -1,0 +1,257 @@
+CREATING A CONTEXT
+Context.store NAME A0 'A0' VALUE ProfilePyNode(0, 'A0')
+CONTEXT {'A0': [ProfilePyNode(0, 'A0')]}
+Context.store NAME A1 'A1' VALUE ProfilePyNode(0, 'A1')
+CONTEXT {'A1': [ProfilePyNode(0, 'A1')], 'A0': [ProfilePyNode(0, 'A0')]}
+Context.store NAME A2 'A2' VALUE ProfilePyNode(0, 'A2')
+CONTEXT {'A1': [ProfilePyNode(0, 'A1')], 'A0': [ProfilePyNode(0, 'A0')], 'A2': [ProfilePyNode(0, 'A2')]}
+Context.store NAME A3 'A3' VALUE ProfilePyNode(0, 'A3')
+CONTEXT {'A1': [ProfilePyNode(0, 'A1')], 'A0': [ProfilePyNode(0, 'A0')], 'A3': [ProfilePyNode(0, 'A3')], 'A2': [ProfilePyNode(0, 'A2')]}
+Context.store NAME A4 'A4' VALUE ProfilePyNode(0, 'A4')
+CONTEXT {'A1': [ProfilePyNode(0, 'A1')], 'A0': [ProfilePyNode(0, 'A0')], 'A3': [ProfilePyNode(0, 'A3')], 'A2': [ProfilePyNode(0, 'A2')], 'A4': [ProfilePyNode(0, 'A4')]}
+Context.store NAME A5 'A5' VALUE ProfilePyNode(0, 'A5')
+CONTEXT {'A1': [ProfilePyNode(0, 'A1')], 'A0': [ProfilePyNode(0, 'A0')], 'A3': [ProfilePyNode(0, 'A3')], 'A2': [ProfilePyNode(0, 'A2')], 'A5': [ProfilePyNode(0, 'A5')], 'A4': [ProfilePyNode(0, 'A4')]}
+Context.store NAME A6 'A6' VALUE ProfilePyNode(0, 'A6')
+CONTEXT {'A1': [ProfilePyNode(0, 'A1')], 'A0': [ProfilePyNode(0, 'A0')], 'A3': [ProfilePyNode(0, 'A3')], 'A2': [ProfilePyNode(0, 'A2')], 'A5': [ProfilePyNode(0, 'A5')], 'A4': [ProfilePyNode(0, 'A4')], 'A6': [ProfilePyNode(0, 'A6')]}
+Context.store NAME A7 'A7' VALUE ProfilePyNode(0, 'A7')
+CONTEXT {'A1': [ProfilePyNode(0, 'A1')], 'A0': [ProfilePyNode(0, 'A0')], 'A3': [ProfilePyNode(0, 'A3')], 'A2': [ProfilePyNode(0, 'A2')], 'A5': [ProfilePyNode(0, 'A5')], 'A4': [ProfilePyNode(0, 'A4')], 'A7': [ProfilePyNode(0, 'A7')], 'A6': [ProfilePyNode(0, 'A6')]}
+Context.store NAME HIGH 'HIGH' VALUE ProfilePyNode(0, 'HIGH')
+CONTEXT {'HIGH': [ProfilePyNode(0, 'HIGH')], 'A1': [ProfilePyNode(0, 'A1')], 'A0': [ProfilePyNode(0, 'A0')], 'A3': [ProfilePyNode(0, 'A3')], 'A2': [ProfilePyNode(0, 'A2')], 'A5': [ProfilePyNode(0, 'A5')], 'A4': [ProfilePyNode(0, 'A4')], 'A7': [ProfilePyNode(0, 'A7')], 'A6': [ProfilePyNode(0, 'A6')]}
+Context.store NAME LOW 'LOW' VALUE ProfilePyNode(0, 'LOW')
+CONTEXT {'HIGH': [ProfilePyNode(0, 'HIGH')], 'A1': [ProfilePyNode(0, 'A1')], 'A0': [ProfilePyNode(0, 'A0')], 'A3': [ProfilePyNode(0, 'A3')], 'A2': [ProfilePyNode(0, 'A2')], 'A5': [ProfilePyNode(0, 'A5')], 'A4': [ProfilePyNode(0, 'A4')], 'A7': [ProfilePyNode(0, 'A7')], 'A6': [ProfilePyNode(0, 'A6')], 'LOW': [ProfilePyNode(0, 'LOW')]}
+Context.store NAME INPUT 'INPUT' VALUE ProfilePyNode(0, 'INPUT')
+CONTEXT {'HIGH': [ProfilePyNode(0, 'HIGH')], 'A1': [ProfilePyNode(0, 'A1')], 'A0': [ProfilePyNode(0, 'A0')], 'A3': [ProfilePyNode(0, 'A3')], 'A2': [ProfilePyNode(0, 'A2')], 'A5': [ProfilePyNode(0, 'A5')], 'A4': [ProfilePyNode(0, 'A4')], 'A7': [ProfilePyNode(0, 'A7')], 'A6': [ProfilePyNode(0, 'A6')], 'INPUT': [ProfilePyNode(0, 'INPUT')], 'LOW': [ProfilePyNode(0, 'LOW')]}
+Context.store NAME OUTPUT 'OUTPUT' VALUE ProfilePyNode(0, 'OUTPUT')
+CONTEXT {'HIGH': [ProfilePyNode(0, 'HIGH')], 'OUTPUT': [ProfilePyNode(0, 'OUTPUT')], 'A1': [ProfilePyNode(0, 'A1')], 'A0': [ProfilePyNode(0, 'A0')], 'A3': [ProfilePyNode(0, 'A3')], 'A2': [ProfilePyNode(0, 'A2')], 'A5': [ProfilePyNode(0, 'A5')], 'A4': [ProfilePyNode(0, 'A4')], 'A7': [ProfilePyNode(0, 'A7')], 'A6': [ProfilePyNode(0, 'A6')], 'INPUT': [ProfilePyNode(0, 'INPUT')], 'LOW': [ProfilePyNode(0, 'LOW')]}
+Context.store NAME NEO_GRB 'NEO_GRB' VALUE ProfilePyNode(0, 'OUTPUT')
+CONTEXT {'HIGH': [ProfilePyNode(0, 'HIGH')], 'OUTPUT': [ProfilePyNode(0, 'OUTPUT')], 'NEO_GRB': [ProfilePyNode(0, 'OUTPUT')], 'A1': [ProfilePyNode(0, 'A1')], 'A0': [ProfilePyNode(0, 'A0')], 'A3': [ProfilePyNode(0, 'A3')], 'A2': [ProfilePyNode(0, 'A2')], 'A5': [ProfilePyNode(0, 'A5')], 'A4': [ProfilePyNode(0, 'A4')], 'A7': [ProfilePyNode(0, 'A7')], 'A6': [ProfilePyNode(0, 'A6')], 'INPUT': [ProfilePyNode(0, 'INPUT')], 'LOW': [ProfilePyNode(0, 'LOW')]}
+Context.store NAME NEO_KHZ800 'NEO_KHZ800' VALUE ProfilePyNode(0, 'OUTPUT')
+CONTEXT {'HIGH': [ProfilePyNode(0, 'HIGH')], 'NEO_KHZ800': [ProfilePyNode(0, 'OUTPUT')], 'OUTPUT': [ProfilePyNode(0, 'OUTPUT')], 'NEO_GRB': [ProfilePyNode(0, 'OUTPUT')], 'A1': [ProfilePyNode(0, 'A1')], 'A0': [ProfilePyNode(0, 'A0')], 'A3': [ProfilePyNode(0, 'A3')], 'A2': [ProfilePyNode(0, 'A2')], 'A5': [ProfilePyNode(0, 'A5')], 'A4': [ProfilePyNode(0, 'A4')], 'A7': [ProfilePyNode(0, 'A7')], 'A6': [ProfilePyNode(0, 'A6')], 'INPUT': [ProfilePyNode(0, 'INPUT')], 'LOW': [ProfilePyNode(0, 'LOW')]}
+USING PROFILE:  default
+CREATED COMPARISON OPERATOR < PyInteger(3, 1) PyInteger(3, 2)
+EMITTING INDENT LexToken(INDENT,'p',4,22)
+EMITTING DEDENT LexToken(DEDENT,'#',6,28)
+Illegal character '#' LexToken(error,'#\n',6,28)
+
+-> REACHED BLOCK
+PARSES IF
+
+--> REACHED IF STATEMENT
+WARNING, expression used in a location requiring truthiness
+This will generally be OK for bools and integers but need a function for anything else
+In particular for strings, lists, dictionaries, tuples and so on
+That is a separate card in the backlog though
+
+parse_file: AST includes []
+
+parse_file: Raw Parsed AST ----------------------------------
+PyProgram(PyStatements(PyAssignment(PyIdentifier(1, 'pan'),PyInteger(1, 0),'='),
+ PyIfStatement(PyComparisonOperator(<, PyInteger(3, 1), PyInteger(3, 2)), PyBlock(PyStatements(<pyxie.model.pynodes.statements.PyPassStatement object at 0x7ffa55c418d0>)))))
+----------------------------------
+
+ANALYSING PROGRAM
+ANALYSING STATEMENTS
+ANALYSING ASSIGNMENT
+**ANALYSE RIGHT**
+ANALYSING VALUE LITERAL integer
+****ADD R VALUE****
+Context.store NAME pan 'pan' VALUE PyInteger(1, 0)
+CONTEXT {'pan': [PyInteger(1, 0)]}
+****ANALYSE LEFT****
+PyIdentifier.analyse pan PyIdentifier(1, 'pan') ['__class__', '__delattr__', '__dict__', '__doc__', '__format__', '__getattribute__', '__hash__', '__info__', '__init__', '__json__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'add_child', 'add_children', 'add_context', 'add_rvalue', 'analyse', 'children', 'classname', 'context', 'get_type', 'lineno', 'name', 'ntype', 'tag', 'tags', 'types', 'value']
+attr identifier PyIdentifier(1, 'pan') children [] []
+attr identifier PyIdentifier(1, 'pan') context 140713157466768 {'tag': 'program', 'profile_context': 140713189210768, 'id': 140713157466768, 'parent': None, 'names': {'pan': [PyInteger(1, 0)]}}
+attr identifier PyIdentifier(1, 'pan') lineno 1 1
+attr identifier PyIdentifier(1, 'pan') ntype None None
+attr identifier PyIdentifier(1, 'pan') tag 'identifier' identifier
+attr identifier PyIdentifier(1, 'pan') types [] []
+attr identifier PyIdentifier(1, 'pan') value 'pan' pan
+Context.lookup -pc  {'tag': 'PROFILE:arduino', 'profile_context': 140713189210768, 'id': 140713189210768, 'parent': None, 'names': {'A1': [ProfilePyNode(0, 'A1')], 'NEO_KHZ800': [ProfilePyNode(0, 'OUTPUT')], 'NEO_GRB': [ProfilePyNode(0, 'OUTPUT')], 'HIGH': [ProfilePyNode(0, 'HIGH')], 'A0': [ProfilePyNode(0, 'A0')], 'A3': [ProfilePyNode(0, 'A3')], 'A2': [ProfilePyNode(0, 'A2')], 'A5': [ProfilePyNode(0, 'A5')], 'A4': [ProfilePyNode(0, 'A4')], 'A7': [ProfilePyNode(0, 'A7')], 'A6': [ProfilePyNode(0, 'A6')], 'OUTPUT': [ProfilePyNode(0, 'OUTPUT')], 'INPUT': [ProfilePyNode(0, 'INPUT')], 'LOW': [ProfilePyNode(0, 'LOW')]}}
+Context.TAG  program
+Context.lookup pan
+Context.lookup [('program', {'pan': [PyInteger(1, 0)]}), ('PROFILE:arduino', {'HIGH': [ProfilePyNode(0, 'HIGH')], 'NEO_KHZ800': [ProfilePyNode(0, 'OUTPUT')], 'OUTPUT': [ProfilePyNode(0, 'OUTPUT')], 'NEO_GRB': [ProfilePyNode(0, 'OUTPUT')], 'A1': [ProfilePyNode(0, 'A1')], 'A0': [ProfilePyNode(0, 'A0')], 'A3': [ProfilePyNode(0, 'A3')], 'A2': [ProfilePyNode(0, 'A2')], 'A5': [ProfilePyNode(0, 'A5')], 'A4': [ProfilePyNode(0, 'A4')], 'A7': [ProfilePyNode(0, 'A7')], 'A6': [ProfilePyNode(0, 'A6')], 'INPUT': [ProfilePyNode(0, 'INPUT')], 'LOW': [ProfilePyNode(0, 'LOW')]})]
+Type for lvalue: integer
+Type for rvalue: integer
+Types match: True
+ANALYSING IF BLOCK
+analyse expression, and analyse block
+ANALYSING comparison_operator
+ANALYSING VALUE LITERAL integer
+ANALYSING VALUE LITERAL integer
+ANALYSING BLOCK
+ANALYSING STATEMENTS
+codegen_phase: _______________________________________________________________
+codegen_phase: GENERATING CODE
+
+AST.includes =  []
+cvariables [<pyxie.model.iinodes.iiIdentifierDeclaration object at 0x7ffa55dd4f50>]
+CONVERT_STATEMENTS PyAssignment(PyIdentifier(1, 'pan'),PyInteger(1, 0),'=')
+nodes.PyValueLiteral PyInteger(1, 0)
+here
+['assignment', 'pan', '=', '0']
+CONVERT_STATEMENTS PyIfStatement(PyComparisonOperator(<, PyInteger(3, 1), PyInteger(3, 2)), PyBlock(PyStatements(<pyxie.model.pynodes.statements.PyPassStatement object at 0x7ffa55c418d0>)))
+WORKING THROUGH IF: PyIfStatement(PyComparisonOperator(<, PyInteger(3, 1), PyInteger(3, 2)), PyBlock(PyStatements(<pyxie.model.pynodes.statements.PyPassStatement object at 0x7ffa55c418d0>)))
+CONVERT - convert_comparison PyComparisonOperator(<, PyInteger(3, 1), PyInteger(3, 2))
+CONVERTING LITERAL PyInteger(3, 1)
+ARG:: integer
+here
+CONVERTING LITERAL PyInteger(3, 2)
+ARG:: integer
+here
+crepr_arg1 ['integer', 1]
+crepr_arg2 ['integer', 2]
+<pyxie.model.iinodes.iiComparison object at 0x7ffa55dd4e50>
+WORKING THROUGH IF: PyBlock(PyStatements(<pyxie.model.pynodes.statements.PyPassStatement object at 0x7ffa55c418d0>))
+CONVERT_STATEMENTS <pyxie.model.pynodes.statements.PyPassStatement object at 0x7ffa55c418d0>
+WORKING THROUGH IF: [<pyxie.model.iinodes.iiPassStatement object at 0x7ffa55dd4f10>]
+('MK_IF_STATEMENT', <pyxie.model.iinodes.iiComparison object at 0x7ffa55dd4e50>)
+('MK_IF_STATEMENT', [<pyxie.model.iinodes.iiPassStatement object at 0x7ffa55dd4f10>])
+('MK_IF_STATEMENT', None)
+('II_IF_STATEMENT C', <pyxie.model.iinodes.iiComparison object at 0x7ffa55dd4e50>)
+('II_IF_STATEMENT S', [<pyxie.model.iinodes.iiPassStatement object at 0x7ffa55dd4f10>])
+('II_IF_STATEMENT EC', None)
+[['assignment', 'pan', '=', '0'], <pyxie.model.iinodes.iiIfStatement object at 0x7ffa55dd4ed0>]
+INCLUDES:: []
+GETTING INCLUDES ['assignment', 'pan', '=', '0']
+GETTING INCLUDES <pyxie.model.iinodes.iiIfStatement object at 0x7ffa55dd4ed0>
+generate_code: CONCRETE C SYNTAX TREE: - - - - - - - - - - - - - - - - - - - -
+here
+('PROGRAM', {'main': {'c_frame': {'identifiers': [<pyxie.model.iinodes.iiIdentifierDeclaration object at 0x7ffa55dd4f50>], 'statements': [['assignment', 'pan', '=', '0'], <pyxie.model.iinodes.iiIfStatement object at 0x7ffa55dd4ed0>]}}, 'name': 'pass', 'includes': []})
+{'PROGRAM': {'includes': [],
+             'main': {'c_frame': {'identifiers': [<pyxie.model.iinodes.iiIdentifierDeclaration object at 0x7ffa55dd4f50>],
+                                  'statements': [['assignment',
+                                                  'pan',
+                                                  '=',
+                                                  '0'],
+                                                 <pyxie.model.iinodes.iiIfStatement object at 0x7ffa55dd4ed0>]}},
+             'name': 'pass'}}
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+OK, IF_STATEMENT <pyxie.model.iinodes.iiComparison object at 0x7ffa55dd4e50>
+OK, IF_STATEMENT <pyxie.model.iinodes.iiIfStatement object at 0x7ffa55dd4ed0>
+OK, IF STATEMENT <pyxie.model.iinodes.iiPassStatement object at 0x7ffa55dd4f10>
+OK, EMPTY STATEMENT
+BUILDING FOR PROFILE arduino
+0
+codegen_phase: _______________________________________________________________
+codegen_phase: Generated Program
+
+#include "iterators.cpp"
+
+void setup()
+{
+   int pan;
+   
+   pan = 0;
+   if ( (1<2) ) { 
+;; } ;
+}
+
+void loop()
+{
+}
+
+_______________________________________________________________
+C_CODE::: ['//', '// This file contains code generated by Pyxie - http://www.sparkslabs.com/pyxie', '//', "// This file is derived from the user's source code, copyright resides", "// with the author of the user's source code.", '//', '// You can edit this header in any way suitable for your project', '//', '', '\n#include "iterators.cpp"\n\nvoid setup()\n{\n   int pan;\n   \n   pan = 0;\n   if ( (1<2) ) { \n;; } ;\n}\n\nvoid loop()\n{\n}\n']
+compile_file: COMPILING examples/pass/pass.pyxie
+compile_file: IN examples/pass
+compile_file: SOURCEFILE pass.pyxie
+compile_file: cname pass
+compile_file: result_filename examples/pass/pass
+buil-------------------------
+Arduino.mk Configuration:
+- [AUTODETECTED]       CURRENT_OS = LINUX 
+- [AUTODETECTED]       ARDUINO_DIR = /usr/share/arduino 
+- [COMPUTED]           ARDMK_DIR = /usr/share/arduino (relative to Common.mk)
+- [AUTODETECTED]       ARDUINO_VERSION = 105 
+- [DEFAULT]            ARCHITECTURE =  
+- [DEFAULT]            VENDOR = arduino 
+- [DEFAULT]            ARDUINO_SKETCHBOOK =  
+- [BUNDLED]            AVR_TOOLS_DIR = /usr/share/arduino/hardware/tools/avr (in Arduino distribution)
+- [COMPUTED]           ARDUINO_LIB_PATH = /usr/share/arduino/libraries (from ARDUINO_DIR)
+- [COMPUTED]           ARDUINO_VAR_PATH = /usr/share/arduino/hardware/arduino//variants (from ARDUINO_DIR)
+- [COMPUTED]           BOARDS_TXT = /usr/share/arduino/hardware/arduino//boards.txt (from ARDUINO_DIR)
+- [DEFAULT]            USER_LIB_PATH = /libraries (in user sketchbook)
+- [DEFAULT]            PRE_BUILD_HOOK = pre-build-hook.sh 
+- [USER]               BOARD_TAG = leonardo 
+- [COMPUTED]           CORE = arduino (from build.core)
+- [COMPUTED]           VARIANT = leonardo (from build.variant)
+- [COMPUTED]           OBJDIR = build-leonardo (from BOARD_TAG)
+- [COMPUTED]           ARDUINO_CORE_PATH = /usr/share/arduino/hardware/arduino//cores/arduino (from ARDUINO_DIR, BOARD_TAG and boards.txt)
+- [ASSUMED]            MONITOR_BAUDRATE = 9600 
+- [DEFAULT]            OPTIMIZATION_LEVEL = s 
+- [DEFAULT]            MCU_FLAG_NAME = mmcu 
+- [DEFAULT]            CFLAGS_STD =  
+- [DEFAULT]            CXXFLAGS_STD =  
+- [COMPUTED]           DEVICE_PATH = /dev/ttyACM0 (from MONITOR_PORT)
+- [DEFAULT]            FORCE_MONITOR_PORT =  
+- [AUTODETECTED]       Size utility: AVR-aware for enhanced output
+- [COMPUTED]           BOOTLOADER_PARENT = /usr/share/arduino/hardware/arduino//bootloaders (from ARDUINO_DIR)
+- [COMPUTED]           ARDMK_VERSION = 1.5 
+- [COMPUTED]           CC_VERSION = 4.9.2 (avr-gcc)
+-------------------------
+mkdir -p build-leonardo
+/usr/share/arduino/hardware/tools/avr/bin/avr-g++ -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036 -fno-exceptions  iterators.cpp -o build-leonardo/iterators.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-g++ -x c++ -include Arduino.h -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036 -fno-exceptions  pass.ino -o build-leonardo/pass.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-gcc -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036  /usr/share/arduino/hardware/arduino//cores/arduino/wiring.c -o build-leonardo/core/wiring.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-gcc -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036  /usr/share/arduino/hardware/arduino//cores/arduino/WInterrupts.c -o build-leonardo/core/WInterrupts.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-gcc -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036  /usr/share/arduino/hardware/arduino//cores/arduino/wiring_digital.c -o build-leonardo/core/wiring_digital.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-gcc -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036  /usr/share/arduino/hardware/arduino//cores/arduino/wiring_pulse.c -o build-leonardo/core/wiring_pulse.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-gcc -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036  /usr/share/arduino/hardware/arduino//cores/arduino/wiring_analog.c -o build-leonardo/core/wiring_analog.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-gcc -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036  /usr/share/arduino/hardware/arduino//cores/arduino/wiring_shift.c -o build-leonardo/core/wiring_shift.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-gcc -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036  /usr/share/arduino/hardware/arduino//cores/arduino/avr-libc/realloc.c -o build-leonardo/core/avr-libc/realloc.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-gcc -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036  /usr/share/arduino/hardware/arduino//cores/arduino/avr-libc/malloc.c -o build-leonardo/core/avr-libc/malloc.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-g++ -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036 -fno-exceptions  /usr/share/arduino/hardware/arduino//cores/arduino/IPAddress.cpp -o build-leonardo/core/IPAddress.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-g++ -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036 -fno-exceptions  /usr/share/arduino/hardware/arduino//cores/arduino/new.cpp -o build-leonardo/core/new.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-g++ -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036 -fno-exceptions  /usr/share/arduino/hardware/arduino//cores/arduino/WString.cpp -o build-leonardo/core/WString.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-g++ -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036 -fno-exceptions  /usr/share/arduino/hardware/arduino//cores/arduino/Tone.cpp -o build-leonardo/core/Tone.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-g++ -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036 -fno-exceptions  /usr/share/arduino/hardware/arduino//cores/arduino/WMath.cpp -o build-leonardo/core/WMath.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-g++ -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036 -fno-exceptions  /usr/share/arduino/hardware/arduino//cores/arduino/Print.cpp -o build-leonardo/core/Print.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-g++ -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036 -fno-exceptions  /usr/share/arduino/hardware/arduino//cores/arduino/HID.cpp -o build-leonardo/core/HID.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-g++ -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036 -fno-exceptions  /usr/share/arduino/hardware/arduino//cores/arduino/Stream.cpp -o build-leonardo/core/Stream.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-g++ -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036 -fno-exceptions  /usr/share/arduino/hardware/arduino//cores/arduino/USBCore.cpp -o build-leonardo/core/USBCore.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-g++ -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036 -fno-exceptions  /usr/share/arduino/hardware/arduino//cores/arduino/main.cpp -o build-leonardo/core/main.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-g++ -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036 -fno-exceptions  /usr/share/arduino/hardware/arduino//cores/arduino/HardwareSerial.cpp -o build-leonardo/core/HardwareSerial.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-g++ -MMD -c -std=c++11 -mmcu=atmega32u4 -DF_CPU=16000000L -DARDUINO=105  -D__PROG_TYPES_COMPAT__ -I/usr/share/arduino/hardware/arduino//cores/arduino -I/usr/share/arduino/hardware/arduino//variants/leonardo    -Wall -ffunction-sections -fdata-sections -Os -DUSB_VID=0x2341 -DUSB_PID=0x8036 -fno-exceptions  /usr/share/arduino/hardware/arduino//cores/arduino/CDC.cpp -o build-leonardo/core/CDC.o
+/usr/share/arduino/hardware/tools/avr/bin/avr-ar rcs build-leonardo/libcore.a  build-leonardo/core/WInterrupts.o  build-leonardo/core/wiring.o  build-leonardo/core/wiring_pulse.o  build-leonardo/core/wiring_analog.o  build-leonardo/core/wiring_digital.o  build-leonardo/core/wiring_shift.o  build-leonardo/core/avr-libc/realloc.o  build-leonardo/core/avr-libc/malloc.o  build-leonardo/core/Tone.o  build-leonardo/core/Print.o  build-leonardo/core/new.o  build-leonardo/core/Stream.o  build-leonardo/core/WString.o  build-leonardo/core/USBCore.o  build-leonardo/core/main.o  build-leonardo/core/IPAddress.o  build-leonardo/core/HID.o  build-leonardo/core/WMath.o  build-leonardo/core/CDC.o  build-leonardo/core/HardwareSerial.o       
+/usr/share/arduino/hardware/tools/avr/bin/avr-gcc -mmcu=atmega32u4 -Wl,--gc-sections -Os -o build-leonardo/build-1511790120.elf build-leonardo/iterators.o build-leonardo/pass.o build-leonardo/libcore.a  -lc -lm
+/usr/share/arduino/hardware/tools/avr/bin/avr-objcopy -j .eeprom --set-section-flags=.eeprom='alloc,load' \
+	--change-section-lma .eeprom=0 -O ihex build-leonardo/build-1511790120.elf build-leonardo/build-1511790120.eep
+/usr/share/arduino/hardware/tools/avr/bin/avr-objcopy -O ihex -R .eeprom build-leonardo/build-1511790120.elf build-leonardo/build-1511790120.hex
+
+/usr/share/arduino/hardware/tools/avr/bin/avr-size --mcu=atmega32u4 -C --format=avr build-leonardo/build-1511790120.elf
+AVR Memory Usage
+----------------
+Device: atmega32u4
+
+Program:    4206 bytes (12.8% Full)
+(.text + .data + .bootloader)
+
+Data:        155 bytes (6.1% Full)
+(.data + .bss + .noinit)
+
+
+d_program: _______________________________________________________________
+build_program: BUILDING examples/pass/build-1511790120
+
+build_program: Program to build:
+['//',
+ '// This file contains code generated by Pyxie - http://www.sparkslabs.com/pyxie',
+ '//',
+ "// This file is derived from the user's source code, copyright resides",
+ "// with the author of the user's source code.",
+ '//',
+ '// You can edit this header in any way suitable for your project',
+ '//',
+ '',
+ '\n#include "iterators.cpp"\n\nvoid setup()\n{\n   int pan;\n   \n   pan = 0;\n   if ( (1<2) ) { \n;; } ;\n}\n\nvoid loop()\n{\n}\n']
+
+build_program: TIDYING
+build_program: /usr/bin/indent examples/pass/build-1511790120/pass.ino
+
+build_program: Done!
+
+['pass.ino', 'pass.ino~', 'build-leonardo', 'iterators.cpp', 'iterators.hpp', 'Makefile']
+compile_file: BUILD DIR examples/pass/build-1511790120
+compile_file: RESULT FILE examples/pass/build-1511790120/build-leonardo/build-1511790120.hex
+compile_file: DEST FILE examples/pass/pass.hex
+compile_file: CWD /home/michael/WIP/Development/pyxie
