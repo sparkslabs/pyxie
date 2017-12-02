@@ -2,3 +2,7 @@
 
 print("Hello World")
 print("Game Over")
+print(1)
+print(1.1)
+print(True)
+print(False)
