@@ -38,42 +38,112 @@ def Print(*args):
 class CppNode(object):
     pass
 
+# --------------------------------------------------------------------------------------------
+# Support code to cover intermediate stages of conversion
+#
+def node_type(node):
+    try:
+        nodeType = node[0]
+    except TypeError:
+        nodeType = node.tag
+    return nodeType
+
+def get_operator_type(arg):
+    try:
+        op_type = arg[1]
+    except TypeError:
+        op_type = arg.comparator
+    return op_type
+
+def infix_op(arg):
+    try:
+        is_infix = len(arg) == 4
+    except TypeError:
+        is_infix = arg.__class__.__name__ == "iiComparison"
+    return is_infix
+
+def left_op(arg):
+    try:
+        left = arg[2]
+    except TypeError:
+        left = arg.left
+    return left
+
+def right_op(arg):
+    try:
+        right = arg[3]
+    except TypeError:
+        right = arg.right
+    return right
+
+
+def ExpressionIsPrintBuiltin(expression):
+    assert node_type(expression) == 'function_call'
+
+    function_label = expression.iifunc_object
+    try:
+        function_name = function_label[1]
+    except TypeError as e:
+        if 'iiAttributeAccess' in str(e):
+            # This is an expected possibility
+            return False
+        if isIdentifier(function_label):
+            function_name = function_label.identifier
+        else:
+            raise
+    return function_name == "print"
+
+from pyxie.model.iinodes import iiIdentifier
+def isIdentifier(node):
+    return type(node) == iiIdentifier
+
+# END Support code to cover intermediate stages of conversion
+# --------------------------------------------------------------------------------------------
 
 def mkStatement(statement_spec):
     ss = statement_spec
-    if ss[0] == "assignment":
-        return CppAssignment( ss[1], ss[3], ss[2])
+    statement_type = node_type(statement_spec)
+    if statement_type == "assignment":
+        s = statement_spec
+        return CppAssignment( s.lvalue, s.rvalue, s.assignment_op)
 
-    elif ss[0] == "print_statement":
-        return CppPrintStatement(*statement_spec[1:])
+    elif statement_type == "expression_statement":
+        expression = statement_spec.expression
+        if node_type(expression) == "function_call":
+            if ExpressionIsPrintBuiltin(expression):
+                print("XXXX", expression)
+                args = expression.iifunc_call_args
+                return CppPrintStatement(args)
+        return CppExpressionStatement(expression)
 
-    elif ss[0] == "expression_statement":
-        return CppExpressionStatement(*statement_spec[1:])
+    elif statement_type == "while_statement":
+        return CppWhileStatement(statement_spec.condition, *statement_spec.statements)
 
-    elif ss[0] == "while_statement":
-        return CppWhileStatement(*statement_spec[1:])
+    elif statement_type == "for_statement":
+        s = statement_spec
+        return CppForStatement(s.lvalue,
+                               s.iterator,
+                               s.statements,
+                               s.for_statement_PyNode)
 
-    elif ss[0] == "for_statement":
-        return CppForStatement(*statement_spec[1:])
+    elif statement_type == "if_statement":
+        if ss.extended_clause == None:
+            return CppIfStatement(ss.condition, ss.statements)
+        else:
+            return CppIfStatement(ss.condition, ss.statements, ss.extended_clause)
 
-    elif ss[0] == "if_statement":
-        if len(ss) == 3:
-            return CppIfStatement(ss[1], ss[2])
-        if len(ss) == 4:
-            return CppIfStatement(ss[1], ss[2], ss[3])
-        raise NotImplementedError("Have not yet implemented else clauses...")
-
-    elif ss[0] == "pass_statement":
+    elif statement_type == "pass_statement":
         return CppEmptyStatement()
 
-    elif ss[0] == "break_statement":
+    elif statement_type == "break_statement":
         return CppBreakStatement()
 
-    elif ss[0] == "continue_statement":
+    elif statement_type == "continue_statement":
         return CppContinueStatement()
 
     else:
-        print("Unknown statement type", ss[0], ss)
+        print("Unknown statement type", statement_type, ss)
+        raise Exception("Unhandlable statement type: ", statement_type)
 
 
 
@@ -90,7 +160,9 @@ class CppProgram(CppNode):
         program.includes = iiprogram.includes
 
         for identifier in iiprogram.global_identifiers:
-            program.main_cframe.identifiers.append(CppIdentifier(identifier[1], identifier[2]))
+            value_type = identifier.value_type
+            name = identifier.name
+            program.main_cframe.identifiers.append(CppIdentifier(value_type, name))
 
         for statement in iiprogram.statements:
             conc_statement = mkStatement(statement)
@@ -170,14 +242,23 @@ class CppAssignment(CppNode):
         return ["assignment", self.lvalue, self.assigntype, self.rvalue ]
 
     def code(self):
-        print(self.rvalue)
-        if type(self.rvalue) == list:
+        if node_type(self.rvalue) == "function_call":
             print("Aha!",self.rvalue)
             crvalue = CppArgumentList(self.rvalue)
             crvalue = crvalue.code()
             print("AHA!", crvalue)
+
+        elif node_type(self.rvalue) == "op":
+            crvalue = CppArgumentList(self.rvalue)
+            crvalue = crvalue.code()
         else:
+            print("Are we here?")
             crvalue = self.rvalue
+            print("Are we here?",crvalue)
+
+        print("self.lvalue",self.lvalue)
+        print("self.assigntype",self.assigntype)
+        print("crvalue",type(crvalue), crvalue)
         return self.lvalue + " "+self.assigntype+" " + crvalue
 
 
@@ -214,7 +295,13 @@ class CppContinueStatement(CppNode):
         return "continue"
 
 
-
+def c_repr_of_expression(expression):
+    try:
+        cexpression = expression[1]
+    except TypeError:
+        cexpression = expression.identifier
+    return cexpression
+    
 
 class CppFunctionCall(CppNode):
     def __init__(self, identifier, args):
@@ -226,19 +313,19 @@ class CppFunctionCall(CppNode):
         return ["function_call", self.identifier ] + self.arg_list.json()
 
     def code(self):
-        identifier = self.identifier[1]
+        if node_type(self.identifier) == "attributeaccess":
+            expression = self.identifier.expression
+            attribute = self.identifier.attribute
 
-        if self.identifier[0] == "attributeaccess":
-            expression = self.identifier[1]
-            attribute = self.identifier[2]
-
-            c_expression = "(" + expression[1] + ")"
-            c_attribute = attribute[1]
+            c_expression = "(" + c_repr_of_expression(expression) + ")"
+            c_attribute = c_repr_of_expression(attribute)
+#            c_attribute = attribute[1]
 
             identifier = c_expression + "." + c_attribute
 
         else:
-            identifier = self.identifier[1]
+            identifier = c_repr_of_expression(self.identifier)
+#            identifier = self.identifier[1]
 
             # FUDGE: The following would need to be profile specific
             #
@@ -251,6 +338,7 @@ class CppFunctionCall(CppNode):
         return identifier + "(" + arglist + ")"
 
 
+
 class CppArgumentList(CppNode):
     def __init__(self, *args):
         self.args = args
@@ -259,28 +347,27 @@ class CppArgumentList(CppNode):
         return list(self.args[:])
 
     def code_op_F(self, arg):
-        if arg[1] == "plus": return "+"
-        if arg[1] == "minus": return "-"
-        if arg[1] == "times": return "*"
-        if arg[1] == "divide": return "/"
-        if arg[1] == "boolean_or": return " || "
-        if arg[1] == "boolean_and": return " && "
-        if arg[1] == "boolean_not": return " ! "
+        if get_operator_type(arg) == "plus": return "+"
+        if get_operator_type(arg) == "minus": return "-"
+        if get_operator_type(arg) == "times": return "*"
+        if get_operator_type(arg) == "divide": return "/"
+        if get_operator_type(arg) == "boolean_or": return " || "
+        if get_operator_type(arg) == "boolean_and": return " && "
+        if get_operator_type(arg) == "boolean_not": return " ! "
 
-        if arg[1] in ["<", ">", "==", ">=", "<=", "!="]:
-            return arg[1]
+        if get_operator_type(arg) in ["<", ">", "==", ">=", "<=", "!="]:
+            return get_operator_type(arg)
 
-        if arg[1] == "<>": return "!="
+        if get_operator_type(arg) == "<>": return "!="
 
         return None
 
     def code_op(self,arg):
         c_op = self.code_op_F(arg)
         if c_op:
-
-            if len(arg) == 4:
-                arg1 = arg[2]
-                arg2 = arg[3]
+            if infix_op(arg):
+                arg1 = left_op(arg)
+                arg2 = right_op(arg)
                 # We would like to try to assert here that the values on both sides
                 # are integers, but at present we cannot do that, since we use too simplistic
                 # a structure. If I remove that constraint, we can generate more code.
@@ -306,24 +393,29 @@ class CppArgumentList(CppNode):
 
 
     def code_arg(self, arg):
-        if arg[0] == "identifier":
-            return arg[1]
-        elif arg[0] == "integer":
-            r = repr(arg[1])
-            if arg[1]<0:
+        if node_type(arg) == "identifier":
+            return arg.identifier
+        elif node_type(arg) == "integer":
+            the_integer = arg.the_integer
+            r = repr(the_integer)
+            if the_integer<0:
                 r = "(" + r + ")"
             return r
-        elif arg[0] == "string":
-            carg = arg[1].replace('"', '\\"')
+        elif node_type(arg) == "string":
+            the_string = arg.the_string
+            carg = the_string.replace('"', '\\"')
             return '"' + carg + '"' # Force double quotes
-        elif arg[0] == "double":
-            return repr(arg[1])
-        elif arg[0] == "boolean":
-            return arg[1]
-        elif arg[0] == "op":
+        elif node_type(arg) == "double":
+            the_float = arg.the_float
+            return repr(the_float)
+        elif node_type(arg) == "boolean":
+            the_boolean = arg.the_boolean
+            return the_boolean
+        elif node_type(arg) == "op":
             return self.code_op(arg)
-        elif arg[0] == "function_call":
-            code_gen = CppFunctionCall(arg[1],arg[2])
+        elif node_type(arg) == "function_call":
+            print("WE REACH HERE")
+            code_gen = CppFunctionCall(arg.iifunc_object, arg.iifunc_call_args)
             return code_gen.code()
             print("We don't know how to generate code for function calls yet", arg)
             return ""
@@ -352,7 +444,7 @@ class CppExpressionStatement(CppNode):
 
     def code(self):
         print(self.expression)
-        if type(self.expression) == list:
+        if node_type(self.expression) == "function_call":
             cvalue = CppArgumentList(self.expression)
             cvalue = cvalue.code()
         else:
@@ -362,7 +454,7 @@ class CppExpressionStatement(CppNode):
 
 
 class CppPrintStatement(CppNode):
-    def __init__(self, *args):
+    def __init__(self, args):
         self.args = args
         self.arg_list = CppArgumentList(*args)
 
@@ -370,7 +462,7 @@ class CppPrintStatement(CppNode):
         return ["print_statement" ] + self.arg_list.json()
 
     def code(self):
-        return "( cout << " + " << \" \" << ".join(self.arg_list.code_list()) + " << endl )"
+        return "( std::cout << " + " << \" \" << ".join(self.arg_list.code_list()) + " << std::endl )"
 
 
 class CppWhileStatement(CppNode):
@@ -443,11 +535,14 @@ class CppForStatement(CppNode):
         print("OK, USE THIS THEN", self.for_statement_pynode.expression.ivalue_name)
         iterator_name = self.for_statement_pynode.expression.ivalue_name
 
-        if self.raw_iterable[0] == "iterator":
-            iterable = self.raw_iterable[1]
-            if iterable[0] == "function_call":
-                assert iterable[1][0] == "identifier"
-                identifier = iterable[1][1]
+        if node_type(self.raw_iterable) == "iterator":
+            iterable = self.raw_iterable.expression
+
+            if node_type(iterable) == "function_call":
+                print("FUNCTION_CALL", iterable.iifunc_object)
+                assert isIdentifier(iterable.iifunc_object)
+
+                identifier = iterable.iifunc_object.identifier
                 if identifier in builtins:
                     print("YAY")
                     pprint.pprint( builtins[identifier] )
@@ -456,7 +551,7 @@ class CppForStatement(CppNode):
                     print("YAY")
 
                 print(iterable)
-                fcall = CppFunctionCall(iterable[1],iterable[2])
+                fcall = CppFunctionCall(iterable.iifunc_object,iterable.iifunc_call_args)
                 fcall_code = fcall.code()
                 iterator_expression = fcall_code
 
@@ -512,20 +607,18 @@ class CppIfStatement(CppNode):
         condition_code = CppArgumentList(self.raw_condition).code()
         block_code = "\n".join( self.block_cframe.concrete() )
         if self.extended_clause:
-            if self.extended_clause[0] == "elif_clause":
-                print(self.extended_clause[0])
-                condition = self.extended_clause[1]
-                statements =  self.extended_clause[2]
-                if len(self.extended_clause) == 4:
-                    extended_sub_clause =  self.extended_clause[3]
+            if node_type(self.extended_clause) == "elif_clause":
+                condition = self.extended_clause.condition
+                statements =  self.extended_clause.statements
+                if self.extended_clause.extended_clause:
+                    extended_sub_clause =  self.extended_clause.extended_clause
                     extended_clauses_code = CppElseIfClause( condition, statements, extended_sub_clause ).code()
                 else:
                     extended_clauses_code = CppElseIfClause( condition, statements ).code()
 
-            if self.extended_clause[0] == "else_clause":
+            if node_type(self.extended_clause) == "else_clause":
                 print("***************************************************")
-                print(self.extended_clause[0])
-                statements =  self.extended_clause[1]
+                statements =  self.extended_clause.statements
                 extended_clauses_code = CppElseClause( statements ).code()
 
         code = "if ( %s ) { %s } " % (condition_code, block_code )
@@ -555,23 +648,21 @@ class CppElseIfClause(CppNode):
         condition_code = CppArgumentList(self.raw_condition).code()
         block_code = "\n".join( self.block_cframe.concrete() )
         if self.extended_clause:
-            if self.extended_clause[0] == "elif_clause":
+            if node_type(self.extended_clause) == "elif_clause":
                 print("***************************************************")
-                print(self.extended_clause[0])
-                condition = self.extended_clause[1]
-                statements =  self.extended_clause[2]
+                condition = self.extended_clause.condition
+                statements =  self.extended_clause.statements
 
-                if len(self.extended_clause) == 4:
-                    extended_sub_clause =  self.extended_clause[3]
+                if self.extended_clause.extended_clause:
+                    extended_sub_clause =  self.extended_clause.extended_clause
                     extended_clauses_code = CppElseIfClause( condition, statements, extended_sub_clause ).code()
                 else:
                     extended_clauses_code = CppElseIfClause( condition, statements ).code()
 
 
-            if self.extended_clause[0] == "else_clause":
+            if node_type(self.extended_clause) == "else_clause":
                 print("***************************************************")
-                print(self.extended_clause[0])
-                statements =  self.extended_clause[1]
+                statements =  self.extended_clause.statements
                 extended_clauses_code = CppElseClause( statements ).code()
 
         code = "else if ( %s ) { %s } " % (condition_code, block_code )

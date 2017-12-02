@@ -39,7 +39,6 @@ from pyxie.model.iinodes import mkString
 from pyxie.model.iinodes import mkInteger
 from pyxie.model.iinodes import mkBoolean
 from pyxie.model.iinodes import mkComparison
-from pyxie.model.iinodes import mkPrintStatement
 from pyxie.model.iinodes import mkWhileStatement
 from pyxie.model.iinodes import mkIterator
 from pyxie.model.iinodes import mkForStatement
@@ -63,6 +62,16 @@ class UnknownType(Exception):
 
 class CannotConvert(Exception):
     pass
+
+#
+# Support code to cover intermediate stages of conversion
+#
+def statement_type(cstatement):
+    try:
+        statementType = cstatement[0]
+    except TypeError:
+        statementType = cstatement.tag
+    return statementType
 
 
 
@@ -143,8 +152,9 @@ def python_type_to_c_type(ptype):
 def includes_for_ctype(ctype):
     if ctype == "string": return "<string>"
 
+
 def includes_for_cstatement(cstatement):
-    if cstatement[0] == "print_statement": return "<iostream>"
+    if statement_type(cstatement) == "print_statement": return "<iostream>"
 
 def crepr_literal(pyliteral):
     assert isinstance(pyliteral, nodes.PyValueLiteral)
@@ -312,9 +322,9 @@ def convert_bool_operator_function(opfunc):
 
     if arg2:
         print("crepr_arg2", repr(crepr_arg2))
-        result = crepr_op(opfunc) + [crepr_arg1, crepr_arg2]
+        result = ["op", crepr_op(opfunc).tag , crepr_arg1, crepr_arg2] # FIXME: Needs improving
     else:
-        result = crepr_op(opfunc) + [crepr_arg1]
+        result = ["op", crepr_op(opfunc).tag, crepr_arg1] # FIXME: Needs improving
     print(repr(result))
     return result
 
@@ -332,7 +342,7 @@ def convert_operator_function(opfunc):
     print("crepr_arg1", repr(crepr_arg1))
     print("crepr_arg2", repr(crepr_arg2))
 
-    result = crepr_op(opfunc) + [crepr_arg1, crepr_arg2]
+    result = ["op", crepr_op(opfunc).tag , crepr_arg1, crepr_arg2] # FIXME: Needs improving
     print(repr(result))
     return result
 
@@ -558,7 +568,8 @@ def convert_statements(AST):
                 cstatement = convert_if_statement(statement)
                 cstatements.append(cstatement)
             elif statement.tag == "pass_statement":
-                cstatement = convert_break_statement(statement)
+                cstatement = convert_pass_statement(statement)
+                cstatements.append(cstatement)
             elif statement.tag == "break_statement":
                 cstatement = convert_break_statement(statement)
                 cstatements.append(cstatement)

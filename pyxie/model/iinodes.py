@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 """
 This file will contain objects used to represent the independent intermediate
 format of the program.
@@ -25,7 +24,7 @@ def jsonify(node):
     if isinstance(node, iiNode):
         print "here"
         return node.__json__()
-    elif isinstance(node, list) or isinstance(node, dict) or isinstance(node, str) or isinstance(node, int) or isinstance(node, float) or isinstance(node, bool):
+    elif ( isinstance(node, list) or isinstance(node, dict) or isinstance(node, str) or isinstance(node, int) or isinstance(node, float) or isinstance(node, bool) ):
         return node
     return ValueError("Don't know what to do with this value"+repr(node))
 
@@ -222,6 +221,8 @@ class iiDefStatement(iiNode):
 
 class iiPassStatement(iiNode):
     tag = "pass_statement"
+    def __init__(self):
+        pass
 
     def __json__(self):
         return ["pass_statement"]
@@ -229,12 +230,15 @@ class iiPassStatement(iiNode):
 
 class iiBreakStatement(iiNode):
     tag = "break_statement"
-
+    def __init__(self):
+        pass
     def __json__(self):
         return ["break_statement"]
 
 class iiContinueStatement(iiNode):
     tag = "continue_statement"
+    def __init__(self):
+        pass
 
     def __json__(self):
         return ["continue_statement"]
@@ -296,111 +300,115 @@ class iiIfStatement(iiNode):
 
 
 def mkIfStatement(condition, statements, extended_clause=None):
-    return jsonify( iiIfStatement(condition, statements, extended_clause) )
+    return iiIfStatement(condition, statements, extended_clause)
 
 def mkElifClause(condition, statements, extended_clause=None):
-    return jsonify( iiElifClause(condition, statements, extended_clause) )
+    return iiElifClause(condition, statements, extended_clause)
 
 def mkElseClause(statements):
-    return jsonify( iiElseClause(statements) )
+    return iiElseClause(statements)
 
 def mkBreakStatement():
-    return jsonify( iiBreakStatement() )
+    return iiBreakStatement()
 
 def mkContinueStatement():
-    return jsonify( iiContinueStatement() )
+    return iiContinueStatement()
 
 def mkExpressionStatement(expression):
-    return jsonify( iiExpressionStatement(expression) )
+    return iiExpressionStatement(expression)
 
 def mkIdentifierDeclaration(name, value_type):
-    return jsonify( iiIdentifierDeclaration(name, value_type) )
+    return iiIdentifierDeclaration(name, value_type)
 
 def mkComparison(comparator, left, right):
-    return jsonify( iiComparison(comparator, left, right) )
+    return iiComparison(comparator, left, right)
 
 def mkWhileStatement(condition, statements):
-    return jsonify( iiWhileStatement(condition, statements) )
+    return iiWhileStatement(condition, statements)
 
 
 def mkForStatement(lvalue, iterator, statements, for_statement_PyNode):
-    return jsonify( iiForStatement(lvalue, iterator, statements, for_statement_PyNode) )
+    return iiForStatement(lvalue, iterator, statements, for_statement_PyNode)
 
 def mkDefStatement(name, params, block, def_statement_PyNode):
-    return jsonify( iiDefStatement(name, params, block, def_statement_PyNode) )
+    return iiDefStatement(name, params, block, def_statement_PyNode)
 
 def mkPassStatement():
-    return jsonify( iiPassStatement() )
+    return iiPassStatement()
 
 def mkAttributeAccess(expression, attribute):
-    return jsonify( iiAttributeAccess(expression, attribute) )
+    return iiAttributeAccess(expression, attribute)
 
 def mkIdentifier(identifier):
-    return jsonify( iiIdentifier(identifier) )
+    return iiIdentifier(identifier)
 
 def mkString(the_string):
-    return jsonify( iiString(the_string) )
+    return iiString(the_string)
 
 def mkInteger(the_integer):
-    return jsonify( iiInteger( the_integer) )
+    return iiInteger( the_integer)
 
 def mkFloat(the_float):
-    return jsonify( iiFloat(the_float) )
+    return iiFloat(the_float)
 
 def mkBoolean(the_boolean):
-    return jsonify( iiBoolean(the_boolean) )
+    return iiBoolean(the_boolean)
 
 def mkIterator(expression):
-    return jsonify( iiIterator(expression) )
+    return iiIterator(expression)
 
 def mkOpPlus():
-    return jsonify(iiOpPlus())
+    return iiOpPlus()
 
 def mkOpMinus():
-    return jsonify(iiOpMinus())
+    return iiOpMinus()
 
 def mkOpMultiply():
-    return jsonify(iiOpMultiply())
+    return iiOpMultiply()
 
 def mkOpDivide():
-    return jsonify(iiOpDivide())
+    return iiOpDivide()
 
 def mkOpBooleanOr():
-    return jsonify(iiOpBooleanOr())
+    return iiOpBooleanOr()
 
 def mkOpBooleanAnd():
-    return jsonify(iiOpBooleanAnd())
+    return iiOpBooleanAnd()
 
 def mkOpBooleanNot():
-    return jsonify(iiOpBooleanNot())
+    return iiOpBooleanNot()
 
 def mkAssignment(lvalue, assignment_op, rvalue):
-    return jsonify(iiAssignment(lvalue, assignment_op, rvalue))
+    return iiAssignment(lvalue, assignment_op, rvalue)
 
 def mkFunctionCall(func_object, args):
-    return jsonify(iiFunctionCall(func_object, args))
+    return iiFunctionCall(func_object, args)
 
 def mkOperator(operator):
+    result = None
     if operator=="op_plus":
-        return mkOpPlus()
+        result = mkOpPlus()
 
     if operator=="op_minus":
-        return mkOpMinus()
+        result = mkOpMinus()
 
     if operator=="op_times":
-        return mkOpMultiply()
+        result = mkOpMultiply()
 
     if operator=="op_divide":
-        return mkOpDivide()
+        result = mkOpDivide()
 
     if operator=="or_operator":
-        return mkOpBooleanOr()
+        result = mkOpBooleanOr()
 
     if operator=="and_operator":
-        return mkOpBooleanAnd()
+        result = mkOpBooleanAnd()
 
     if operator=="not_operator":
-        return mkOpBooleanNot()
+        result = mkOpBooleanNot()
+
+    if result:
+        return result
 
     raise ValueError("Cannot represent operator", repr(func))
 
