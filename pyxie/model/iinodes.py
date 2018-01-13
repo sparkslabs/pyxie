@@ -13,21 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 """
 This file will contain objects used to represent the independent intermediate
 format of the program.
 
 Initially it's being a bridging/extraction point.
 """
-
-def jsonify(node):
-    if isinstance(node, iiNode):
-        print "here"
-        return node.__json__()
-    elif ( isinstance(node, list) or isinstance(node, dict) or isinstance(node, str) or isinstance(node, int) or isinstance(node, float) or isinstance(node, bool) ):
-        return node
-    return ValueError("Don't know what to do with this value"+repr(node))
-
 
 class iiNode(object): # This is to allow intermediate thunk check whether it has an iiNode or not...
     tag = "iinode"

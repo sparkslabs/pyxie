@@ -34,7 +34,7 @@ from pyxie.model.transform import ast_to_cst
 from pyxie.codegen.clib import files as clib_files
 from pyxie.codegen.simple_cpp import CppProgram, source, reset_parser
 
-from pyxie.model.iinodes import jsonify
+from pyxie.model.iinodes import iiNode
 
 testdir = "test-data"
 testprogs_dir = os.path.join(testdir, "progs")
@@ -146,6 +146,15 @@ def analyse_file(filename):
     print("analyse_file: Analysis results follow ------------")
     pprint.pprint(AST.__info__())
     print("------------")
+
+def jsonify(node):
+    if isinstance(node, iiNode):
+        print ("here")
+        return node.__json__()
+    elif ( isinstance(node, list) or isinstance(node, dict) or isinstance(node, str) or isinstance(node, int) or isinstance(node, float) or isinstance(node, bool) ):
+        return node
+    return ValueError("Don't know what to do with this value"+repr(node))
+
 
 def generate_code(cname, AST, profile, debug=False):
     iiNodes = ast_to_cst(cname, AST)
