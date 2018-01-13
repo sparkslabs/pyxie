@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 """
 This file will contain objects used to represent the independent intermediate
 format of the program.
@@ -290,120 +289,30 @@ class iiIfStatement(iiNode):
         else:
             return ["if_statement", self.condition, self.statements]
 
-
-def mkIfStatement(condition, statements, extended_clause=None):
-    return iiIfStatement(condition, statements, extended_clause)
-
-def mkElifClause(condition, statements, extended_clause=None):
-    return iiElifClause(condition, statements, extended_clause)
-
-def mkElseClause(statements):
-    return iiElseClause(statements)
-
-def mkBreakStatement():
-    return iiBreakStatement()
-
-def mkContinueStatement():
-    return iiContinueStatement()
-
-def mkExpressionStatement(expression):
-    return iiExpressionStatement(expression)
-
-def mkIdentifierDeclaration(name, value_type):
-    return iiIdentifierDeclaration(name, value_type)
-
-def mkComparison(comparator, left, right):
-    return iiComparison(comparator, left, right)
-
-def mkWhileStatement(condition, statements):
-    return iiWhileStatement(condition, statements)
-
-
-def mkForStatement(lvalue, iterator, statements, for_statement_PyNode):
-    return iiForStatement(lvalue, iterator, statements, for_statement_PyNode)
-
-def mkDefStatement(name, params, block, def_statement_PyNode):
-    return iiDefStatement(name, params, block, def_statement_PyNode)
-
-def mkPassStatement():
-    return iiPassStatement()
-
-def mkAttributeAccess(expression, attribute):
-    return iiAttributeAccess(expression, attribute)
-
-def mkIdentifier(identifier):
-    return iiIdentifier(identifier)
-
-def mkString(the_string):
-    return iiString(the_string)
-
-def mkInteger(the_integer):
-    return iiInteger( the_integer)
-
-def mkFloat(the_float):
-    return iiFloat(the_float)
-
-def mkBoolean(the_boolean):
-    return iiBoolean(the_boolean)
-
-def mkIterator(expression):
-    return iiIterator(expression)
-
-def mkOpPlus():
-    return iiOpPlus()
-
-def mkOpMinus():
-    return iiOpMinus()
-
-def mkOpMultiply():
-    return iiOpMultiply()
-
-def mkOpDivide():
-    return iiOpDivide()
-
-def mkOpBooleanOr():
-    return iiOpBooleanOr()
-
-def mkOpBooleanAnd():
-    return iiOpBooleanAnd()
-
-def mkOpBooleanNot():
-    return iiOpBooleanNot()
-
-def mkAssignment(lvalue, assignment_op, rvalue):
-    return iiAssignment(lvalue, assignment_op, rvalue)
-
-def mkFunctionCall(func_object, args):
-    return iiFunctionCall(func_object, args)
-
-def mkOperator(operator):
+def iiOperator(operator):
     result = None
     if operator=="op_plus":
-        result = mkOpPlus()
+        result = iiOpPlus()
 
     if operator=="op_minus":
-        result = mkOpMinus()
+        result = iiOpMinus()
 
     if operator=="op_times":
-        result = mkOpMultiply()
+        result = iiOpMultiply()
 
     if operator=="op_divide":
-        result = mkOpDivide()
+        result = iiOpDivide()
 
     if operator=="or_operator":
-        result = mkOpBooleanOr()
+        result = iiOpBooleanOr()
 
     if operator=="and_operator":
-        result = mkOpBooleanAnd()
+        result = iiOpBooleanAnd()
 
     if operator=="not_operator":
-        result = mkOpBooleanNot()
+        result = iiOpBooleanNot()
 
     if result:
         return result
 
     raise ValueError("Cannot represent operator", repr(func))
-
-def mkProgram( name, includes, identifiers, statements):
-    program = iiProgram(name, includes, identifiers, statements)
-    return program
