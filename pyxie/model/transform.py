@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright 2016 Michael Sparks
+# Copyright 2018 Michael Sparks
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ from pyxie.model.iinodes import mkAttributeAccess
 from pyxie.model.iinodes import mkIdentifier
 from pyxie.model.iinodes import mkString
 from pyxie.model.iinodes import mkInteger
+from pyxie.model.iinodes import mkFloat
 from pyxie.model.iinodes import mkBoolean
 from pyxie.model.iinodes import mkComparison
 from pyxie.model.iinodes import mkWhileStatement
