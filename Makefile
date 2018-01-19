@@ -32,6 +32,7 @@ all:
 	@echo "make test - run behave and other tests"
 	@echo "make clean - Get rid of scratch and byte files"
 	@echo "make test - Run any unit tests"
+	@echo "make edit - convenience to launch editor for dev"
 
 source:
 	$(PYTHON) setup.py sdist $(COMPILE)
@@ -73,3 +74,6 @@ devloop: purge distclean deb use
 test:
 	PYTHONPATH="." ./bin/pyxie --test run-tests
 	# behave
+
+edit:
+	((kate --new -s Pyxie </dev/null >/dev/null 2>/dev/null)&)&
