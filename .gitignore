@@ -1,6 +1,7 @@
 *pyc
 *~
 
+doc/WIPNOTES/0.RandomDevNotes.md
 parser.out
 parsetab.py
 test-data/genprogs
