@@ -16,6 +16,8 @@
 from __future__ import print_function
 from __future__ import absolute_import
 
+from pyxie.model.iinodes import iiIdentifier
+
 import pyxie.codegen.simple_cpp
 from pyxie.codegen.profiles import cpp_templates
 
@@ -43,38 +45,27 @@ class CppNode(object):
 #
 def node_type(node):
     try:
-        nodeType = node[0]
-    except TypeError:
         nodeType = node.tag
+    except AttributeError as e:
+        print("*** WARNING ***")
+        print("WARNING: AttributeError:", e)
+        print("** WARNING ***")
+        nodeType = "UNDEFINED_NODETYPE"
+
     return nodeType
 
 def get_operator_type(arg):
-    try:
-        op_type = arg[1]
-    except TypeError:
-        op_type = arg.comparator
-    return op_type
+    return arg.comparator
 
 def infix_op(arg):
-    try:
-        is_infix = len(arg) == 4
-    except TypeError:
-        is_infix = arg.__class__.__name__ == "iiComparison"
+    is_infix = arg.__class__.__name__ == "iiComparison"
     return is_infix
 
 def left_op(arg):
-    try:
-        left = arg[2]
-    except TypeError:
-        left = arg.left
-    return left
+    return arg.left
 
 def right_op(arg):
-    try:
-        right = arg[3]
-    except TypeError:
-        right = arg.right
-    return right
+    return arg.right
 
 
 def ExpressionIsPrintBuiltin(expression):
@@ -93,7 +84,6 @@ def ExpressionIsPrintBuiltin(expression):
             raise
     return function_name == "print"
 
-from pyxie.model.iinodes import iiIdentifier
 def isIdentifier(node):
     return type(node) == iiIdentifier
 
@@ -237,6 +227,8 @@ class CppAssignment(CppNode):
         self.lvalue = lvalue
         self.rvalue = rvalue
         self.assigntype = assigntype
+        print("CppAssignment.__init__   LVALUE", lvalue, type(lvalue), repr(lvalue))
+        print("CppAssignment.__init__   RVALUE", rvalue, type(rvalue), repr(rvalue))
 
     def json(self):
         return ["assignment", self.lvalue, self.assigntype, self.rvalue ]
