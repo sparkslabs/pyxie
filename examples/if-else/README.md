@@ -1,9 +1,8 @@
-else-bug
---------
+if-else
+-------
 This directory was created in response to a bug in the code generation of
-else statements - specifically in the code generation of statements using
-identifiers. The reason for this was due to lack of propogation of context.
+else statements, and so this directory was therefore created to test a specific
+failure case.
 
-This directory was created to test/check this. I'm leaving it here to allow
-testing for regression. It also acts as a simple example of how pyxie programs
-can be written, compiled etc.
+I'm leaving it here to allow testing for regression. It also acts as a simple
+example of how pyxie programs can be written, compiled etc.
