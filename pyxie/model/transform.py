@@ -170,8 +170,12 @@ def crepr_literal(pyliteral):
 
 def crepr_op(py_op):
     assert isinstance(py_op, nodes.PyOperator) or isinstance(py_op, nodes.PyBoolOperator)
+
+    args = py_op.args()
+    crepr_args = [ convert_arg(x) for x in args ]
+
     try:
-        result = iiOperator(operator=py_op.tag)
+        result = iiOperator(py_op.tag, crepr_args)
     except ValueError:
         raise CannotConvert("Cannot represent operator", py_op.tag)
     return result
@@ -296,11 +300,8 @@ def convert_bool_operator_function(opfunc):
 
     print("crepr_arg1", repr(crepr_arg1))
 
-    if arg2:
-        print("crepr_arg2", repr(crepr_arg2))
-        result = ["op", crepr_op(opfunc).tag , crepr_arg1, crepr_arg2] # FIXME: Needs improving
-    else:
-        result = ["op", crepr_op(opfunc).tag, crepr_arg1] # FIXME: Needs improving
+    result = crepr_op(opfunc)
+
     print(repr(result))
     return result
 
@@ -318,7 +319,7 @@ def convert_operator_function(opfunc):
     print("crepr_arg1", repr(crepr_arg1))
     print("crepr_arg2", repr(crepr_arg2))
 
-    result = ["op", crepr_op(opfunc).tag , crepr_arg1, crepr_arg2] # FIXME: Needs improving
+    result = crepr_op(opfunc)
     print(repr(result))
     return result
 
@@ -382,7 +383,7 @@ def convert_arg(arg):
 
     else:
         todo("Handle print for non-value-literals")
-        raise CannotConvert("Cannot convert print for non-value-literals")
+        raise CannotConvert("Cannot convert print for non-value-literals", arg)
 
 
 def convert_print(print_statement):

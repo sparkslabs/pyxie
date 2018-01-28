@@ -49,34 +49,6 @@ class iiProgram(iiNode):
         result = {"PROGRAM" : program }
         return result
 
-class iiOpNode(iiNode):
-    tag = "iiopnode"
-    def __init__(self):
-        pass
-
-    def __json__(self):
-        return ["op", self.tag ]
-
-class iiOpPlus(iiOpNode):
-    tag = "plus"
-
-class iiOpMinus(iiOpNode):
-    tag = "minus"
-
-class iiOpMultiply(iiOpNode):
-    tag = "times"
-
-class iiOpDivide(iiOpNode):
-    tag = "divide"
-
-class iiOpBooleanOr(iiOpNode):
-    tag = "boolean_or"
-
-class iiOpBooleanAnd(iiOpNode):
-    tag = "boolean_and"
-
-class iiOpBooleanNot(iiOpNode):
-    tag = "boolean_not"
 
 class iiAssignment(iiNode):
     tag = "assignment"
@@ -87,6 +59,43 @@ class iiAssignment(iiNode):
     def __json__(self):
         return ["assignment", self.lvalue, self.assignment_op, self.rvalue ]
 
+
+class iiOperator(iiNode):
+    tag = "operator"
+    def __init__(self, operator, args):
+        # FIXME: This is a transform that should happen outside this file...
+        if operator=="op_plus":
+            self.operator = "plus"
+
+        elif operator=="op_minus":
+            self.operator = "minus"
+
+        elif operator=="op_times":
+            self.operator = "times"
+
+        elif operator=="op_divide":
+            self.operator = "divide"
+
+        elif operator=="or_operator":
+            self.operator = "boolean_or"
+
+        elif operator=="and_operator":
+            self.operator = "boolean_and"
+
+        elif operator=="not_operator":
+            self.operator = "boolean_not"
+
+        else:
+            raise ValueError("Cannot represent operator", (operator, args) )
+
+        self.tag = "op"
+
+#        self.operator = operator
+        self.args = args
+
+
+    def __json__(self):
+        return ["operator", self.operator, self.args ]
 
 
 class iiFunctionCall(iiNode):
@@ -134,9 +143,6 @@ class iiInteger(iiNode):
     def __json__(self):
         return ["integer", self.the_integer]
 
-
-
-
 class iiFloat(iiNode):
     tag = "double"
     def __init__(self, the_float):
@@ -159,7 +165,9 @@ class iiBoolean(iiNode):
 class iiComparison(iiNode):
     tag = "op"
     def __init__(self, comparator, left, right):
-        self.comparator = comparator
+        self.comparator = comparator # FIXME: Do we still need comparator? It's just a special case operator, right?
+        self.operator = comparator
+        self.args = [ left, right ]
         self.left = left
         self.right = right
     def __json__(self):
@@ -197,6 +205,7 @@ class iiForStatement(iiNode):
     def __json__(self):
         return ["for_statement", self.lvalue, self.iterator, self.statements, self.for_statement_PyNode]
 
+
 class iiDefStatement(iiNode):
     tag = "func_defintion"
     def __init__(self, name, params, block, def_statement_PyNode):
@@ -207,7 +216,6 @@ class iiDefStatement(iiNode):
 
     def __json__(self):
         return ["func_defintion", self.name, self.params, self.block, repr(self.def_statement_PyNode) ]
-
 
 
 class iiPassStatement(iiNode):
@@ -289,30 +297,3 @@ class iiIfStatement(iiNode):
         else:
             return ["if_statement", self.condition, self.statements]
 
-def iiOperator(operator):
-    result = None
-    if operator=="op_plus":
-        result = iiOpPlus()
-
-    if operator=="op_minus":
-        result = iiOpMinus()
-
-    if operator=="op_times":
-        result = iiOpMultiply()
-
-    if operator=="op_divide":
-        result = iiOpDivide()
-
-    if operator=="or_operator":
-        result = iiOpBooleanOr()
-
-    if operator=="and_operator":
-        result = iiOpBooleanAnd()
-
-    if operator=="not_operator":
-        result = iiOpBooleanNot()
-
-    if result:
-        return result
-
-    raise ValueError("Cannot represent operator", repr(func))

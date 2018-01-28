@@ -55,18 +55,7 @@ def node_type(node):
     return nodeType
 
 def get_operator_type(arg):
-    return arg.comparator
-
-def infix_op(arg):
-    is_infix = arg.__class__.__name__ == "iiComparison"
-    return is_infix
-
-def left_op(arg):
-    return arg.left
-
-def right_op(arg):
-    return arg.right
-
+    return arg.operator
 
 def ExpressionIsPrintBuiltin(expression):
     assert node_type(expression) == 'function_call'
@@ -357,24 +346,20 @@ class CppArgumentList(CppNode):
     def code_op(self,arg):
         c_op = self.code_op_F(arg)
         if c_op:
-            if infix_op(arg):
-                arg1 = left_op(arg)
-                arg2 = right_op(arg)
+            if len(arg.args) == 2:
+                print("GENERATING CODE FOR INFIX OPERATORS")
                 # We would like to try to assert here that the values on both sides
                 # are integers, but at present we cannot do that, since we use too simplistic
                 # a structure. If I remove that constraint, we can generate more code.
                 # But we will need to revisit this.
-                lit_arg1 = self.code_arg(arg1)
-                lit_arg2 = self.code_arg(arg2)
-
-                result = "(" + lit_arg1 + c_op + lit_arg2 + ")"
+                lit_args = [ self.code_arg(x) for x in arg.args ]
+                result = "(" + lit_args[0] + c_op + lit_args[1] + ")"
                 return result
-            if len(arg) == 3:
-                arg1 = arg[2]
-                # We would like to try to assert here that the values on both sides
-                # are integers, but at present we cannot do that, since we use too simplistic
-                # a structure. If I remove that constraint, we can generate more code.
-                # But we will need to revisit this.
+
+            if len(arg.args) == 1:
+                print("HERE INSTEAD")
+                arg1 = arg.args[0]
+#                # We will need to revisit this.
                 lit_arg1 = self.code_arg(arg1)
 
                 result = "(" + c_op + lit_arg1 + ")"

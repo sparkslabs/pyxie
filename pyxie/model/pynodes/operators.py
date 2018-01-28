@@ -80,6 +80,9 @@ class PyOperator(PyOperation):
 
         self.ntype = self.get_type()
 
+    def args(self):
+        return [ self.arg1, self.arg2 ]
+
 
 class PyBoolOperator(PyOperation):
     tag = "base_bool_operator"
@@ -104,6 +107,9 @@ class PyBoolOperator(PyOperation):
             info[self.tag]["arg%d" % i] = arg.__info__()
             i = i + 1
         return info
+
+    def args(self):
+        return list(self.argv)
 
     def __repr__(self):
         return "%s%s" % (self.classname(),repr(tuple([x for x in self.argv])))
@@ -177,6 +183,9 @@ class PyComparisonOperator(PyOperation):
 
     def __repr__(self):
         return "%s(%s, %s, %s)" % (self.classname(),self.comparison, repr(self.arg1),repr(self.arg2))
+
+    def args(self):
+        return [ self.arg1, self.arg2 ]
 
     def __json__(self):
         return [ self.tag, self.comparison, jdump(self.arg1), jdump(self.arg2) ]
