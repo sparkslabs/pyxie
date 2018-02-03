@@ -48,7 +48,7 @@ packages = find_packages(".")
 package_names = packages.keys()
 
 setup(name = "pyxie",
-      version = "0.1.24",
+      version = "0.1.25",
       description = "Little Python to C++ Compiler",
       url='http://www.sparkslabs.com/pyxie/',
       author='Michael Sparks (sparkslabs)',
@@ -69,8 +69,8 @@ Pyxie -- A Little Python to C++ Compiler
 What job does / will this do?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The aim of this project is to allow a adults and children to write code
-in a familiar high level language that can then be compiled to run on an
+The aim of this project is to allow adults and children to write code in
+a familiar high level language that can then be compiled to run on an
 arbitrary embedded system - that is devices with very low power CPUs and
 very little memory. (ie devices too small to host a python
 interpreter/runtime)
@@ -305,6 +305,7 @@ Release History
 
 Release History:
 
+-  0.1.25 - UNRELEASED - TBD
 -  0.1.24 - 2016-11-10 - Fix assignment in else/elif, update to support
    Ubuntu 16.04LTS, initial steps on function/def statement support
 -  0.1.23 - 2016-10-11 - Major arduino profile improvements,
@@ -496,7 +497,7 @@ As of 0.1.23, the print\_statement has been removed. As well as being
 simplifying the syntax, it also means that Arudino statements like
 Serial.print now become legal statements.
 
-Michael Sparks, November 2016
+Michael Sparks, February 2018
 
 """
       )

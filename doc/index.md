@@ -1,10 +1,10 @@
 ## Pyxie -- A Little Python to C++ Compiler
 
-**Latest Release:** [0.1.23](changelog.html) (12/Oct/2016)
+**Latest Release:** [0.1.25](changelog.html) (3/Feb/2018)
 
 ### What job does / will this do?
 
-The aim of this project is to allow a adults and children to write code in a
+The aim of this project is to allow adults and children to write code in a
 familiar high level language that can then be compiled to run on an arbitrary
 embedded system - that is devices with very low power CPUs and very little memory.
 (ie devices too small to host a python interpreter/runtime) 
@@ -446,6 +446,7 @@ inspired heavily by python introspection) That's quite some time off.
 
 Release History:
 
+* 0.1.25 - UNRELEASED - TBD
 * 0.1.24 - 2016-11-10 - Fix assignment in else/elif, update to support Ubuntu 16.04LTS, initial steps on function/def statement support
 * 0.1.23 - 2016-10-11 - Major arduino profile improvements, print-as-function not statement
 * 0.0.22 - 2016-09-25 - Enable ability to use a variety of Arduino boards by using an Makefile.in file
