@@ -352,7 +352,8 @@ def upload_to_pypi():
     # Build PyPI release
     os.system("rm -rf dist")
     os.system("rm MANIFEST")
-    os.system("python setup.py sdist upload")
+    os.system("python setup.py sdist")
+    os.system("twine upload dist/*")
     os.system("make distclean")
 
 # <NEED REFACTOR PROBABLY> ------------------------------------------------------
