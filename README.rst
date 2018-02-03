@@ -240,6 +240,7 @@ Release History
 
 Release History:
 
+-  0.1.26 - UNRELEASED - TBD
 -  0.1.25 - 2018-02-03 - Major changes to internal representation and
    some new examples
 -  0.1.24 - 2016-11-10 - Fix assignment in else/elif, update to support

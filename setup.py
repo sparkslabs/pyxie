@@ -48,7 +48,7 @@ packages = find_packages(".")
 package_names = packages.keys()
 
 setup(name = "pyxie",
-      version = "0.1.25",
+      version = "0.1.26",
       description = "Little Python to C++ Compiler",
       url='http://www.sparkslabs.com/pyxie/',
       author='Michael Sparks (sparkslabs)',
@@ -305,6 +305,7 @@ Release History
 
 Release History:
 
+-  0.1.26 - UNRELEASED - TBD
 -  0.1.25 - 2018-02-03 - Major changes to internal representation and
    some new examples
 -  0.1.24 - 2016-11-10 - Fix assignment in else/elif, update to support

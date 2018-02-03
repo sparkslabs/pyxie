@@ -12,6 +12,24 @@ This project adheres to [Semantic Versioning](http://semver.org/), within
 reason. (Prior to a 1.0.0 release minor version increases may be backwards
 incompatible) See doc/Versioning.md for more details
 
+## [0.1.26] - UNRELEASED
+
+### New
+
+*
+
+### What's been fixed?
+
+*
+
+### Internal Changes
+
+*
+
+### Other
+
+*
+
 ## [0.1.25] - 2018-02-03
 
 The focus of this release is the result of the independent intermediate
