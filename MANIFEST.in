@@ -2,8 +2,12 @@ recursive-include examples *
 recursive-include features *
 recursive-include test-data/progs *
 recursive-include bin *
+recursive-include clib *
 recursive-include doc *
+recursive-include site *
 
 include README.md
 include stdeb.cfg
-
+include COPYING
+include COPYING.output.md
+include README.rst

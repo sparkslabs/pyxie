@@ -48,7 +48,7 @@ Release History:
 
 {% grammar = panel("panels/why-python-2-print.md") %}
 
-Michael Sparks, MONTH 2016
+Michael Sparks, MONTH 2018
 
 """
 

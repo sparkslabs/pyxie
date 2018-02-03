@@ -3,25 +3,79 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/), within
 reason. (Prior to a 1.0.0 release minor version increases may be backwards
-incompatible)
+incompatible) See doc/Versioning.md for more details
 
 ## [0.1.25] - UNRELEASED
 
+The focus of this release is the result of the independent intermediate
+node refactoring project I was undertaking. This was to transform the list
+oriented data structure for representing a "pure" intermediate form of
+code into a more stuctured/generalisable format.
+
+The motivation behind this change was the realisation that implementation
+of end user functions (ie `def`) would be very difficult with this more
+structured approach. 
+
 ### New
 
-*
+* `doc/Versioning.md` - semantic versioning as it applies to pyxie
+* `doc/WIPNOTES/6.Models.md` - start of some docs around the models in use
+* Added explicit notes on licensing of pyxie's output.
+  (Short version: I view the output as being derived from your code by you)
+* Language focussed examples / acceptance tests added:
+  `if` `if-else` `pass` `print`  `while-break` `while-continue`
+* Change `arduino` profile to support the `Adafruit_NeoPixel` library
+* `neopixel` example added
 
-### What's been fixed?
+### What's been fixed? / Improved
 
-*
+* Handling if if/elif/else improved/fixed
+* added `clean.sh` to `arduino` example
+* added `clean.sh` to `servo` example
+* added `README.md` to `simplest_function` example (won't work yet)
 
 ### Internal Changes
 
-*
+* `bin/pyxie` now pulls in functionality from `pyxie.api` to be clearer
+   about what the API is
+* added `pyxie/api.py` - public API for embedding pyxie. (Assumes
+  ubuntu host) Core contents:
+    * `initialise_API(profile="default")` - Call first
+    * `set_profile(profile_name)` - Call later
+    * `PyxieAPI.parse(filename)` - parse file, output goes to console
+    * `PyxieAPI.analyse(filename)` - parse & analyse flle, output to console
+    * `PyxieAPI.codegen(filename, result_filename=None)` - parse through
+       code generation. Output to console
+    * `PyxieAPI.compile(filename, result_filename=None)` - Compile file,
+       result ends up as "result_filename"
+* `pyxie/core` - changed over to drive the conversion of pynodes to
+   cppnodes via iinodes. (aim is to simplify pynodes down the line and
+   make iinodes our main location for analysis/etc)
+* Minor changes to `.gitignore`
+* Minor change to the `Makefile` to make editting simpler for me...
+* Update `clib.py` based on changes to `clib`
+* `pyxie/codegen/simple_cpp.py` - functionality shifted out to
+  `pyxie/models/cppnodes.py` to allow a model driven approach
+* `pyxie/model/cppnodes.py` Created. A better code representation
+   model for C++. Code generation therefore means transforming from the
+   `iiNode`s to `CppNode`s 
+* `pyxie/model/iinodes.py` - Introduces `iiNode`s - which are used to
+  represent an intermediate version of a program such that it can bridge
+  the conversion between languages
+* `pyxie/model/pynodes/operators.py` - added `args()` method to a number
+   of classes to unify behaviours
+* `pyxie/model/transform.py` - Major change - converts `PyNode`s to
+  `iiNode` representation rather than json objects.
 
 ### Other
 
-*
+* `doc/newsletter/07-20161110.Pyxie-Release-0.1.24.md` corrected release date
+* `doc/newsletter/XX-TBD.Pyxie-2017-Goals.md` - Unreleased newsletter.
+  Interesting notes, will get reused if appropriate later. Rather moot
+  contents now though.
+* `doc/newsletter/08-TBD.Focus-Or-Pyxie-Release-X.X.XX.md` Template for
+   next newsletter
+
 
 ## [0.1.24] - 2016-11-10
 
@@ -82,7 +136,6 @@ incompatible)
 * Function call code supports simplified type definitions for externals. #34
 * Block structure of generated C Code is pretty/human friendly/readable #26
 * Add special case for function calls like print #37
-
 
 
 ## [0.1.23] - 2016-10-11
