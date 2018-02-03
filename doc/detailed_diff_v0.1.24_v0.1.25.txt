@@ -1,0 +1,579 @@
+diff --git a/CHANGELOG b/CHANGELOG
+
+    Changelog updated with changes - but as a raw log dump, which isn't
+    sufficient really (well, it'd do but not really the right approach IMO)
+
+### New
+
+* *doc/Versioning.md* Document describing semantic versioning as it applies to pyxie
+* doc/WIPNOTES/6.Models.md - start of some documentation around the models in use
+* Added explicit notes on licensing of pyxie's output. (Short version: I view the output as being derived from your code by you)
+* Language focussed examples / acceptance tests added: if if-else pass print 
+  while-break while-convert_continue_statement
+* Change arduino profile to support the Adafruit_NeoPixel library
+* Neopixel example added
+
+### What's been fixed? / Improved
+
+* Handling if if/elif/else improved/fixed
+* added clean.sh to arduino example
+* added clean.sh to servo example
+* added README.md to simplest_function example (NB, not expected to compile etc yet)
+
+### Internal Changes
+
+* bin/pyxie now pulls in functionality from pyxie.api to be clearer about what the API is
+* added pyxie/api.py - public API for embedding pyxie. (Assumes ubuntu host) Core contents:
+    * initialise_API(profile="default") # Call first
+    * set_profile(profile_name) # Call later
+    * PyxieAPI.parse(filename) # parse file, output goes to console
+    * PyxieAPI.analyse(filename) #  parse & analyse flle, output to console
+    * PyxieAPI.codegen(filename, result_filename=None) # parse through code generation. Output to console
+    * PyxieAPI.compile(filename, result_filename=None) # Compile file, result ends up as "result_filename"
+* pyxie/core - changed over to drive the conversion of pynodes to cppnodes via iinodes. (aim is to simplify pynodes down the line and make iinodes our main location for analysis/etc)
+* Minor changes to .gitignore
+* Minor change to the Makefile to make editting simpler for me... (yeah, I know)
+* Update clib.py based on changes to clib
+* pyxie/codegen/simple_cpp.py  - functionality shifted out to pyxie/models/cppnodes.py to allow a model driven approach
+* pyxie/model/cppnodes.py Created. Introduces a better code representation model for C++.
+    Code generation therefore means transforming from the iiNodes to CppNodes
+    This change enables this to me model driven.
+* pyxie/model/iinodes.py - Introduces iiNodes - which are used to represent an intermediate version of a program such that it can bridge the conversion between languages
+* pyxie/model/pynodes/operators.py  - added args() method to a number of classes to unify behaviours
+* pyxie/model/transform.py  - Major change - converts PyNodes to iiNode representation rather than json objects.
+
+### Other
+
+* doc/newsletter/07-20161110.Pyxie-Release-0.1.24.md - correct release date
+* doc/newsletter/08-TBD.Pyxie-2017-Goals.md - Unreleased newsletter. Interesting notes, will get reused if appropriate later. Rather moot contents now though.
+* doc/newsletter/09-TBD.Focus-Or-Pyxie-Release-X.X.XX.md Template for next release
+
+@@ #############################################################################
+
+diff --git a/.gitignore b/.gitignore
+
+    Ignore pyc files and backup files.
+    Ignore the doc/WIPNOTES/0.RandomDevNotes.md file
+
+diff --git a/COPYING.output.md b/COPYING.output.md
+
+    Added a file regarding licensing the output of generated code. This is due to seeing lack of an explicit license in the case of Bison causing issues in the past. See the file for more details.
+
+diff --git a/bin/pyxie b/bin/pyxie
+
+    Modified to pull in functionality from pyxie.api rather than pyxie.core directly
+
+    The aim of this is in part to show how to use pyxie.api, and also to have better high level structure.
+
+    Could still be improved, but better than it was.
+
+diff --git a/clib/iterators.cpp b/clib/iterators.cpp
+
+    Add explicit license data block for usage with programs' output
+
+diff --git a/clib/iterators.hpp b/clib/iterators.hpp
+
+    Add explicit license data block for usage with programs' output
+ 
+diff --git a/doc/Versioning.md b/doc/Versioning.md
+
+    Add a document detailing how semantic versioning is applied within this project.
+    In paticular how to differentiate between stable and development versions while
+    still tracking between the two.
+
+    Istill need a better way of summarising it, but anything beginning with 0 is
+    development. Anything beginning with 1 (or more) is stable in some shape or form.
+    Otherwise all version numbers always increase.
+
+diff --git a/doc/WIPNOTES/6.Models.md b/doc/WIPNOTES/6.Models.md
+
+    Added a WIPNOTE regarding the models that are in use in the system.
+    This is the start of some internal documentation. It's largely ongoing
+    notes for development more than anything though.
+
+    Should also help with improving the code structure.
+
+diff --git a/doc/newsletter/07-20161110.Pyxie-Release-0.1.24.md b/doc/newsletter/07-20161110.Pyxie-Release-0.1.24.md
+
+    Release date corrected in local copy of newsletter
+
+diff --git a/doc/newsletter/08-TBD.Pyxie-2017-Goals.md b/doc/newsletter/08-TBD.Pyxie-2017-Goals.md
+
+    Un-posted newsletter from the start of 2017
+    Covered - successes of 2016
+    Listed a number of featues that I consider missing from Pyxie:
+      * lists
+      * dictionaries
+      * tuples
+      * Actually useful string support
+      * User functions - ie from def statements
+      * Generators
+      * User objects/classes - ie class statements
+
+    Language Goals for 2017
+      * JSON level of data support
+      * User functions
+      * Classes
+
+    Usage goals
+      * Ability to run/use perceptrons on an Atmel 8A based robot
+
+    Summarised the releases of 2016
+
+    Covered the idea of a roadmap for growing pains - specifically the issue of iinodes.
+
+    Probably more useful as blog material now.
+
+diff --git a/doc/newsletter/09-TBD.Focus-Or-Pyxie-Release-X.X.XX.md b/doc/newsletter/09-TBD.Focus-Or-Pyxie-Release-X.X.XX.md
+
+    Added template for next newsletter.
+
+    This can/should be renamed a slightly different number (8.1 perhaps for filename)
+
+    May be bumped after next release
+
+diff --git a/examples/arduino/clean.sh b/examples/arduino/clean.sh
+
+    Added clean.sh to arduino example
+
+diff --git a/examples/servo/clean.sh b/examples/servo/clean.sh
+
+    servo example: Add clean.sh file
+
+diff --git a/examples/simplest_function/README.md b/examples/simplest_function/README.md
+
+    simplest_function example: Add README.md file
+
+@@ NEW EXAMPLES
+
+    All of the following have at least a main file, and then scripts for analyse.sh, clean.sh, parse.sh
+        * examples/if-else
+        * examples/if
+        * examples/neopixel
+        * examples/pass
+        * examples/print
+        * examples/while-break
+        * examples/while-continue
+
+diff --git a/pyxie/api.py b/pyxie/api.py
+
+    New file - a public API for using pyxie as a code library rather than needing to shell out.
+    (Could allow things like integration into an editor/IDE/etc)
+
+    API:
+
+        from pyxie.api import initialise_API
+        from pyxie.api import set_profile
+        from pyxie.api import PyxieAPI
+
+        initialise_API(profile="default")
+            # Initialises the API - must be called before the other options
+
+        set_profile(profile_name)
+            # If after using the API you decide you want to change the profile, you can,
+            # using this option.
+
+        PyxieAPI.parse(filename)
+            # parses the given filename, outputs result to console
+
+        PyxieAPI.analyse(filename)
+            # parses and analyses the given filename, outputs result to console
+
+        PyxieAPI.codegen(filename, result_filename=None)
+            # parses, analyse and generate code for the given filename, outputs result
+            # to console. Does not attempt compiling
+
+        PyxieAPI.compile(filename, result_filename=None)
+            # compiles the given file.
+            # for a given file "some/program.pyxie" it is compiled to "some/program"
+            # result_filename can be provide an alternative output name
+
+diff --git a/pyxie/codegen/clib.py b/pyxie/codegen/clib.py
+
+    Update clib.py based on changes to clib
+ 
+diff --git a/pyxie/codegen/simple_cpp.py b/pyxie/codegen/simple_cpp.py
+
+Added:
+    def get_blank_line():
+    from pyxie.model.cppnodes import CppProgram
+
+Removed: (Largely shifted into pyxie/models/cppnodes.py)
+    def mkStatement(statement_spec):
+    class C_Program(object):
+    class C_Frame(object):
+    class Identifier(object):
+    class Assigment(object):
+    class PassStatement(object):
+    class BreakStatement(object):
+    class ContinueStatement(object):
+    class ExpressionStatement(object):
+    def todo(*args):
+    class ArgumentList(object):
+    class FunctionCall(object):
+    class PrintStatement(object):
+    class WhileStatement(object):
+    class ForStatement(object):
+    class IfStatement(object):
+    class ElIfClause(object):
+    class ElseClause(object):
+    def build_program(json):
+
+diff --git a/pyxie/core.py b/pyxie/core.py
+
+Added:
+    Uses iiNode from pyxie.model.iinodes
+    Added the code header that gets added to generated pyxie code.
+    def jsonify(node): -- "Takes an iinode based representation and jsonifies it - which is the old (relatively human readable) representation of state
+
+Changed:
+    C++ Code generation side now uses a model driven approach, and so pulls in that alternative interface
+
+    generate_code(cname, AST, profile, debug=False):
+    The key point here is that the intermediate representation between the PyNode AST and the Cpp code  generation is iiNodes, rather than a JSON representation. Pretty major change internally. Small external
+    footprint though.
+    prepends the new header to the generated C++ code.
+
+diff --git a/pyxie/model/cppnodes.py b/pyxie/model/cppnodes.py
+
+    Created. Introduces a better code representation model for C++.
+    Code generation therefore means transforming from the iiNodes to CppNodes
+    This change enables this to me model driven.
+    Not ideal, could do with further refactoring
+
+    Interesting things:
+        * class CppNode(object):
+        * Special casing of special case python functions (cf print)
+
+        * class CppProgram(CppNode):
+        * class CppFrame(CppNode):
+        * class CppIdentifier(CppNode):
+        * class CppAssignment(CppNode):
+        * class CppEmptyStatement(CppNode):
+        * class CppBreakStatement(CppNode):
+        * class CppContinueStatement(CppNode):
+        * class CppFunctionCall(CppNode):
+        * class CppArgumentList(CppNode):
+        * class CppExpressionStatement(CppNode):
+        * class CppPrintStatement(CppNode):
+        * class CppWhileStatement(CppNode):
+        * class CppForStatement(CppNode):
+        * class CppIfStatement(CppNode):
+        * class CppElseIfClause(CppNode):
+        * class CppElseClause(CppNode):
+
+diff --git a/pyxie/model/iinodes.py b/pyxie/model/iinodes.py
+
+    This file contains objects used to represent the independent intermediate
+    format of the program.
+
+    iiNodes represent an intermediate version of a program. The idea is that this represents the program in its "base" form - such that it can be transformed to a concrete language representation. At the moment the only source language is PyNodes, and the only output form is CppNodes, but this could be changed later down the line. As such iiNodes will be expanded in time so that this is wherre type inference and similar takes place.
+
+    Key points:
+        * class iiNode(object):
+        * class iiProgram(iiNode):
+        * class iiAssignment(iiNode):
+        * class iiOperator(iiNode):
+        * class iiFunctionCall(iiNode):
+        * class iiAttributeAccess(iiNode):
+        * class iiIdentifier(iiNode):
+        * class iiString(iiNode):
+        * class iiInteger(iiNode):
+        * class iiFloat(iiNode):
+        * class iiBoolean(iiNode):
+        * class iiComparison(iiNode):
+        * class iiWhileStatement(iiNode):
+        * class iiIterator(iiNode):
+        * class iiForStatement(iiNode):
+        * class iiDefStatement(iiNode):
+        * class iiPassStatement(iiNode):
+        * class iiBreakStatement(iiNode):
+        * class iiContinueStatement(iiNode):
+        * class iiExpressionStatement(iiNode):
+        * class iiIdentifierDeclaration(iiNode):
+        * class iiElifClause(iiNode):
+        * class iiElseClause(iiNode):
+        * class iiIfStatement(iiNode):
+
+
+diff --git a/pyxie/model/pynodes/operators.py b/pyxie/model/pynodes/operators.py
+
+    Add an "args() method to a number of classes - Minor change to allow getting at
+    arguments in a uniform manner across *all* operators.
+
+diff --git a/pyxie/model/transform.py b/pyxie/model/transform.py
+
+    Changed:
+        Bumped copyright date
+
+        Pull in iinodes - transform pynodes to iinodes instead of json.
+        Means *LOTS* of internal changes
+        There may be some bits of code which are holdovers from the
+        transition. If you see any please fix and raise a pull request!
+        FIXME: Name of file could perhaps be changed to represent transform
+
+diff --git a/pyxie/profile/arduino.py b/pyxie/profile/arduino.py
+    * Added Adafruit_NeoPixel to the the list of types in the profile.
+    * Added a couple of default variables into the runtime context for the profile.
+
+@@ ################################################
+@@ RAW CHANGE NOTES
+@@ ################################################
+
+### RAW NOTES TO SUMMARISE
+
+SHORTLOG
+
+      Create README.md - NB simplest_function is expected to not compile yet
+      Update release date to match actual release date
+      Initial pyxie.models.cppnodes
+      Re-raise exceptions with original context
+      Move code modelling C++ programs into pyxie/model/cppnodes
+      Update code to use new names for CppNodes
+      Extract all list based IInodes to be constructed into a single file
+      Move the actual entry points for compiling/etc into an API file to serve as a nascent API
+      Document explaining what a Pyxie version number means. Specifically in the context of semantic versioning
+      Start of overview/notes regarding internal model nodes
+      Clarify license over generated code. (ie disclaim effective ownership)
+      Add neopixel support to arduino profile, with example
+      Pyxie Versioning
+      Trace looking for includes
+      Snapshot changes to cppnodes
+      Add newsletter not sent earlier in year
+      Snapshot of template for newsletter 09 (not sent)
+      Restart iiNode refactor
+      Better iiNode baseclass (for now)
+      Refactored explicit json to iiNodes
+      Bump copyright on file - to indicate when changed last
+      Return iiNodes, not json
+      Start of removal of json version
+      Remove mkPrint / iiPrintStatement since not part of grammar now
+      Simple acceptance tests for if and if-else
+      Example for testing break statement fixes
+      Example to allow quick checking of continue code generation
+      Add back in an example that uses print
+      Add clean.sh to servo example
+      Add example/test that exercises 'pass'
+      Add clean.sh script to the arduino demo
+      Make example encompass more types
+      Some acceptance tests
+      Dejsonify the intermediate layer
+      Move jsonify into the UI layer, for display purposes
+      Include missing import
+      Remove use of thunk middleman
+      New parts of changelog for next release
+      Convenience target added to makefile
+      Snapshot update of models WIPNOTE
+      Ignore random devnotes for now
+      Remove support for list based proto iiNodes
+      Change contents of 'if' examples readme to match purpose
+      Change contents of 'if-else' examples readme to match purpose
+      Ensure operator expressions compile correctly again
+
+
+LONG LOG
+
+* Ensure operator expressions compile correctly again
+    Quite a few changes:
+
+    * pyxie/model/pynodes/operators.py - extended to make it simpler to
+      extract the arguments for the operators. This could be rationalised
+      further.
+
+    * pyxie/model/iinodes.py - remove the iiOpNode based operator nodes, and
+      replace with a single simpler iiOperator class.  iiComparison modified
+      to allow the compator to be also called the operator, harmonising
+      exceptions.
+
+    * pyxie/model/transform.py - Remove usage of list based iiOperators and
+      use iiOperators instead.
+
+    * pyxie/model/cppnodes.py - Collection of fixes to make these changes work
+        as expected.
+
+* Change contents of 'if-else' examples readme to match purpose
+
+* Change contents of 'if' examples readme to match purpose
+
+* Remove support for list based proto iiNodes
+    This is deliberate to flush out bugs and flushes out issues in the
+    handling of operators
+
+* Ignore random devnotes for now
+
+* Snapshot update of models WIPNOTE
+
+* Convenience target added to makefile
+
+* New parts of changelog for next release
+
+* Remove use of thunk middleman
+
+    The middleman is the mk* functions - these allowed the use of jsonify and
+    iiNodeNames to co-exist.  Since the jsonify and lists are no longer used,
+    these middleman functions can now disappear.
+
+    There is an open question about iiOperator, but that suggests that
+    iiOperator is in fact badly named and can be simplified somewhat.
+    Perhaps the approach to take is to have classes of operators - infix
+    and prefix, and then to treat these as special cases of function calls
+    instead.
+
+    That would the simplify the implementation.
+
+    That can wait until the ECS based iiNodes though
+
+* Include missing import
+
+* Move jsonify into the UI layer, for display purposes
+
+* Dejsonify the intermediate layer
+
+    The intermediate layer at this point uses both iiNodes and lists.
+    This commit bundles up the changes necessary to flip the list based
+    usage to solely use the iiNode based form.  This is necessary to
+    later support better/more interesting/useful things like better
+    type inference.
+
+* Some acceptance tests
+
+* Make example encompass more types
+
+* Add clean.sh script to the arduino demo
+
+* Add example/test that exercises 'pass'
+
+* Add clean.sh to servo example
+
+* Add back in an example that uses print
+
+* Example to allow quick checking of continue code generation
+
+* Example for testing break statement fixes
+
+* Simple acceptance tests for if and if-else
+
+* Remove mkPrint / iiPrintStatement since not part of grammar now
+
+* Start of removal of json version
+
+* Return iiNodes, not json
+
+* Bump copyright on file - to indicate when changed last
+
+* Refactored explicit json to iiNodes
+
+    Large collection of changes (squashed a branch)
+    Specific additions:
+        Add iiProgram iiNode
+        Add iiOpNode, iiOpPlus, iiOpMinus
+        Add iiOpMultiply
+        Add iiOpDivide, iiOpBooleanOr, iiOpBooleanAnd, iiOpBooleanNot
+        Add iiAssignment
+        Add iiFunctionCall
+        Add iiAttributeAccess
+        Add iiIdentifier
+        Add iiString
+        Add iiInteger
+        Add iiFloat
+        Add iiBoolean
+        Add iiComparison, iiPrintStatement
+        Add iiWhileStatement, iiForStatement, iiIterator
+        Add iiDefStatement, iiPassStatement
+        Add iiBreakStatement, iiContinueStatement
+        Added iiExpressionStatement, iiIdentifierDeclaration
+        Added iiIfStatement, iiElifClause, iiElseClause
+        Rearrange order of things in the file
+
+* Better iiNode baseclass (for now)
+
+* Restart iiNode refactor
+
+* Snapshot of template for newsletter 09 (not sent)
+
+* Add newsletter not sent earlier in year
+
+* Snapshot changes to cppnodes
+
+* Trace looking for includes
+
+* Pyxie Versioning
+
+* Add neopixel support to arduino profile, with example
+
+* Clarify license over generated code. (ie disclaim effective ownership)
+
+* Start of overview/notes regarding internal model nodes
+
+* Document explaining what a Pyxie version number means. Specifically in
+  the context of semantic versioning
+
+* Move the actual entry points for compiling/etc into an API file
+  to serve as a nascent API
+
+    Why?
+
+    Received a query about importing pyxie/core.py into a file and whether
+    this was the right thing, wrong thing, good thing, bad thing to do. In
+    particular the query was based on a desire to use pyxie inside another
+    project.
+
+    Pyxie's main API has always been intended to be the one exposed by
+    the actual front end bin/pyxie, and of course the specific language
+    subset it exposes. On the flipside, the internals of the pyxie.core
+    are still changing as the implementation improves. As a result exposing
+    pyxie/core.py as an external API (which then has some measure of
+    commitment to not change) causes problems. As a result, it made sense
+    to move the implementation of bin/pyxie into pyxie/api.py - so that
+    the front end can effectively be used programmatically.
+
+    I'm not certain that the names in that file are correct. However, by
+    creating a hook that can be used as follows:
+
+    from pyxie.api import initialise_API
+    from pyxie.api import set_profile
+    from pyxie.api import PyxieAPI
+
+    initialise_API(profile=default)
+    # Initialises the API - must be called before the other options
+
+    set_profile(profile_name)
+        # If after using the API you decide you want to change the profile,
+        # you can, using this option.
+
+    PyxieAPI.parse(filename)
+        # parses the given filename, outputs result to console
+
+    PyxieAPI.analyse(filename)
+        # parses and analyses the given filename, outputs result to console
+
+    PyxieAPI.codegen(filename, result_filename=None)
+        # parses, analyse and generate code for the given filename,
+        # outputs result to console. Does not attempt compiling
+
+    PyxieAPI.compile(filename, result_filename=None)
+        # compiles the given file.
+        # for a given file some/program.pyxie it is compiled to some/program
+        # result_filename can be provide an alternative output name
+
+        I think is a good starting point. In particular, this only really
+        exposes 3 names that can't change. The methods parse, analyse,
+        codegen and compile are all independent of each other. You can
+        just call compile if you want. These may be augmented by better
+        versions as time goes on.
+
+* Extract all list based IInodes to be constructed into a single file
+    The idea behind this is to allow us to replace the implementation
+    of IINodes from being nested lists and dictionaries to things
+    that better represent the code. In particular so we stop losing
+    information from the analysis phase...
+
+* Update code to use new names for CppNodes
+* Move code modelling C++ programs into pyxie/model/cppnodes
+* Re-raise exceptions with original context
+* Initial pyxie.models.cppnodes
+* Update release date to match actual release date
+
+* Create README.md - NB simplest_function is expected to not compile yet
+    (simplest_function example)
+    As noted in the file, this example is a WIP, and not expected to run yet.
