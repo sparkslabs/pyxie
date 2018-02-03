@@ -5,7 +5,7 @@ name: Shortlog
 updated: August 2016
 title: Shortlog
 ---
-* 0.1.25 - UNRELEASED - TBD
+* 0.1.25 - 2018-02-03 - Major changes to internal representation and some new examples
 * 0.1.24 - 2016-11-10 - Fix assignment in else/elif, update to support Ubuntu 16.04LTS, initial steps on function/def statement support
 * 0.1.23 - 2016-10-11 - Major arduino profile improvements, print-as-function not statement
 * 0.0.22 - 2016-09-25 - Enable ability to use a variety of Arduino boards by using an Makefile.in file
