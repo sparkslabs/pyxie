@@ -18,8 +18,8 @@ from __future__ import absolute_import
 
 from pyxie.model.iinodes import iiIdentifier
 
-import pyxie.codegen.simple_cpp
-from pyxie.codegen.profiles import cpp_templates
+import pyxie.transform.simple_cpp
+from pyxie.transform.profiles import cpp_templates
 
 from pyxie.model.functions import builtins
 
@@ -32,10 +32,10 @@ def todo(*args):
     print("TODO", " ".join([repr(x) for x in args]))
 
 def get_blank_line():
-    return pyxie.codegen.simple_cpp.get_blank_line()
+    return pyxie.transform.simple_cpp.get_blank_line()
 
 def Print(*args):
-    return pyxie.codegen.simple_cpp.Print(*args)
+    return pyxie.transform.simple_cpp.Print(*args)
 
 class CppNode(object):
     pass

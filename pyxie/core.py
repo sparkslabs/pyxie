@@ -22,8 +22,8 @@ import os
 import pprint
 import time
 
-import pyxie.codegen.profiles as profiles
-import pyxie.codegen.simple_cpp
+import pyxie.transform.profiles as profiles
+import pyxie.transform.simple_cpp
 
 from pyxie.parsing.lexer import build_lexer
 from pyxie.parsing.grammar import parse
@@ -31,8 +31,8 @@ from pyxie.parsing.grammar import parse
 from pyxie.model.pynode import jdump
 from pyxie.model.transform import ast_to_cst
 
-from pyxie.codegen.clib import files as clib_files
-from pyxie.codegen.simple_cpp import CppProgram, source, reset_parser
+from pyxie.transform.clib import files as clib_files
+from pyxie.transform.simple_cpp import CppProgram, source, reset_parser
 
 from pyxie.model.iinodes import iiNode
 
@@ -165,7 +165,7 @@ def generate_code(cname, AST, profile, debug=False):
 
     program = CppProgram.fromiinodes(iiNodes)
     program.generate(profile)
-    return pyxie.codegen.simple_cpp.source[:]
+    return pyxie.transform.simple_cpp.source[:]
 
 
 def codegen_phase(filename, result_filename, profile):

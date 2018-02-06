@@ -25,8 +25,8 @@ files = %s
 
 """
 
-print("Deploying into ../pyxie/codegen/clib.py")
+print("Deploying into ../pyxie/transform/clib.py")
 clib = template % repr(files)
-d = open("../pyxie/codegen/clib.py","w")
+d = open("../pyxie/transform/clib.py","w")
 d.write(clib)
 d.close()
