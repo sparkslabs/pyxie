@@ -48,11 +48,8 @@ class CannotConvert(Exception):
 #
 # Support code to cover intermediate stages of conversion
 #
-def statement_type(cstatement):
-    try:
-        statementType = cstatement[0]
-    except TypeError:
-        statementType = cstatement.tag
+def statement_type(iistatement):
+    statementType = iistatement.tag
     return statementType
 
 
@@ -135,8 +132,8 @@ def includes_for_ctype(ctype):
     if ctype == "string": return "<string>"
 
 
-def includes_for_cstatement(cstatement):
-    if statement_type(cstatement) == "print_statement": return "<iostream>"
+def includes_for_iistatement(iistatement):
+    if statement_type(iistatement) == "print_statement": return "<iostream>"
 
 def crepr_literal(pyliteral):
     assert isinstance(pyliteral, nodes.PyValueLiteral)
@@ -393,7 +390,7 @@ def convert_arg(arg):
 
 
 def convert_print(print_statement):
-    cstatement = []
+    iistatement = []
     cargs = []
     for arg in print_statement.expr_list:
         #DebugPrint(arg)
@@ -406,9 +403,9 @@ def convert_print(print_statement):
 
 def convert_while_statement(while_statement):
     crepr_condition = convert_arg(while_statement.condition)
-    cstatements = convert_statements(while_statement.block)
+    iistatements = convert_statements(while_statement.block)
 
-    return iiWhileStatement(condition=crepr_condition, statements=cstatements)
+    return iiWhileStatement(condition=crepr_condition, statements=iistatements)
 
 
 def convert_for_statement(for_statement):
@@ -418,6 +415,7 @@ def convert_for_statement(for_statement):
     step = for_statement.block
 
     clvalue = lvalue.value # FIXME: This is only valid for identifiers
+
 
     crvalue_source = convert_arg(rvalue_source)
     crvalue_source = iiIterator(expression=crvalue_source)
@@ -468,20 +466,20 @@ def convert_extended_clause(extended_clause):
     if extended_clause.tag == "elif_clause":
         DebugPrint("WORKING THROUGH ELIF:", extended_clause)
         crepr_condition = convert_arg(extended_clause.condition)
-        cstatements = convert_statements(extended_clause.block)
+        iistatements = convert_statements(extended_clause.block)
         if extended_clause.else_clause:
             cextended_clause = convert_extended_clause(extended_clause.else_clause)
 
-            return iiElifClause(condition=crepr_condition, statements=cstatements,
+            return iiElifClause(condition=crepr_condition, statements=iistatements,
                                 extended_clause=cextended_clause)
 
-        return iiElifClause(condition=crepr_condition, statements=cstatements)
+        return iiElifClause(condition=crepr_condition, statements=iistatements)
 
     if extended_clause.tag == "else_clause":
         DebugPrint("WORKING THROUGH ELSE:", extended_clause)
-        cstatements = convert_statements(extended_clause.block)
+        iistatements = convert_statements(extended_clause.block)
 
-        return iiElseClause(statements=cstatements)
+        return iiElseClause(statements=iistatements)
 
     DebugPrint("NOT ELIF!")
     DebugPrint("NOT ELSE!")
@@ -492,13 +490,13 @@ def convert_extended_clause(extended_clause):
 def convert_if_statement(if_statement):
     DebugPrint("WORKING THROUGH IF:", if_statement)
     crepr_condition = convert_arg(if_statement.condition)
-    cstatements = convert_statements(if_statement.block)
+    iistatements = convert_statements(if_statement.block)
     if if_statement.else_clause:
         cextended_clause = convert_extended_clause(if_statement.else_clause)
 
-        return iiIfStatement(condition=crepr_condition, statements=cstatements, extended_clause=cextended_clause)
+        return iiIfStatement(condition=crepr_condition, statements=iistatements, extended_clause=cextended_clause)
 
-    return iiIfStatement(condition=crepr_condition, statements=cstatements)
+    return iiIfStatement(condition=crepr_condition, statements=iistatements)
 
 
 def convert_pass_statement(pass_statement):
@@ -524,41 +522,41 @@ def convert_expression_statement(statement):
 
 
 def convert_statements(AST):
-    cstatements = []
+    iistatements = []
     statements = AST.statements
     for statement in statements:
         try:
             if statement.tag == "assignment_statement":
-                cstatement = convert_assignment(statement)
-                DebugPrint(cstatement)
-                cstatements.append(cstatement)
+                iistatement = convert_assignment(statement)
+                DebugPrint(iistatement)
+                iistatements.append(iistatement)
             elif statement.tag == "print_statement":
-                cstatement = convert_print(statement)
-                cstatements.append(cstatement)
+                iistatement = convert_print(statement)
+                iistatements.append(iistatement)
             elif statement.tag == "expression_statement":
-                cstatement = convert_expression_statement(statement)
-                cstatements.append(cstatement)
+                iistatement = convert_expression_statement(statement)
+                iistatements.append(iistatement)
             elif statement.tag == "while_statement":
-                cstatement = convert_while_statement(statement)
-                cstatements.append(cstatement)
+                iistatement = convert_while_statement(statement)
+                iistatements.append(iistatement)
             elif statement.tag == "for_statement":
-                cstatement = convert_for_statement(statement)
-                cstatements.append(cstatement)
+                iistatement = convert_for_statement(statement)
+                iistatements.append(iistatement)
             elif statement.tag == "def_statement":
-                cstatement = convert_def_statement(statement)
-                cstatements.append(cstatement)
+                iistatement = convert_def_statement(statement)
+                iistatements.append(iistatement)
             elif statement.tag == "if_statement":
-                cstatement = convert_if_statement(statement)
-                cstatements.append(cstatement)
+                iistatement = convert_if_statement(statement)
+                iistatements.append(iistatement)
             elif statement.tag == "pass_statement":
-                cstatement = convert_pass_statement(statement)
-                cstatements.append(cstatement)
+                iistatement = convert_pass_statement(statement)
+                iistatements.append(iistatement)
             elif statement.tag == "break_statement":
-                cstatement = convert_break_statement(statement)
-                cstatements.append(cstatement)
+                iistatement = convert_break_statement(statement)
+                iistatements.append(iistatement)
             elif statement.tag == "continue_statement":
-                cstatement = convert_continue_statement(statement)
-                cstatements.append(cstatement)
+                iistatement = convert_continue_statement(statement)
+                iistatements.append(iistatement)
             else:
                 print("SKIPPING STATEMENT", statement.tag)
                 raise CannotConvert("Statement: "+ statement.tag)
@@ -566,7 +564,8 @@ def convert_statements(AST):
         except CannotConvert:
             DebugPrint("REACHED HERE FOR", statement)
             raise
-    return cstatements
+
+    return iistatements
 
 
 def pynodes_to_iinodes(program_name, AST):
@@ -595,8 +594,8 @@ def pynodes_to_iinodes(program_name, AST):
 
     DebugPrint("cvariables",cvariables)
 
-    cstatements = convert_statements(AST)
-    DebugPrint(cstatements)
+    iistatements = convert_statements(AST)
+    DebugPrint(iistatements)
 
     # Based on variables, update includes
     for ctype in ctypes:
@@ -606,13 +605,13 @@ def pynodes_to_iinodes(program_name, AST):
 
     DebugPrint("INCLUDES::", includes)
     # Based on statements, update includes
-    for cstatement in cstatements:
-        DebugPrint( "GETTING INCLUDES",  cstatement  )
-        inc = includes_for_cstatement(cstatement)
+    for iistatement in iistatements:
+        DebugPrint( "GETTING INCLUDES",  iistatement  )
+        inc = includes_for_iistatement(iistatement)
         if inc:
             includes.append(inc)
 
-    program = iiProgram(name=program_name, includes=includes, identifiers=cvariables, statements=cstatements)
+    program = iiProgram(name=program_name, includes=includes, identifiers=cvariables, statements=iistatements)
     return program
 
 
