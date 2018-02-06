@@ -20,6 +20,13 @@ from __future__ import absolute_import
 from .util import *
 from .base_nodes import PyOperation
 
+trace = False
+
+def DebugPrint(*args):
+    if trace:
+        print(*args)
+
+
 # This lookup should probably really look somewhere else
 expression_mixed_types = {
        #(function_tag, type, type ) -> result_type
@@ -74,7 +81,7 @@ class PyOperator(PyOperation):
         return self.type
 
     def analyse(self):
-        print("ANALYSING OPERATOR", self.tag)
+        DebugPrint("ANALYSING OPERATOR", self.tag)
         self.arg1.analyse()
         self.arg2.analyse()
 
@@ -119,7 +126,7 @@ class PyBoolOperator(PyOperation):
         return [ self.tag ] + L
 
     def analyse(self):
-        print("ANALYSING OPERATOR:", self.tag)
+        DebugPrint("ANALYSING OPERATOR:", self.tag)
         for arg in self.argv:
             arg.analyse()
 
@@ -168,7 +175,7 @@ class PyComparisonOperator(PyOperation):
         self.ntype = None
         self.add_children(arg1,arg2)
 
-        print("CREATED COMPARISON OPERATOR", comparison, arg1, arg2)
+        DebugPrint("CREATED COMPARISON OPERATOR", comparison, arg1, arg2)
 
     def __info__(self):
         info = super(PyComparisonOperator, self).__info__()
@@ -194,7 +201,7 @@ class PyComparisonOperator(PyOperation):
         return "bool"
 
     def analyse(self):
-        print("ANALYSING", self.tag)
+        DebugPrint("ANALYSING", self.tag)
         self.arg1.analyse()
         self.arg2.analyse()
 

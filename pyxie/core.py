@@ -36,6 +36,8 @@ from pyxie.transform.simple_cpp import CppProgram, source, reset_parser
 
 from pyxie.model.iinodes import iiNode
 
+debug = trace = False
+
 testdir = "test-data"
 testprogs_dir = os.path.join(testdir, "progs")
 
@@ -49,6 +51,11 @@ code_header = ["//",
  "//",
  ""]
 
+
+def DebugPrint(*args, **argd):
+    force = argd.get("force", False)
+    if trace or force:
+        print(*args)
 
 def copy_file(source, dest):
     f = open(source, "rb")
@@ -98,19 +105,21 @@ def get_build_environment(filename, result_filename):
            }
 
 
-def parse_file(somefile):
+def parse_file(somefile, dumpast=False):
     lexer = build_lexer()
     reset_parser()
     data = open(somefile).read() + "\n#\n"
     AST = parse(data, lexer)
     AST.includes = lexer.includes
-    print()
-    print("parse_file: AST includes", AST.includes)
-    print()
-    print("parse_file: Raw Parsed AST ----------------------------------")
-    print(AST)
-    print("----------------------------------")
-    print()
+    DebugPrint()
+    DebugPrint("parse_file: AST includes", AST.includes)
+    DebugPrint()
+
+    DebugPrint("parse_file: Raw Parsed AST ----------------------------------", force=dumpast)
+    DebugPrint(AST, force=dumpast)
+    DebugPrint("----------------------------------", force=dumpast)
+
+    DebugPrint()
     return AST
 
 
@@ -149,7 +158,7 @@ def analyse_file(filename):
 
 def jsonify(node):
     if isinstance(node, iiNode):
-        print ("here")
+        DebugPrint ("here")
         return node.__json__()
     elif ( isinstance(node, list) or isinstance(node, dict) or isinstance(node, str) or isinstance(node, int) or isinstance(node, float) or isinstance(node, bool) ):
         return node
@@ -158,12 +167,10 @@ def jsonify(node):
 
 def generate_code(cname, AST, profile, debug=False):
     iiNodes = ast_to_cst(cname, AST)
-    if debug:
-        print("generate_code: CONCRETE C SYNTAX TREE: - - - - - - - - - - - - - - - - - - - -")
-        print(pprint.pformat(jsonify(iiNodes)))
-        print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
 
-    program = CppProgram.fromiinodes(iiNodes)
+    DebugPrint("generate_code: CONCRETE C SYNTAX TREE: - - - - - - - - - - - - - - - - - - - -")
+    DebugPrint(pprint.pformat(jsonify(iiNodes)))
+    DebugPrint("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
     program.generate(profile)
     return pyxie.transform.simple_cpp.source[:]
 
@@ -178,7 +185,7 @@ def codegen_phase(filename, result_filename, profile):
     print("codegen_phase: _______________________________________________________________")
     print("codegen_phase: GENERATING CODE")
     print()
-    c_code = generate_code(cname, AST, profile, debug=True)  # Need the C NAME TO DO THIS
+    c_code = generate_code(cname, AST, profile)  # Need the C NAME TO DO THIS
     print("codegen_phase: _______________________________________________________________")
     print("codegen_phase: Generated Program")
     print("\n".join(c_code))
@@ -187,12 +194,12 @@ def codegen_phase(filename, result_filename, profile):
 
 
 def build_program(source, work_dir, name, profile):
-    print("build_program: _______________________________________________________________")
+    DebugPrint("build_program: _______________________________________________________________")
     print("build_program: BUILDING", work_dir)
-    print()
-    print("build_program: Program to build:")
-    pprint.pprint(source, width=200)
-    print()
+    DebugPrint()
+    DebugPrint("build_program: Program to build:")
+    DebugPrint(pprint.pformat(source, width=200))
+    DebugPrint()
 
     extension = profiles.mainfile_extensions.get(profile,"c")
 
@@ -208,11 +215,11 @@ def build_program(source, work_dir, name, profile):
     if os.path.exists("/usr/bin/indent"):
         try:
             print("build_program: TIDYING")
-            print("build_program: /usr/bin/indent %s" % source_filename)
+            DebugPrint("build_program: /usr/bin/indent %s" % source_filename)
             os.system("/usr/bin/indent -npcs -brf -br -npsl -l120 -i4 -nut %s" % source_filename)
         except Exception as e:
-            print("build_program: TIDYING Failed - continuing anyway")
-            print("build_program: TIDYING error: %s %s" % (str(e), repr(e)))
+            DebugPrint("build_program: TIDYING Failed - continuing anyway")
+            DebugPrint("build_program: TIDYING error: %s %s" % (str(e), repr(e)))
 
     try:
         makefile_tmpl = profiles.makefile_templates[profile]
@@ -269,9 +276,9 @@ def build_program(source, work_dir, name, profile):
 
     os.chdir(work_dir)
     os.system("make")
-    print()
+    DebugPrint()
     print("build_program: Done!")
-    print()
+    DebugPrint()
 
 
 # Next function is called by compile_file, but could be called independently
@@ -290,7 +297,7 @@ def compile_file(filename, profile, result_filename=None):
 
     c_code = code_header + c_code
 
-    print("C_CODE:::", repr(c_code))
+    DebugPrint("C_CODE:::", repr(c_code))
     print("compile_file: COMPILING", filename)
     print("compile_file: IN", base_dir)
     print("compile_file: SOURCEFILE", base_filename)
@@ -332,14 +339,14 @@ def compile_file(filename, profile, result_filename=None):
 
 
 def parse_testfile(testprogs_dir, testfile, debug=False):
-    print("parse_testfile: _______________________________________________________________")
+    DebugPrint("parse_testfile: _______________________________________________________________")
     print("parse_testfile: PARSING", os.path.join(testprogs_dir,testfile))
     print()
     AST = parse_file(os.path.join(testprogs_dir,testfile))
-    if debug:
-        pprint.pprint(AST)
-        JAST = jdump(AST)
-        pprint.pprint(JAST)
+
+    DebugPrint(pprint.pformat(AST))
+    DebugPrint(pprint.pformat(jdump(AST)))
+
     return AST
 
 

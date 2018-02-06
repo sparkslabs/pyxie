@@ -88,6 +88,13 @@ t_NORMAL_ignore  = ' \t'
 t_INITIAL_BLOCKS_ignore  = ''
 t_ENDBLOCKS_ignore  = ''
 
+
+trace = False
+
+def DebugPrint(*args):
+    if trace:
+        print(*args)
+
 def t_NORMAL_SCHARACTER(t):
     r"c'([^\\']|(\\.))'"
     t.value = t.value[2:-1]
@@ -189,8 +196,8 @@ def t_BLOCKS_EOL(t):
 
 def t_NORMAL_INCLUDELINE(t):
     r'\#include.*'
-    print("WE SAW A #INCLUDE line! :-)")
-    print("It was this:", repr(t.value))
+    DebugPrint("WE SAW A #INCLUDE line! :-)")
+    DebugPrint("It was this:", repr(t.value))
     t.lexer.includes.append(t.value)
 
 def t_INITIAL_BLOCKS_WS(t):
@@ -237,7 +244,7 @@ def t_INITIAL_BLOCKS_INDENT(t):
     # If it's a new one, add it to the "lexer.indents" stack
     if curr_indent > t.lexer.indents[-1]:
         t.lexer.indents.append(t.lexer.curr_indent)
-        print("EMITTING INDENT", t)
+        DebugPrint("EMITTING INDENT", t)
         return t
 
     t.lexer.begin('NORMAL')
@@ -258,7 +265,7 @@ def t_ENDBLOCKS_DEDENT(t):
     # This allows us to emit as many DEDENT tokens as necessary.
     if t.lexer.dedents_needed > 0:
         t.lexer.dedents_needed -= 1
-        print("EMITTING DEDENT", t)
+        DebugPrint("EMITTING DEDENT", t)
         return t
     t.lexer.begin('NORMAL')
 

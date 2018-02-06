@@ -59,6 +59,12 @@
 from __future__ import print_function
 from __future__ import absolute_import
 
+trace = False
+
+def DebugPrint(*args):
+    if trace:
+        print(*args)
+
 class UndefinedValue(Exception):
     pass
 
@@ -75,14 +81,14 @@ class Context(object):
             self.contexts[id(self)] = self
 
     def store(self, name, expression):
-        print("Context.store NAME", name, repr(name), "VALUE", expression)
+        DebugPrint("Context.store NAME", name, repr(name), "VALUE", expression)
         if name in self.names:
-            print("WARNING: Name %s already exists in names, this may be OK. Storing expression %s" % (repr(name), repr(expression)))
+            DebugPrint("WARNING: Name %s already exists in names, this may be OK. Storing expression %s" % (repr(name), repr(expression)))
         try:
             self.names[name].append( expression )
         except KeyError:
             self.names[name] = [ expression ]
-        print("CONTEXT", self.names)
+        DebugPrint("CONTEXT", self.names)
 
     def complete_context(self):
         search_list = []
@@ -96,12 +102,12 @@ class Context(object):
         return search_list
 
     def lookup(self, name):
-        print("Context.lookup -pc ", profile_context)
+        DebugPrint("Context.lookup -pc ", profile_context)
         if self.tag:
-            print("Context.TAG ", self.tag)
-        print("Context.lookup", name)
+            DebugPrint("Context.TAG ", self.tag)
+        DebugPrint("Context.lookup", name)
 
-        print("Context.lookup",self.complete_context())
+        DebugPrint("Context.lookup",self.complete_context())
         if name in self.names:
             values = self.names[name]
             return values[0]
@@ -117,7 +123,7 @@ class Context(object):
                     # So we deliberately suppress the lookup error here.
                     pass
 
-        print(self.complete_context())
+        DebugPrint(self.complete_context())
         raise UndefinedValue("Cannot find name %s in current context stack" % name, str(self.complete_context()) )
 
     def __str__(self):
