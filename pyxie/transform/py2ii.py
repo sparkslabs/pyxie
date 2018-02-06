@@ -33,6 +33,12 @@ from pyxie.model.iinodes import *
 
 iterator_unique_base = 0
 
+trace = 0
+
+def DebugPrint(*args):
+    if trace:
+        print(*args)
+
 class UnknownType(Exception):
     pass
 
@@ -68,25 +74,25 @@ def find_variables(AST):
             rvalue_source = for_statement.expression
             identifier = lvalue.value
             v_type = lvalue.ntype
-            print("FOR LOOP, IDENTIFIER", identifier, "HAS TYPE", v_type)
+            DebugPrint("FOR LOOP, IDENTIFIER", identifier, "HAS TYPE", v_type)
             variables[identifier] = v_type
             if for_statement.expression.isiterator:
-                print("#####################################################")
-                print("Extracting generator intermediate variable")
-                print(for_statement.expression)
+                DebugPrint("#####################################################")
+                DebugPrint("Extracting generator intermediate variable")
+                DebugPrint(for_statement.expression)
                 if isinstance(for_statement.expression, nodes.PyFunctionCall):
                     identifier = for_statement.expression.func_label             # FIXME: May not be an identifier...
-                    print("Bibble", identifier)
-                    print("Bibble", identifier.value)
+                    DebugPrint("Bibble", identifier)
+                    DebugPrint("Bibble", identifier.value)
                     iterator_type = identifier.value
                     iterator_unique_base += 1
                     iterator_name = identifier.value + "_iter_" + str(iterator_unique_base)
-                    print("iterator_type", iterator_type)
-                    print("iterator_name", iterator_name)
+                    DebugPrint("iterator_type", iterator_type)
+                    DebugPrint("iterator_name", iterator_name)
                     variables[iterator_name] = iterator_type
                     for_statement.expression.ivalue_name = iterator_name
 
-                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                DebugPrint("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
         if node.tag == "assignment_statement":
             if node.assign_type != "=":
@@ -201,7 +207,7 @@ def convert_assignment(assignment):
         todo("assignment where the rvalue is not a value_literal, operator, or function call")
         raise CannotConvert("Cannot convert assignment where the rvalue is not a value_literal, operator, or function call")
 
-    # print(rvalue)
+    # DebugPrint(rvalue)
     clvalue = lvalue.value # FIXME: This is only valid for identifiers
 
     # If the rvalue is a PyIdentifier, it should pass through as the identifier
@@ -209,7 +215,7 @@ def convert_assignment(assignment):
         crvalue = rvalue.value
 
     elif isinstance(assignment.rvalue, nodes.PyValueLiteral):
-        print("nodes.PyValueLiteral", assignment.rvalue)
+        DebugPrint("nodes.PyValueLiteral", assignment.rvalue)
         crvalue = crepr_literal(rvalue)
 
     elif isinstance(assignment.rvalue, nodes.PyOperator):
@@ -223,7 +229,7 @@ def convert_assignment(assignment):
 
     elif isinstance(assignment.rvalue, nodes.PyFunctionCall):
         arg = assignment.rvalue
-        print("NEED TO CONVERT FUNCTION CALL TO SOMETHING THE C CODE GENERATOR CAN HANDLE")
+        DebugPrint("NEED TO CONVERT FUNCTION CALL TO SOMETHING THE C CODE GENERATOR CAN HANDLE")
         cargs = []
         if arg.expr_list:
             for expr in arg.expr_list:
@@ -239,9 +245,9 @@ def convert_assignment(assignment):
 
 
 def convert_value_literal(arg):
-    # print(repr(arg), arg)
+    # DebugPrint(repr(arg), arg)
     stype = None
-    print ("ARG::", arg.tag)
+    DebugPrint ("ARG::", arg.tag)
 
     if arg.tag == "attributeaccess":
         expression = convert_value_literal(arg.expression)
@@ -281,7 +287,7 @@ def convert_value_literal(arg):
 
 
 def convert_bool_operator_function(opfunc):
-    print("CONVERT - convert_bool_operator_function", repr(opfunc))
+    DebugPrint("CONVERT - convert_bool_operator_function", repr(opfunc))
     assert isinstance(opfunc, nodes.PyBoolOperator)
 
     func = opfunc.tag
@@ -298,16 +304,16 @@ def convert_bool_operator_function(opfunc):
     else:
         crepr_arg2 = None
 
-    print("crepr_arg1", repr(crepr_arg1))
+    DebugPrint("crepr_arg1", repr(crepr_arg1))
 
     result = crepr_op(opfunc)
 
-    print(repr(result))
+    DebugPrint(repr(result))
     return result
 
 
 def convert_operator_function(opfunc):
-    print("CONVERT - convert_operator_function", repr(opfunc))
+    DebugPrint("CONVERT - convert_operator_function", repr(opfunc))
     assert isinstance(opfunc, nodes.PyOperator)
 
     func = opfunc.tag
@@ -316,11 +322,11 @@ def convert_operator_function(opfunc):
 
     crepr_arg1 = convert_arg(arg1)
     crepr_arg2 = convert_arg(arg2)
-    print("crepr_arg1", repr(crepr_arg1))
-    print("crepr_arg2", repr(crepr_arg2))
+    DebugPrint("crepr_arg1", repr(crepr_arg1))
+    DebugPrint("crepr_arg2", repr(crepr_arg2))
 
     result = crepr_op(opfunc)
-    print(repr(result))
+    DebugPrint(repr(result))
     return result
 
     #todo("Cannot yet convert operator functions")
@@ -337,7 +343,7 @@ def convert_comparison_operator(comparison):
 
 
 def convert_comparison(comparison_spec):
-    print("CONVERT - convert_comparison", repr(comparison_spec))
+    DebugPrint("CONVERT - convert_comparison", repr(comparison_spec))
     assert isinstance(comparison_spec, nodes.PyComparisonOperator)
 
     comparison = comparison_spec.comparison
@@ -347,18 +353,18 @@ def convert_comparison(comparison_spec):
     crepr_comparison = convert_comparison_operator(comparison)
     crepr_arg1 = convert_arg(arg1)
     crepr_arg2 = convert_arg(arg2)
-    print("crepr_arg1", repr(crepr_arg1))
-    print("crepr_arg2", repr(crepr_arg2))
+    DebugPrint("crepr_arg1", repr(crepr_arg1))
+    DebugPrint("crepr_arg2", repr(crepr_arg2))
 
     result = iiComparison(comparator=crepr_comparison, left=crepr_arg1, right=crepr_arg2)
 
-    print(repr(result))
+    DebugPrint(repr(result))
     return result
 
 
 def convert_arg(arg):
     if isinstance(arg, nodes.PyValueLiteral):
-        print("CONVERTING LITERAL", arg)
+        DebugPrint("CONVERTING LITERAL", arg)
         return convert_value_literal(arg)
     elif isinstance(arg, nodes.PyComparisonOperator):
         return convert_comparison(arg)
@@ -368,12 +374,12 @@ def convert_arg(arg):
         return  convert_bool_operator_function(arg)
 
     elif isinstance(arg, nodes.PyFunctionCall):
-        print("NEED TO CONVERT FUNCTION CALL TO SOMETHING THE C CODE GENERATOR CAN HANDLE")
+        DebugPrint("NEED TO CONVERT FUNCTION CALL TO SOMETHING THE C CODE GENERATOR CAN HANDLE")
         cargs = []
         if arg.expr_list:
             for expr in arg.expr_list:
-                #print(arg)
-                #print("We need to convert the arg", arg)
+                #DebugPrint(arg)
+                #DebugPrint("We need to convert the arg", arg)
                 crepr = convert_arg(expr)
                 carg = crepr
                 cargs.append(carg)
@@ -382,16 +388,16 @@ def convert_arg(arg):
         return iiFunctionCall(func_object=func_label, args=cargs)
 
     else:
-        todo("Handle print for non-value-literals")
-        raise CannotConvert("Cannot convert print for non-value-literals", arg)
+        todo("Handle DebugPrint for non-value-literals")
+        raise CannotConvert("Cannot convert DebugPrint for non-value-literals", arg)
 
 
 def convert_print(print_statement):
     cstatement = []
     cargs = []
     for arg in print_statement.expr_list:
-        #print(arg)
-        #print("We need to convert the arg", arg)
+        #DebugPrint(arg)
+        #DebugPrint("We need to convert the arg", arg)
         crepr = convert_arg(arg)
         carg = crepr
         cargs.append(carg)
@@ -418,35 +424,35 @@ def convert_for_statement(for_statement):
 
     cstep = convert_statements(step)
 
-    print("*******************")
-    print(crvalue_source)
-    print("*******************")
-    print("FOR STATEMENT :")
-    print("              : ", for_statement)
-    print("              :", dir(for_statement))
-    print("     loop var :", for_statement.identifier)
-    print("loop var type :", for_statement.identifier.get_type())
-    print("loop var ctype:", python_type_to_c_type(for_statement.identifier.get_type()))
-    print("     iterator :", for_statement.expression)
-    print("        block :", for_statement.block)
-    print("        info :", for_statement.__info__())
-    print("*******************")
-    pprint.pprint(for_statement.__info__())
-    print("*******************")
+    DebugPrint("*******************")
+    DebugPrint(crvalue_source)
+    DebugPrint("*******************")
+    DebugPrint("FOR STATEMENT :")
+    DebugPrint("              : ", for_statement)
+    DebugPrint("              :", dir(for_statement))
+    DebugPrint("     loop var :", for_statement.identifier)
+    DebugPrint("loop var type :", for_statement.identifier.get_type())
+    DebugPrint("loop var ctype:", python_type_to_c_type(for_statement.identifier.get_type()))
+    DebugPrint("     iterator :", for_statement.expression)
+    DebugPrint("        block :", for_statement.block)
+    DebugPrint("        info :", for_statement.__info__())
+    DebugPrint("*******************")
+    DebugPrint( pprint.pformat(for_statement.__info__()) )
+    DebugPrint("*******************")
 
     return iiForStatement(lvalue=clvalue, iterator=crvalue_source,
                           statements=cstep, for_statement_PyNode=for_statement)
 
 
 def convert_def_statement(def_statement):
-    print("******************************************")
-    print("* CONVERT DEF STATEMENT ******************")
-    print("")
-    print("     :",def_statement)
-    print("NAME:", def_statement.identifier.value)
-    print("PARAMETERS:", def_statement.parameterlist)
-    print("BLOCK:", def_statement.block)
-    print("*******************")
+    DebugPrint("******************************************")
+    DebugPrint("* CONVERT DEF STATEMENT ******************")
+    DebugPrint("")
+    DebugPrint("     :",def_statement)
+    DebugPrint("NAME:", def_statement.identifier.value)
+    DebugPrint("PARAMETERS:", def_statement.parameterlist)
+    DebugPrint("BLOCK:", def_statement.block)
+    DebugPrint("*******************")
 
     lvalue = def_statement.identifier
     cidentifer = lvalue.value # FIXME: This is only valid for identifiers
@@ -460,7 +466,7 @@ def convert_def_statement(def_statement):
 
 def convert_extended_clause(extended_clause):
     if extended_clause.tag == "elif_clause":
-        print("WORKING THROUGH ELIF:", extended_clause)
+        DebugPrint("WORKING THROUGH ELIF:", extended_clause)
         crepr_condition = convert_arg(extended_clause.condition)
         cstatements = convert_statements(extended_clause.block)
         if extended_clause.else_clause:
@@ -472,19 +478,19 @@ def convert_extended_clause(extended_clause):
         return iiElifClause(condition=crepr_condition, statements=cstatements)
 
     if extended_clause.tag == "else_clause":
-        print("WORKING THROUGH ELSE:", extended_clause)
+        DebugPrint("WORKING THROUGH ELSE:", extended_clause)
         cstatements = convert_statements(extended_clause.block)
 
         return iiElseClause(statements=cstatements)
 
-    print("NOT ELIF!")
-    print("NOT ELSE!")
-    print(extended_clause)
+    DebugPrint("NOT ELIF!")
+    DebugPrint("NOT ELSE!")
+    DebugPrint(extended_clause)
     raise ValueError("Extended clause isn't a else or elif clause: %s" % repr(extended_clause))
 
 
 def convert_if_statement(if_statement):
-    print("WORKING THROUGH IF:", if_statement)
+    DebugPrint("WORKING THROUGH IF:", if_statement)
     crepr_condition = convert_arg(if_statement.condition)
     cstatements = convert_statements(if_statement.block)
     if if_statement.else_clause:
@@ -508,11 +514,11 @@ def convert_continue_statement(continue_statement):
 
 
 def convert_expression_statement(statement):
-    print("CONVERTING EXPRESSION STATEMENTS", statement.value)
-    print("EXPRESSION STATEMENT", statement.value.tag)
+    DebugPrint("CONVERTING EXPRESSION STATEMENTS", statement.value)
+    DebugPrint("EXPRESSION STATEMENT", statement.value.tag)
     crepr = convert_arg(statement.value)
-    print("REACHED HERE")
-    print("CONVERTED ", crepr)
+    DebugPrint("REACHED HERE")
+    DebugPrint("CONVERTED ", crepr)
 
     return iiExpressionStatement(expression=crepr)
 
@@ -524,7 +530,7 @@ def convert_statements(AST):
         try:
             if statement.tag == "assignment_statement":
                 cstatement = convert_assignment(statement)
-                print(cstatement)
+                DebugPrint(cstatement)
                 cstatements.append(cstatement)
             elif statement.tag == "print_statement":
                 cstatement = convert_print(statement)
@@ -558,7 +564,7 @@ def convert_statements(AST):
                 raise CannotConvert("Statement: "+ statement.tag)
 
         except CannotConvert:
-            print("REACHED HERE FOR", statement)
+            DebugPrint("REACHED HERE FOR", statement)
             raise
     return cstatements
 
@@ -566,7 +572,7 @@ def ast_to_cst(program_name, AST):
     cst = {}
 
     ast_includes = [x.replace("#include ","") for x in AST.includes]
-    print("AST.includes = ", ast_includes)
+    DebugPrint("AST.includes = ", ast_includes)
 
     # Extract and handle variables
 
@@ -586,10 +592,10 @@ def ast_to_cst(program_name, AST):
         cvariables.append(identifier_declaration)
         ctypes[ctype] = True
 
-    print("cvariables",cvariables)
+    DebugPrint("cvariables",cvariables)
 
     cstatements = convert_statements(AST)
-    print(cstatements)
+    DebugPrint(cstatements)
 
     # Based on variables, update includes
     for ctype in ctypes:
@@ -597,10 +603,10 @@ def ast_to_cst(program_name, AST):
         if inc:
             includes.append(inc)
 
-    print("INCLUDES::", includes)
+    DebugPrint("INCLUDES::", includes)
     # Based on statements, update includes
     for cstatement in cstatements:
-        print( "GETTING INCLUDES",  cstatement  )
+        DebugPrint( "GETTING INCLUDES",  cstatement  )
         inc = includes_for_cstatement(cstatement)
         if inc:
             includes.append(inc)
@@ -672,7 +678,7 @@ if __name__ == "__main__":
 
     actual = ast_to_cst("hello_operators", AST)
 
-    print("actual == expect --->", actual == expect)
+    DebugPrint("actual == expect --->", actual == expect)
 
     import json
     import pprint
