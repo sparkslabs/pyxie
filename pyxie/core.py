@@ -34,6 +34,8 @@ from pyxie.transform.py2ii import ast_to_cst
 from pyxie.transform.clib import files as clib_files
 from pyxie.transform.simple_cpp import CppProgram, source, reset_parser
 
+from pyxie.model.cppnodes import mkProgram
+
 from pyxie.model.iinodes import iiNode
 
 debug = trace = False
@@ -171,6 +173,8 @@ def generate_code(cname, AST, profile, debug=False):
     DebugPrint("generate_code: CONCRETE C SYNTAX TREE: - - - - - - - - - - - - - - - - - - - -")
     DebugPrint(pprint.pformat(jsonify(iiNodes)))
     DebugPrint("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+
+    program = mkProgram(iiNodes)
     program.generate(profile)
     return pyxie.transform.simple_cpp.source[:]
 

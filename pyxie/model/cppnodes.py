@@ -138,6 +138,22 @@ def c_repr_of_expression(expression):
 class CppNode(object):
     pass
 
+def mkProgram(iiprogram):
+    program = CppProgram()
+    program.name = iiprogram.name
+    program.includes = iiprogram.includes
+
+    for identifier in iiprogram.global_identifiers:
+        value_type = identifier.value_type
+        name = identifier.name
+        program.main_cframe.identifiers.append(CppIdentifier(value_type, name))
+
+    for statement in iiprogram.statements:
+        conc_statement = mkStatement(statement)
+        program.main_cframe.statements.append(conc_statement)
+
+    return program
+
 class CppProgram(CppNode):
     def __init__(self):
         self.includes = []
