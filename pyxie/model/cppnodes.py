@@ -190,9 +190,11 @@ class CppProgram(CppNode):
         self.name = ""
 
 
-    def generate(self, profile = "default"):
+    def code(self, profile = "default"):
         print("BUILDING FOR PROFILE", profile)
-        frame_lines = self.main_cframe.concrete()
+        frame_raw = self.main_cframe.code()
+        frame_lines = frame_raw.split("\n")
+
         seen = {}
         for include in self.includes:
             if not seen.get(include, False):
@@ -224,7 +226,7 @@ class CppFrame(CppNode):
                             "statements" : [y.json() for y in self.statements ] }
                }
 
-    def concrete(self):
+    def code(self):
         block = []
         for identifier in self.identifiers:
             decl_code = identifier.decl_code()
@@ -237,7 +239,8 @@ class CppFrame(CppNode):
                 if code is None:
                     print("STATEMENT IS None, WHY?", statement)
                 block.append(code + ";")
-        return block
+        block_as_string = "\n".join(block)
+        return block_as_string
 
 
 class CppIdentifier(CppNode):
@@ -476,7 +479,8 @@ class CppWhileStatement(CppNode):
         code += "("
         code += CppArgumentList(self.raw_condition).code()
         code += ") {"
-        code += "\n".join( self.block_cframe.concrete() )
+#        code += "\n".join( self.block_cframe.concrete() )
+        code += self.block_cframe.code()
         code += "}"
         return code
 
@@ -553,7 +557,7 @@ class CppForStatement(CppNode):
                            "ITERATOR_NAME": iterator_name,
                            "UNIQIFIER":repr(unique_id),
                            "IDENTIFIER": self.raw_identifier,
-                           "BODY": "\n".join( self.block_cframe.concrete() )
+                           "BODY": self.block_cframe.code()
                          }
 
 
@@ -598,7 +602,7 @@ class CppIfStatement(CppNode):
     def code(self):
         extended_clauses_code = None
         condition_code = CppArgumentList(self.raw_condition).code()
-        block_code = "\n".join( self.block_cframe.concrete() )
+        block_code = self.block_cframe.code()
         if self.extended_clause:
             if node_type(self.extended_clause) == "elif_clause":
                 condition = self.extended_clause.condition
@@ -639,7 +643,7 @@ class CppElseIfClause(CppNode):
     def code(self):
         extended_clauses_code = None
         condition_code = CppArgumentList(self.raw_condition).code()
-        block_code = "\n".join( self.block_cframe.concrete() )
+        block_code = self.block_cframe.code()
         if self.extended_clause:
             if node_type(self.extended_clause) == "elif_clause":
                 print("***************************************************")
@@ -678,7 +682,7 @@ class CppElseClause(CppNode):
 
     def code(self):
         extended_clauses_code = None
-        block_code = "\n".join( self.block_cframe.concrete() )
+        block_code = self.block_cframe.code()
 
         code = "else { %s } " % (block_code, )
 
@@ -692,3 +696,88 @@ class CppElseClause(CppNode):
             #"CppIfStatement", "CppElseIfClause", "CppElseClause"
           #]
 
+"""
+def todo(*args):
+def get_blank_line():
+def Print(*args):
+def node_type(node):
+def get_operator_type(arg):
+def ExpressionIsPrintBuiltin(expression):
+def isIdentifier(node):
+def mkStatement(statement_spec):
+def c_repr_of_expression(expression):
+def mkProgram(iiprogram):
+def iioperator_to_cpp_repr(iioperator): # FIXME: Terrible name
+
+class CppNode(object):
+
+class CppIdentifier(CppNode):
+    def __init__(self, ctype, name):
+    def json(self):
+    def decl_code(self):
+
+class CppArgumentList(CppNode):
+    def __init__(self, *args):
+    def json(self):
+
+    def code_op(self,arg):
+    def code_arg(self, arg):
+    def code_list(self):
+
+    def code(self):
+
+class CppProgram(CppNode):
+    def __init__(self):
+    def code(self, profile = "default"):
+    def json(self):
+class CppFrame(CppNode):
+    def __init__(self):
+    def json(self):
+    def code(self):
+class CppAssignment(CppNode):
+    def __init__(self, lvalue, rvalue, assigntype="="):
+    def json(self):
+    def code(self):
+class CppEmptyStatement(CppNode):
+    def json(self):
+    def code(self):
+class CppBreakStatement(CppNode):
+    def json(self):
+    def code(self):
+class CppContinueStatement(CppNode):
+    def json(self):
+    def code(self):
+class CppFunctionCall(CppNode):
+    def __init__(self, identifier, args):
+    def json(self):
+    def code(self):
+class CppExpressionStatement(CppNode):
+    def __init__(self, expression):
+    def json(self):
+    def code(self):
+class CppPrintStatement(CppNode):
+    def __init__(self, args):
+    def json(self):
+    def code(self):
+class CppWhileStatement(CppNode):
+    def __init__(self, condition, *statements):
+    def json(self):
+    def code(self):
+class CppForStatement(CppNode):
+    def __init__(self, identifier, iterable, statements, for_statement_pynode):
+    def json(self):
+    def code(self):
+class CppIfStatement(CppNode):
+    def __init__(self, condition, statements, extended_clause=None):
+    def json(self):
+    def code(self):
+class CppElseIfClause(CppNode):
+    def __init__(self, condition, statements, extended_clause=None):
+    def json(self):
+    def code(self):
+class CppElseClause(CppNode):
+    def __init__(self, statements):
+    def json(self):
+    def code(self):
+
+"""

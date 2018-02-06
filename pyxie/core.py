@@ -175,7 +175,7 @@ def generate_code(cname, AST, profile, debug=False):
     DebugPrint("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
 
     program = mkProgram(iiNodes)
-    program.generate(profile)
+    program.code(profile)
     return pyxie.transform.simple_cpp.source[:]
 
 
