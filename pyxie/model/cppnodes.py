@@ -145,6 +145,28 @@ def mkProgram(iiprogram):
 
     return program
 
+def iioperator_to_cpp_repr(iioperator): # FIXME: Terrible name
+
+    # Converts an iiNode representation of an operator
+    op_type = get_operator_type(iioperator)
+
+    print("ARG", iioperator, op_type)
+    if op_type == "plus": return "+"
+    if op_type == "minus": return "-"
+    if op_type == "times": return "*"
+    if op_type == "divide": return "/"
+    if op_type == "boolean_or": return " || "
+    if op_type == "boolean_and": return " && "
+    if op_type == "boolean_not": return " ! "
+
+    if op_type in ["<", ">", "==", ">=", "<=", "!="]:
+        return op_type
+
+    if op_type == "<>": return "!="
+
+    return TypeError("Cannot convert operator", iioperator, op_type)
+
+
 #
 # CppNodes representing C++ Programs. From these you can generate C++ code.
 #
@@ -337,24 +359,8 @@ class CppArgumentList(CppNode):
     def json(self):
         return list(self.args[:])
 
-    def code_op_F(self, arg):
-        if get_operator_type(arg) == "plus": return "+"
-        if get_operator_type(arg) == "minus": return "-"
-        if get_operator_type(arg) == "times": return "*"
-        if get_operator_type(arg) == "divide": return "/"
-        if get_operator_type(arg) == "boolean_or": return " || "
-        if get_operator_type(arg) == "boolean_and": return " && "
-        if get_operator_type(arg) == "boolean_not": return " ! "
-
-        if get_operator_type(arg) in ["<", ">", "==", ">=", "<=", "!="]:
-            return get_operator_type(arg)
-
-        if get_operator_type(arg) == "<>": return "!="
-
-        return None
-
     def code_op(self,arg):
-        c_op = self.code_op_F(arg)
+        c_op = iioperator_to_cpp_repr(arg)
         if c_op:
             if len(arg.args) == 2:
                 print("GENERATING CODE FOR INFIX OPERATORS")
