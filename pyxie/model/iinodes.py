@@ -14,18 +14,18 @@
 # limitations under the License.
 #
 """
-This file will contain objects used to represent the independent intermediate
+This file contains objects used to represent the independent intermediate
 format of the program.
-
-Initially it's being a bridging/extraction point.
 """
 
-class iiNode(object): # This is to allow intermediate thunk check whether it has an iiNode or not...
+class iiNode(object):
     tag = "iinode"
     def __init__(self):
         raise TypeError("Abstract Base class method called")
+
     def __json__(self):
         raise TypeError("Abstract Base class method called")
+
 
 class iiProgram(iiNode):
     tag = "program"
@@ -116,6 +116,7 @@ class iiAttributeAccess(iiNode):
 
     def __json__(self):
         return ["attributeaccess", self.expression, self.attribute]
+
 
 class iiIdentifier(iiNode):
     tag = "identifier"
@@ -234,6 +235,7 @@ class iiBreakStatement(iiNode):
     def __json__(self):
         return ["break_statement"]
 
+
 class iiContinueStatement(iiNode):
     tag = "continue_statement"
     def __init__(self):
@@ -241,6 +243,7 @@ class iiContinueStatement(iiNode):
 
     def __json__(self):
         return ["continue_statement"]
+
 
 class iiExpressionStatement(iiNode):
     tag = "expression_statement"
@@ -260,6 +263,7 @@ class iiIdentifierDeclaration(iiNode):
 
     def __json__(self):
         return ["identifier", self.value_type, self.name]
+
 
 class iiElifClause(iiNode):
     tag = "elif_clause"
@@ -296,4 +300,3 @@ class iiIfStatement(iiNode):
             return ["if_statement", self.condition, self.statements, self.extended_clause]
         else:
             return ["if_statement", self.condition, self.statements]
-
