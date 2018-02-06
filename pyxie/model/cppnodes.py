@@ -37,8 +37,6 @@ def get_blank_line():
 def Print(*args):
     return pyxie.transform.simple_cpp.Print(*args)
 
-class CppNode(object):
-    pass
 
 # --------------------------------------------------------------------------------------------
 # Support code to cover intermediate stages of conversion
@@ -125,6 +123,20 @@ def mkStatement(statement_spec):
         raise Exception("Unhandlable statement type: ", statement_type)
 
 
+def c_repr_of_expression(expression):
+    try:
+        cexpression = expression[1]
+    except TypeError:
+        cexpression = expression.identifier
+    return cexpression
+
+#
+# CppNodes representing C++ Programs. From these you can generate C++ code.
+#
+
+
+class CppNode(object):
+    pass
 
 class CppProgram(CppNode):
     def __init__(self):
@@ -274,15 +286,6 @@ class CppContinueStatement(CppNode):
 
     def code(self):
         return "continue"
-
-
-def c_repr_of_expression(expression):
-    try:
-        cexpression = expression[1]
-    except TypeError:
-        cexpression = expression.identifier
-    return cexpression
-    
 
 class CppFunctionCall(CppNode):
     def __init__(self, identifier, args):
