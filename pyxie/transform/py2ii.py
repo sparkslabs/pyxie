@@ -45,14 +45,6 @@ class UnknownType(Exception):
 class CannotConvert(Exception):
     pass
 
-#
-# Support code to cover intermediate stages of conversion
-#
-def statement_type(iistatement):
-    statementType = iistatement.tag
-    return statementType
-
-
 
 def todo(*args):
     print("TODO", " ".join([repr(x) for x in args]))
@@ -133,7 +125,7 @@ def includes_for_ctype(ctype):
 
 
 def includes_for_iistatement(iistatement):
-    if statement_type(iistatement) == "print_statement": return "<iostream>"
+    if iistatement.tag == "print_statement": return "<iostream>"
 
 def crepr_literal(pyliteral):
     assert isinstance(pyliteral, nodes.PyValueLiteral)
