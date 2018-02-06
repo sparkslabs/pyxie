@@ -37,7 +37,6 @@ def get_blank_line():
 def Print(*args):
     return pyxie.transform.simple_cpp.Print(*args)
 
-
 # --------------------------------------------------------------------------------------------
 # Support code to cover intermediate stages of conversion
 #
@@ -130,14 +129,6 @@ def c_repr_of_expression(expression):
         cexpression = expression.identifier
     return cexpression
 
-#
-# CppNodes representing C++ Programs. From these you can generate C++ code.
-#
-
-
-class CppNode(object):
-    pass
-
 def mkProgram(iiprogram):
     program = CppProgram()
     program.name = iiprogram.name
@@ -154,28 +145,28 @@ def mkProgram(iiprogram):
 
     return program
 
+#
+# CppNodes representing C++ Programs. From these you can generate C++ code.
+#
+
+#
+#
+# Below here should be C++ Nodes, representing C++ programs
+# They should be able to generate C++ code directly from the data they have.
+# They should NOT be doing any transformations.
+# The fact they do at present should be viewed as a areas needing improvements
+#
+
+
+class CppNode(object):
+    pass
+
 class CppProgram(CppNode):
     def __init__(self):
         self.includes = []
         self.main_cframe = CppFrame()
         self.name = ""
 
-    @classmethod
-    def fromiinodes(klass, iiprogram):
-        program = klass()
-        program.name = iiprogram.name
-        program.includes = iiprogram.includes
-
-        for identifier in iiprogram.global_identifiers:
-            value_type = identifier.value_type
-            name = identifier.name
-            program.main_cframe.identifiers.append(CppIdentifier(value_type, name))
-
-        for statement in iiprogram.statements:
-            conc_statement = mkStatement(statement)
-            program.main_cframe.statements.append(conc_statement)
-
-        return program
 
     def generate(self, profile = "default"):
         print("BUILDING FOR PROFILE", profile)
