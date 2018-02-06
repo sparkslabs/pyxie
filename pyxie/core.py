@@ -29,7 +29,7 @@ from pyxie.parsing.lexer import build_lexer
 from pyxie.parsing.grammar import parse
 
 from pyxie.model.pynode import jdump
-from pyxie.transform.py2ii import ast_to_cst
+from pyxie.transform.py2ii import pynodes_to_iinodes
 
 from pyxie.transform.clib import files as clib_files
 from pyxie.transform.simple_cpp import CppProgram, source, reset_parser
@@ -168,7 +168,7 @@ def jsonify(node):
 
 
 def generate_code(cname, AST, profile, debug=False):
-    iiNodes = ast_to_cst(cname, AST)
+    iiNodes = pynodes_to_iinodes(cname, AST)
 
     DebugPrint("generate_code: CONCRETE C SYNTAX TREE: - - - - - - - - - - - - - - - - - - - -")
     DebugPrint(pprint.pformat(jsonify(iiNodes)))
@@ -408,7 +408,7 @@ def parsing_tests():
 
 
 def compilation_tests(profile):
-    # ast_to_cst
+    # pynodes_to_iinodes
     # Compilation Tests
     rootdir = os.getcwd()
     testprogs = get_test_programs(".pyxie")

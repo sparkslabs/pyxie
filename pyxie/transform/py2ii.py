@@ -568,7 +568,8 @@ def convert_statements(AST):
             raise
     return cstatements
 
-def ast_to_cst(program_name, AST):
+
+def pynodes_to_iinodes(program_name, AST):
     cst = {}
 
     ast_includes = [x.replace("#include ","") for x in AST.includes]
@@ -613,6 +614,7 @@ def ast_to_cst(program_name, AST):
 
     program = iiProgram(name=program_name, includes=includes, identifiers=cvariables, statements=cstatements)
     return program
+
 
 
 if __name__ == "__main__":
