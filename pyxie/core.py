@@ -29,7 +29,7 @@ from pyxie.parsing.lexer import build_lexer
 from pyxie.parsing.grammar import parse
 
 from pyxie.model.pynode import jdump
-from pyxie.model.transform import ast_to_cst
+from pyxie.transform.py2ii import ast_to_cst
 
 from pyxie.transform.clib import files as clib_files
 from pyxie.transform.simple_cpp import CppProgram, source, reset_parser
