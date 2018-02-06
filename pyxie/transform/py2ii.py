@@ -33,7 +33,7 @@ from pyxie.model.iinodes import *
 
 iterator_unique_base = 0
 
-trace = 0
+trace = False
 
 def DebugPrint(*args):
     if trace:
@@ -616,73 +616,4 @@ def ast_to_cst(program_name, AST):
 
 
 if __name__ == "__main__":
-    AST =   ['program',
-             ['statements',
-              [['assignment_statement',
-                ['first', 'IDENTIFIER', 1],
-                ['ASSIGN', '='],
-                ['value_literal', 1, 'NUMBER', 'INT', 1]],
-               ['assignment_statement',
-                ['second', 'IDENTIFIER', 2],
-                ['ASSIGN', '='],
-                ['value_literal', 2, 'NUMBER', 'INT', 2]],
-               ['assignment_statement',
-                ['third', 'IDENTIFIER', 3],
-                ['ASSIGN', '='],
-                ['value_literal', 3, 'NUMBER', 'INT', 3]],
-               ['print_statement',
-                [['value_literal', 'first', 'IDENTIFIER', 5],
-                 ['value_literal', 'second', 'IDENTIFIER', 5],
-                 ['value_literal', 'third', 'IDENTIFIER', 5]]],
-               ['print_statement',
-                [['value_literal', 1, 'NUMBER', 'INT', 6],
-                 ['value_literal', 2, 'NUMBER', 'INT', 6],
-                 ['value_literal', 'hello', 'STRING', 6]]]]]]
-
-    expect = {
-        'PROGRAM': {'includes': ['<iostream>', '<iostream>'],
-             'main': {'c_frame': {'identifiers': [['identifier', 'int', 'second'],
-                                                  ['identifier', 'int', 'third'],
-                                                  ['identifier', 'int', 'first']],
-                                  'statements': [['assignment', 'first', '=', '1'],
-                                                 ['assignment', 'second', '=', '2'],
-                                                 ['assignment', 'third', '=', '3'],
-                                                 ['print_statement',
-                                                      ['identifier', 'first'],
-                                                      ['identifier', 'second'],
-                                                      ['identifier', 'third']],
-                                                 ['print_statement',
-                                                      ["integer", 1],
-                                                      ["integer", 2],
-                                                      ["string", 'hello']]]}},
-             'name': 'hello_world_mixed'}}
-
-    AST = ['program',
-           ['statements',
-            [['print_statement',
-              [['operator_function',
-                'plus',
-                ['value_literal', 1, 'NUMBER', 'INT', 1],
-                ['value_literal', 1, 'NUMBER', 'INT', 1]]]]]]]
-
-    expect = {
-        'PROGRAM': {'includes': ['<iostream>'],
-             'main': {'c_frame': {'identifiers': [],
-                                  'statements': [['print_statement', ['op', 'plus', 
-                                                                            ["integer", 1],
-                                                                            ["integer", 1]]]
-,
-                                                ] }},
-             'name': 'hello_operators'}}
-
-
-    actual = ast_to_cst("hello_operators", AST)
-
-    DebugPrint("actual == expect --->", actual == expect)
-
-    import json
-    import pprint
-    # print json.dumps(actual, indent=4)
-    pprint.pprint(actual)
-    pprint.pprint(expect)
-
+    pass
