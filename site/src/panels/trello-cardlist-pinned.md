@@ -2,7 +2,7 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Pinned
-updated: October 2016
+updated: February 2018
 title: Trello Cardlist Pinned
 ---
 ### Pinned

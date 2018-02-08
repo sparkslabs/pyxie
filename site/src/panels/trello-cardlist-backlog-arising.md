@@ -2,9 +2,11 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Backlog: Arising
-updated: October 2016
+updated: February 2018
 title: Trello Cardlist Backlog: Arising
 ---
 ### Backlog: Arising
 
-* 259\. Would be nice to remove extraneous brackets round generated C++ expressions
+* 292\. Debian packaging should include examples
+* 294\. Website should include examples.
+* 295\. Move analysis to pyxie.transform.analysis

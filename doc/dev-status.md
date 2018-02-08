@@ -10,38 +10,46 @@ commits. _(This is exported from trello)_
 
 * HEADLINE: PRE-ALPHA
 * DEV STATE: WORKING (USABLE)
-* DEV VERSION: 0.1.23
-* RELEASED: 0.0.22 (25 Sep 2016)
+* DEV VERSION: 0.1.26
+* RELEASED: 0.1.25 (2 Feb 2018)
 * LANGUAGE STATE: BARE*
-* FOCUS: Practicalities (Arduino Profile real example) - Get the Puppy/Kitten Robot working
+* FOCUS: Basic User Functions, Practicalities (Arduino Profile real example) - Get the Puppy/Kitten Robot working
 * Newsletter created at http://tinyletter.com/sparkslabs
 
 
 ### WIP
 
+* 297\. Detangle the code transforms out from the cppnodes...
+* 18\. Code generation of C literals is muddled up a touch with structural representation #internals
+* 293\. Extract the transforms from cppnodes into pyxie.transform.ii2cpp
 
 
 ### Paused
 
-* 227\. .get_type() should be delegated, not rely on internal pynode details.
-* Flesh out a micro:bit profile.
 
 
 ### Backlog: Arising
 
-* 259\. Would be nice to remove extraneous brackets round generated C++ expressions
+* 292\. Debian packaging should include examples
+* 294\. Website should include examples.
+* 295\. Move analysis to pyxie.transform.analysis
 
 
 ### Release Backlog: Features
 
-* 0\.1.23 = = = = = = = = = =
+* 0\.1.26 = = = = = = = = = =
+* 286\. Revise iiNodes to use ECS like ideas
+* 288\. Use ECS style iiNodes for type inference and variable collation
+* 291\. Rename model.transform to transform.pynodetoiinode
+* 32\. C Syntax Tree is a Tree #internals
 
 
 ### Release Backlog: Tasks
 
-* 0\.1.23 - - - - - (tasks)
+* 0\.1.26 - - - - - (tasks)
+* 0\.1.25 - - - - - (tasks)
+* 287\. Make repo more visible
 * 57\. Blog post: Pyxie structure #website
-* Release tasks
 
 
 ### Known Bugs / Anti-features
@@ -50,86 +58,125 @@ commits. _(This is exported from trello)_
 
 ### Backlog: Proposed Next
 
-* 196\. Batch Compiler
-* 59\. Start thoughts on pyxie-web #reflect #website
-* 195\. Functionality of bin/pyxie-dev is in core, not a script
-* 3\.5 Analysis code looks for an arduino profile file describing c-types appropriately.
-* 3\.6 arduino profile file is propogated with something relating to core functions that read values, to avoid forcing types "manually"
-* 213\. v0 no funcs Playful Puppy code analyses
-* 214\. v0 no funcs Playful Puppy code generates code
-* 215\. v0 no funcs Playful Puppy code compiles, and runs on device correctly
+* 271\. Transformation from python AST to C-CST exists/works - for simplest possible function
+* 268\. Code generation for very basic functions succeeds. (no args, return values or variables)
+* 267\. Analysis of functions not using any variables succeeds (no args, no return values)
 * 221\. Initial spike support for function definitions. (no args, no return values)
+* 273\. Code generation for functions has cross overs for that of identifier definition.
+* -----------------------------
 * 223\. Spike support for functions with basic arguments.
 * 222\. Spike support for functions which use local variables
+* 251\. Profile Context is usable for defining externally defined methods (for typechecking)
+* 227\. .get_type() should be delegated, not rely on internal pynode details.
+* 15\. Refactor code generation #refactor #internals
+* 16\. Find Variables duplicates effort from the analysis phase, while also relying on results from it #internals
+* 17\. Transform step is throwing away data. This seems broken and should perhaps pass through decorated pynodes - or at least retain a reference. #internals
+* 58\. Blog Post: Pyxie Decisions #website
 
 
 ### Backlog: Features
 
-* 251\. Profile Context is usable for defining externally defined methods/functions (for typechecking)
-* 9\. Add the manpage to the distributed files, into the right places #docs
-* 8\. Add updating man page to the makefile #docs
-* 197\. Web Editor
-* 4\. Compilation profiles are pluggable
-* 11\. MBed compatible compilation profile? (Seeedstudio Arch)
-* 12\. MSP430 compatible compilation profile?
-* 13\. Pyxie compile harness supports custom working directories #practicalities
-* 14\. Code Cleanups #refactor #internals
-* 15\. Refactor code generation #refactor #internals
-* 16\. Find Variables duplicates effort from the analysis phase, while also relying on results from it #internals
-* 17\. Transform step is throwing away data. This seems broken and should perhaps pass through decorated pynodes - or at least retain a reference. #internals
-* 18\. Code generation of C literals is muddled up a touch with structural representation #internals
-* 19\. Website should use responsive CSS #website
-* 20\. Website side bar could be better implemented. #website
-* 21\. Truthiness for values that AND/OR/NOT arguments needs resolving properly in C. (deferred) #pylang
-* 22\. Truthiness of expressions is explicitly checked/valid - for us in if and while statements and boolean expressions #pylang #internals
-* 23\. Website could do with some pictures :-) #website
-* 24\. Currently have 2 shift/reduce conflicts. They're auto-resolved correctly, but could be worth seeing if they could be resolved better. #pylang #internals
-* 25\. Consider using CppHeaderParser on the C++ side of things - to inform the code generation side of things #internals #pylang
-* 26\. Block structure of generated C Code is pretty/human friendly/readable #internals
-* 27\. Operations and operators could be unified with a bit of tweaking - using "x.operation", not "x.tag/x.comparison" etc #internals #refactor
-* 28\. Better Error messages for users #pylang #practicalties
-* 29\. Duplication exists within code generation for operators. (cf convert_operator etc) #internals #refactor
 * 31\. Features focusses on BARE level functionality
-* 32\. C Syntax Tree is a Tree #internals
-* 33\. Can find_variables(AST) in pyxie.model.transform actually just look in the results of the analysis phase? It should be able to. Building the same structure after all #internals
-* 34\. Function call code supports simplified type definitions for externals. #practicalities
-* 35\. Unify Boolean operator pynode implementations #refactor #internals
-* 36\. Comments are implemented - would be useful for documented tests more appropriately #pylang
-* 37\. Add special case for function calls like print... #pylang
+* -----------------------------
+* == NEED ======
 * 38\. Generalise special casing of function calls. #practicalities
-* 39\. Variables inside while loops are handled correctly #testing
 * 40\. Core expression code generation for strings #pylang
 * 41\. Implement container oriented comparison operators  #pylang
 * 42\. Implement identity oriented comparison operators  #pylang
+* 48\. Modulo Operator for Integers #pylang
+* -----------------------------
+* == USEFUL ======
+* 33\. Can find_variables(AST) in pyxie.model.transform actually just look in the results of the analysis phase? It should be able to. Building the same structure after all #internals
+* 36\. Comments are implemented - would be useful for documented tests more appropriately #pylang
+* 28\. Better Error messages for users #pylang #practicalties
+* 14\. Code Cleanups #refactor #internals
+* 4\. Compilation profiles are pluggable
+* 13\. Pyxie compile harness supports custom working directories #practicalities
+* 21\. Truthiness for values that AND/OR/NOT arguments needs resolving properly in C. (deferred) #pylang
+* 22\. Truthiness of expressions is explicitly checked/valid - for us in if and while statements and boolean expressions #pylang #internals
+* 47\. Modulo Operator for Strings #pylang
+* -----------------------------
+* == WANT ======
+* Flesh out a micro:bit profile.
+* 196\. Batch Compiler
+* 197\. Web Editor
+* 39\. Variables inside while loops are handled correctly #testing
+* -----------------------------
+* == WOULDLIKE ======
+* 24\. Currently have 2 shift/reduce conflicts. They're auto-resolved correctly, but could be worth seeing if they could be resolved better. #pylang #internals
+* 59\. Start thoughts on pyxie-web #reflect #website
+* 9\. Add the manpage to the distributed files, into the right places #docs
+* 8\. Add updating man page to the makefile #docs
+* 11\. MBed compatible compilation profile? (Seeedstudio Arch)
+* 12\. MSP430 compatible compilation profile?
+* 25\. Consider using CppHeaderParser on the C++ side of things - to inform the code generation side of things #internals #pylang
+* 259\. Would be nice to remove extraneous brackets round generated C++ expressions
+* 27\. Operations and operators could be unified with a bit of tweaking - using "x.operation", not "x.tag/x.comparison" etc #internals #refactor
+* 29\. Duplication exists within code generation for operators. (cf convert_operator etc) #internals #refactor
+* 35\. Unify Boolean operator pynode implementations #refactor #internals
 * 43\. Code generation for integer literals retains original representation where possible (Octal, hex, binary, etc) #practicalities
 * 44\. Function call code supports C style function prototypes for type definitions #tbd
 * 45\. Function call code supports name C headers for type definitions #tbd
 * 46\. Pyxie caches results of C style header parsing #tbd
-* 47\. Modulo Operator for Strings #pylang
-* 48\. Modulo Operator for Integers #pylang
 * 49\. Modulo Operator for Floats #pylang
+* == NOT PRIORITISED ======
 
 
 ### Backlog: Tasks
 
 * 52\. Review whether context should check types of ALL expressions, rather than just first, and whether we can should try to detect type mismatches #reflect
-* 53\. Use https://travis-ci.org/ ? #reflect
-* 54\. Review pypi packaging for things we should be doing #reflect #practicalities
-* 55\. Create pyxie-service for managing batch compilation services #practicalities
+* 272\. Review Core Python Types To Do Next
 
 
 ### Backlog: Website, docs, etc
 
+* 20\. Website side bar could be better implemented. #website
+* 50\. Link current test programs on the website, maybe #website
 * 232\. Would be nice to have a prettier website
+* 23\. Website could do with some pictures :-) #website
 * 233\. Some sort of Logo would be nice
-* 58\. Blog Post: Pyxie Decisions #website
 * 60\. Start thoughts on pyxie-gui #reflect
 * 30\. Should we allow comments on website? #website
-* 50\. Link current test programs on the website, maybe #website
+* 19\. Website should use responsive CSS #website
 
 
 ### Features Implemented
 
+* 296\. Remove a large chunk of old extraneous debugging output
+* 290\. Rename "codegen" as "transform"
+* 0\.1.25 = = = = = = = = = =
+* 289\. Reimplement Cpp Operators
+* 283\. Delete thunk
+* 281\. Create classes for remaining iiNodes (if appropriate)
+* 280\. Decorate CppNodes to use thunk to continue functioning using *either* iinodes or lists
+* 282\. Shift code to use the actual iiNodes, removing use of thunk
+* 279\. Create thunk that can take both iiNode lists or iiNodes to allow transition to iiNodes
+* 278\. Create base class iiNode
+* 285\. Document SemVer for Pyxie
+* 284\. Create a pyxie.api import, to allow the use of Pyxie as an API.
+* 277\. Move all creation of iiNode lists into functions in pyxie.models.iinodes
+* 276\. Shift CppNodes into new location
+* 275\. Rename existing CppNodes to make things clearer
+* 274\. Create pyxie.models.cppnodes
+* 0\.1.24 = = = = = = = = = =
+* Prep Release 0.1.24
+* 269\. Pynode support for def statements
+* 270\. Add a callable type
+* 266\. Grammar parsing for function definition succeeds
+* 265\. Lexing for function definition succeeds
+* 37\. Add special case for function calls like print... #pylang
+* 34\. Function call code supports simplified type definitions for externals. #practicalities
+* 26\. Block structure of generated C Code is pretty/human friendly/readable #internals
+* 3\.5 Analysis code looks for an arduino profile file describing c-types appropriately.
+* 3\.6 Arduino profile now configured in separate "profile" interface file
+* 215\. v0 no funcs Playful Puppy code compiles, and runs on device correctly
+* 214\. v0 no funcs Playful Puppy code generates code
+* 213\. v0 no funcs Playful Puppy code analyses
+* 264\. Check all Pynodes add all sub nodes as children correctly
+* 263\. Bug: "elif" not analysing/generating code correctly regarding context
+* 262\. BUGFIX: "else" not analysing/generating code correctly regarding context
+* 195\. Functionality of bin/pyxie-dev is in core, not a script
+* 0\.1.23 = = = = = = = = = =
 * 258\. Improve Arduino profile documentation
 * 260\. Arduino Profile supports HIGH,LOW,INPUT,OUTPUT,A0-A7
 * 238\. Update grammar on website/in docs to match current grammar.
@@ -306,6 +353,8 @@ commits. _(This is exported from trello)_
 
 ### Tasks Done
 
+* 0\.1.23 - - - - - (tasks)
+* 0\.1.23 Release tasks
 * 0\.0.22 - - - - - (tasks)
 * 239\. 0.0.22 Release tasks
 * 0\.0.22 - - - - - (tasks)
@@ -394,5 +443,10 @@ commits. _(This is exported from trello)_
 
 ### Rejected
 
+* 54\. Review pypi packaging for things we should be doing - Seems OK for now
+* 55\. Create pyxie-service for managing batch compilation services - to be folded into Make a Batch Compiler
+* 53\. Use https://travis-ci.org/ - No time to do at the moment
+* 261\. Consider PEP 484 based type hints - maybe later, but part of point of pyxie is to autodetect types
+* 298\. Generated C++ code should a list of fragments and joined at the end.
 
 

@@ -2,11 +2,46 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Features Implemented
-updated: October 2016
+updated: February 2018
 title: Trello Cardlist Features Implemented
 ---
 ### Features Implemented
 
+* 296\. Remove a large chunk of old extraneous debugging output
+* 290\. Rename "codegen" as "transform"
+* 0\.1.25 = = = = = = = = = =
+* 289\. Reimplement Cpp Operators
+* 283\. Delete thunk
+* 281\. Create classes for remaining iiNodes (if appropriate)
+* 280\. Decorate CppNodes to use thunk to continue functioning using *either* iinodes or lists
+* 282\. Shift code to use the actual iiNodes, removing use of thunk
+* 279\. Create thunk that can take both iiNode lists or iiNodes to allow transition to iiNodes
+* 278\. Create base class iiNode
+* 285\. Document SemVer for Pyxie
+* 284\. Create a pyxie.api import, to allow the use of Pyxie as an API.
+* 277\. Move all creation of iiNode lists into functions in pyxie.models.iinodes
+* 276\. Shift CppNodes into new location
+* 275\. Rename existing CppNodes to make things clearer
+* 274\. Create pyxie.models.cppnodes
+* 0\.1.24 = = = = = = = = = =
+* Prep Release 0.1.24
+* 269\. Pynode support for def statements
+* 270\. Add a callable type
+* 266\. Grammar parsing for function definition succeeds
+* 265\. Lexing for function definition succeeds
+* 37\. Add special case for function calls like print... #pylang
+* 34\. Function call code supports simplified type definitions for externals. #practicalities
+* 26\. Block structure of generated C Code is pretty/human friendly/readable #internals
+* 3\.5 Analysis code looks for an arduino profile file describing c-types appropriately.
+* 3\.6 Arduino profile now configured in separate "profile" interface file
+* 215\. v0 no funcs Playful Puppy code compiles, and runs on device correctly
+* 214\. v0 no funcs Playful Puppy code generates code
+* 213\. v0 no funcs Playful Puppy code analyses
+* 264\. Check all Pynodes add all sub nodes as children correctly
+* 263\. Bug: "elif" not analysing/generating code correctly regarding context
+* 262\. BUGFIX: "else" not analysing/generating code correctly regarding context
+* 195\. Functionality of bin/pyxie-dev is in core, not a script
+* 0\.1.23 = = = = = = = = = =
 * 258\. Improve Arduino profile documentation
 * 260\. Arduino Profile supports HIGH,LOW,INPUT,OUTPUT,A0-A7
 * 238\. Update grammar on website/in docs to match current grammar.
