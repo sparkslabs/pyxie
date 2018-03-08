@@ -34,19 +34,8 @@ from pyxie.util import Print
 # --------------------------------------------------------------------------------------------
 # Support code to cover intermediate stages of conversion
 #
-def node_type(node):
-    try:
-        nodeType = node.tag
-    except AttributeError as e:
-        print("*** WARNING ***")
-        print("WARNING: AttributeError:", e)
-        print("** WARNING ***")
-        nodeType = "UNDEFINED_NODETYPE"
-
-    return nodeType
-
 def ExpressionIsPrintBuiltin(expression):
-    assert node_type(expression) == 'function_call'
+    assert expression.tag == 'function_call'
 
     function_label = expression.iifunc_object
     try:
@@ -66,14 +55,14 @@ def ExpressionIsPrintBuiltin(expression):
 
 def mkStatement(statement_spec):
     ss = statement_spec
-    statement_type = node_type(statement_spec)
+    statement_type = statement_spec.tag
     if statement_type == "assignment":
         s = statement_spec
         return CppAssignment( s.lvalue, s.rvalue, s.assignment_op)
 
     elif statement_type == "expression_statement":
         expression = statement_spec.expression
-        if node_type(expression) == "function_call":
+        if expression.tag == "function_call":
             if ExpressionIsPrintBuiltin(expression):
                 print("XXXX", expression)
                 args = expression.iifunc_call_args
@@ -246,7 +235,7 @@ class CppIdentifier(CppNode):
 class CppAssignment(CppNode):
     def __init__(self, lvalue, rvalue, assigntype="="):
         self.lvalue = lvalue
-        self.rvalue = rvalue
+        self.rvalue = rvalue   # rvalues seem to a mixture of types.
         self.assigntype = assigntype
         print("CppAssignment.__init__   LVALUE", lvalue, type(lvalue), repr(lvalue))
         print("CppAssignment.__init__   RVALUE", rvalue, type(rvalue), repr(rvalue))
@@ -255,13 +244,18 @@ class CppAssignment(CppNode):
         return ["assignment", self.lvalue, self.assigntype, self.rvalue ]
 
     def code(self):
-        if node_type(self.rvalue) == "function_call":
+        try:
+            rvalue_tag = self.rvalue.tag
+        except AttributeError: # FIXME: This is borken
+            rvalue_tag = None
+
+        if rvalue_tag == "function_call":
             print("Aha!",self.rvalue)
             crvalue = CppArgumentList(self.rvalue)
             crvalue = crvalue.code()
             print("AHA!", crvalue)
 
-        elif node_type(self.rvalue) == "op":
+        elif rvalue_tag == "op":
             crvalue = CppArgumentList(self.rvalue)
             crvalue = crvalue.code()
         else:
@@ -317,7 +311,7 @@ class CppFunctionCall(CppNode):
         return ["function_call", self.identifier ] + self.arg_list.json()
 
     def code(self):
-        if node_type(self.identifier) == "attributeaccess":
+        if self.identifier.tag == "attributeaccess":
             expression = self.identifier.expression
             attribute = self.identifier.attribute
 
@@ -377,27 +371,27 @@ class CppArgumentList(CppNode):
 
 
     def code_arg(self, arg):                         # PERFORMING A TRANSFORM FROM AN IINODE
-        if node_type(arg) == "identifier":
+        if arg.tag == "identifier":
             return arg.identifier
-        elif node_type(arg) == "integer":
+        elif arg.tag == "integer":
             the_integer = arg.the_integer
             r = repr(the_integer)
             if the_integer<0:
                 r = "(" + r + ")"
             return r
-        elif node_type(arg) == "string":
+        elif arg.tag == "string":
             the_string = arg.the_string
             carg = the_string.replace('"', '\\"')
             return '"' + carg + '"' # Force double quotes
-        elif node_type(arg) == "double":
+        elif arg.tag == "double":
             the_float = arg.the_float
             return repr(the_float)
-        elif node_type(arg) == "boolean":
+        elif arg.tag == "boolean":
             the_boolean = arg.the_boolean
             return the_boolean
-        elif node_type(arg) == "op":
+        elif arg.tag == "op":
             return self.code_op(arg)                     # PERFORMING A TRANSFORM FROM AN IINODE
-        elif node_type(arg) == "function_call":
+        elif arg.tag == "function_call":
             print("WE REACH HERE")
             code_gen = CppFunctionCall(arg.iifunc_object, arg.iifunc_call_args)
             return code_gen.code()
@@ -428,7 +422,7 @@ class CppExpressionStatement(CppNode):
 
     def code(self):
         print(self.expression)
-        if node_type(self.expression) == "function_call":
+        if self.expression.tag == "function_call":
             cvalue = CppArgumentList(self.expression)
             cvalue = cvalue.code()
         else:
@@ -520,10 +514,10 @@ class CppForStatement(CppNode):
         print("OK, USE THIS THEN", self.for_statement_pynode.expression.ivalue_name)
         iterator_name = self.for_statement_pynode.expression.ivalue_name
 
-        if node_type(self.raw_iterable) == "iterator":
+        if self.raw_iterable.tag == "iterator":
             iterable = self.raw_iterable.expression
 
-            if node_type(iterable) == "function_call":
+            if iterable.tag == "function_call":
                 print("FUNCTION_CALL", iterable.iifunc_object)
                 assert type(iterable.iifunc_object) == iiIdentifier
 
@@ -592,7 +586,7 @@ class CppIfStatement(CppNode):
         condition_code = CppArgumentList(self.raw_condition).code()
         block_code = self.block_cframe.code()
         if self.extended_clause:
-            if node_type(self.extended_clause) == "elif_clause":
+            if self.extended_clause.tag == "elif_clause":
                 condition = self.extended_clause.condition
                 statements =  self.extended_clause.statements
                 if self.extended_clause.extended_clause:
@@ -601,7 +595,7 @@ class CppIfStatement(CppNode):
                 else:
                     extended_clauses_code = CppElseIfClause( condition, statements ).code()
 
-            if node_type(self.extended_clause) == "else_clause":
+            if self.extended_clause.tag == "else_clause":
                 print("***************************************************")
                 statements =  self.extended_clause.statements
                 extended_clauses_code = CppElseClause( statements ).code()
@@ -633,7 +627,7 @@ class CppElseIfClause(CppNode):
         condition_code = CppArgumentList(self.raw_condition).code()
         block_code = self.block_cframe.code()
         if self.extended_clause:
-            if node_type(self.extended_clause) == "elif_clause":
+            if self.extended_clause.tag == "elif_clause":
                 print("***************************************************")
                 condition = self.extended_clause.condition
                 statements =  self.extended_clause.statements
@@ -645,7 +639,7 @@ class CppElseIfClause(CppNode):
                     extended_clauses_code = CppElseIfClause( condition, statements ).code()
 
 
-            if node_type(self.extended_clause) == "else_clause":
+            if self.extended_clause.tag == "else_clause":
                 print("***************************************************")
                 statements =  self.extended_clause.statements
                 extended_clauses_code = CppElseClause( statements ).code()
