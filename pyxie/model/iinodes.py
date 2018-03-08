@@ -300,3 +300,20 @@ class iiIfStatement(iiNode):
             return ["if_statement", self.condition, self.statements, self.extended_clause]
         else:
             return ["if_statement", self.condition, self.statements]
+
+
+def ExpressionIsPrintBuiltin(expression):
+    assert expression.tag == 'function_call'
+
+    function_label = expression.iifunc_object
+    try:
+        function_name = function_label[1]
+    except TypeError as e:
+        if 'iiAttributeAccess' in str(e):
+            # This is an expected possibility
+            return False
+        if type(function_label) == iiIdentifier:
+            function_name = function_label.identifier
+        else:
+            raise
+    return function_name == "print"

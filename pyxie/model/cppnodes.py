@@ -17,6 +17,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 from pyxie.model.iinodes import iiIdentifier
+from pyxie.model.iinodes import ExpressionIsPrintBuiltin
 
 from pyxie.transform.profiles import cpp_templates
 
@@ -31,27 +32,6 @@ from pyxie.util import todo
 from pyxie.util import get_blank_line
 from pyxie.util import Print
 
-# --------------------------------------------------------------------------------------------
-# Support code to cover intermediate stages of conversion
-#
-def ExpressionIsPrintBuiltin(expression):
-    assert expression.tag == 'function_call'
-
-    function_label = expression.iifunc_object
-    try:
-        function_name = function_label[1]
-    except TypeError as e:
-        if 'iiAttributeAccess' in str(e):
-            # This is an expected possibility
-            return False
-        if type(function_label) == iiIdentifier:
-            function_name = function_label.identifier
-        else:
-            raise
-    return function_name == "print"
-
-# END Support code to cover intermediate stages of conversion
-# --------------------------------------------------------------------------------------------
 
 def mkStatement(statement_spec):
     ss = statement_spec
