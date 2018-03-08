@@ -55,14 +55,11 @@ def ExpressionIsPrintBuiltin(expression):
         if 'iiAttributeAccess' in str(e):
             # This is an expected possibility
             return False
-        if isIdentifier(function_label):
+        if type(function_label) == iiIdentifier:
             function_name = function_label.identifier
         else:
             raise
     return function_name == "print"
-
-def isIdentifier(node):
-    return type(node) == iiIdentifier
 
 # END Support code to cover intermediate stages of conversion
 # --------------------------------------------------------------------------------------------
@@ -528,7 +525,7 @@ class CppForStatement(CppNode):
 
             if node_type(iterable) == "function_call":
                 print("FUNCTION_CALL", iterable.iifunc_object)
-                assert isIdentifier(iterable.iifunc_object)
+                assert type(iterable.iifunc_object) == iiIdentifier
 
                 identifier = iterable.iifunc_object.identifier
                 if identifier in builtins:
