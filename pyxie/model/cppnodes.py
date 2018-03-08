@@ -45,9 +45,6 @@ def node_type(node):
 
     return nodeType
 
-def get_operator_type(arg):
-    return arg.operator
-
 def ExpressionIsPrintBuiltin(expression):
     assert node_type(expression) == 'function_call'
 
@@ -142,7 +139,7 @@ def mkProgram(iiprogram):
 def iioperator_to_cpp_repr(iioperator): # FIXME: Terrible name
 
     # Converts an iiNode representation of an operator
-    op_type = get_operator_type(iioperator)
+    op_type = iioperator.operator
 
     print("ARG", iioperator, op_type)
     if op_type == "plus": return "+"
