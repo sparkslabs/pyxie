@@ -18,7 +18,6 @@ from __future__ import absolute_import
 
 from pyxie.model.iinodes import iiIdentifier
 
-import pyxie.transform.simple_cpp
 from pyxie.transform.profiles import cpp_templates
 
 from pyxie.model.functions import builtins
@@ -28,14 +27,9 @@ import pprint
 unique_id = 0 # FIXME: Naming - Used to generate unique ids within for statements. 
               # FIXME: Implies there should be a better way of doing this.
 
-def todo(*args):
-    print("TODO", " ".join([repr(x) for x in args]))
-
-def get_blank_line():
-    return pyxie.transform.simple_cpp.get_blank_line()
-
-def Print(*args):
-    return pyxie.transform.simple_cpp.Print(*args)
+from pyxie.util import todo
+from pyxie.util import get_blank_line
+from pyxie.util import Print
 
 # --------------------------------------------------------------------------------------------
 # Support code to cover intermediate stages of conversion
