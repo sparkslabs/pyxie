@@ -362,8 +362,8 @@ class CppArgumentList(CppNode):
     def json(self):
         return list(self.args[:])
 
-    def code_op(self,arg):
-        c_op = iioperator_to_cpp_repr(arg)
+    def code_op(self,arg):  # PERFORMING A TRANSFORM FROM AN IINODE
+        c_op = iioperator_to_cpp_repr(arg)   # PERFORMING A TRANSFORM FROM AN IINODE
         if c_op:
             if len(arg.args) == 2:
                 print("GENERATING CODE FOR INFIX OPERATORS")
@@ -388,7 +388,7 @@ class CppArgumentList(CppNode):
         raise NotImplementedError("Handle code ops for anything other than plus/int,int" + repr(arg))
 
 
-    def code_arg(self, arg):
+    def code_arg(self, arg):                         # PERFORMING A TRANSFORM FROM AN IINODE
         if node_type(arg) == "identifier":
             return arg.identifier
         elif node_type(arg) == "integer":
@@ -408,7 +408,7 @@ class CppArgumentList(CppNode):
             the_boolean = arg.the_boolean
             return the_boolean
         elif node_type(arg) == "op":
-            return self.code_op(arg)
+            return self.code_op(arg)                     # PERFORMING A TRANSFORM FROM AN IINODE
         elif node_type(arg) == "function_call":
             print("WE REACH HERE")
             code_gen = CppFunctionCall(arg.iifunc_object, arg.iifunc_call_args)
@@ -419,16 +419,16 @@ class CppArgumentList(CppNode):
         todo("Handle print value types that are more than the basic types", arg[0])
         raise NotImplementedError("Handle print value types that are more than the basic types" + repr(arg))
 
-    def code_list(self):
+    def code_list(self):                                           # PERFORMING A TRANSFORM FROM AN IINODE
         cargs = []
         for arg in self.args:
-            c_str = self.code_arg(arg)
+            c_str = self.code_arg(arg)                             # PERFORMING A TRANSFORM FROM AN IINODE
             cargs.append(c_str)
 
         return cargs
 
-    def code(self):
-        return ",".join(self.code_list())
+    def code(self):                                # TRANSFORM INVOLVES IINODES :-(
+        return ",".join(self.code_list())          # TRANSFORM INVOLVES IINODES :-(
 
 
 class CppExpressionStatement(CppNode):
@@ -687,97 +687,3 @@ class CppElseClause(CppNode):
         code = "else { %s } " % (block_code, )
 
         return code
-
-
-#__all__ = [ "CppNode", "CppProgram", "CppFrame", "CppIdentifier",
-            #"CppAssignment", "CppEmptyStatement", "CppBreakStatement",
-            #"CppFunctionCall", "CppArgumentList", "CppExpressionStatement",
-            #"CppPrintStatement", "CppWhileStatement", "CppForStatement",
-            #"CppIfStatement", "CppElseIfClause", "CppElseClause"
-          #]
-
-"""
-def todo(*args):
-def get_blank_line():
-def Print(*args):
-def node_type(node):
-def get_operator_type(arg):
-def ExpressionIsPrintBuiltin(expression):
-def isIdentifier(node):
-def mkStatement(statement_spec):
-def c_repr_of_expression(expression):
-def mkProgram(iiprogram):
-def iioperator_to_cpp_repr(iioperator): # FIXME: Terrible name
-
-class CppNode(object):
-
-class CppIdentifier(CppNode):
-    def __init__(self, ctype, name):
-    def json(self):
-    def decl_code(self):
-
-class CppArgumentList(CppNode):
-    def __init__(self, *args):
-    def json(self):
-
-    def code_op(self,arg):
-    def code_arg(self, arg):
-    def code_list(self):
-
-    def code(self):
-
-class CppProgram(CppNode):
-    def __init__(self):
-    def code(self, profile = "default"):
-    def json(self):
-class CppFrame(CppNode):
-    def __init__(self):
-    def json(self):
-    def code(self):
-class CppAssignment(CppNode):
-    def __init__(self, lvalue, rvalue, assigntype="="):
-    def json(self):
-    def code(self):
-class CppEmptyStatement(CppNode):
-    def json(self):
-    def code(self):
-class CppBreakStatement(CppNode):
-    def json(self):
-    def code(self):
-class CppContinueStatement(CppNode):
-    def json(self):
-    def code(self):
-class CppFunctionCall(CppNode):
-    def __init__(self, identifier, args):
-    def json(self):
-    def code(self):
-class CppExpressionStatement(CppNode):
-    def __init__(self, expression):
-    def json(self):
-    def code(self):
-class CppPrintStatement(CppNode):
-    def __init__(self, args):
-    def json(self):
-    def code(self):
-class CppWhileStatement(CppNode):
-    def __init__(self, condition, *statements):
-    def json(self):
-    def code(self):
-class CppForStatement(CppNode):
-    def __init__(self, identifier, iterable, statements, for_statement_pynode):
-    def json(self):
-    def code(self):
-class CppIfStatement(CppNode):
-    def __init__(self, condition, statements, extended_clause=None):
-    def json(self):
-    def code(self):
-class CppElseIfClause(CppNode):
-    def __init__(self, condition, statements, extended_clause=None):
-    def json(self):
-    def code(self):
-class CppElseClause(CppNode):
-    def __init__(self, statements):
-    def json(self):
-    def code(self):
-
-"""
