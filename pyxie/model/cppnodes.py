@@ -17,10 +17,8 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 from pyxie.model.iinodes import iiIdentifier
-from pyxie.model.iinodes import ExpressionIsPrintBuiltin
 
 from pyxie.transform.profiles import cpp_templates
-
 from pyxie.model.functions import builtins
 
 import pprint
@@ -32,104 +30,12 @@ from pyxie.util import todo
 from pyxie.util import get_blank_line
 from pyxie.util import Print
 
-def mkStatement(statement_spec):
-    ss = statement_spec
-    statement_type = statement_spec.tag
-    if statement_type == "assignment":
-        s = statement_spec
-        return CppAssignment( s.lvalue, s.rvalue, s.assignment_op)
-
-    elif statement_type == "expression_statement":
-        expression = statement_spec.expression
-        if expression.tag == "function_call":
-            if ExpressionIsPrintBuiltin(expression):
-                print("XXXX", expression)
-                args = expression.iifunc_call_args
-                return CppPrintStatement(args)
-        return CppExpressionStatement(expression)
-
-    elif statement_type == "while_statement":
-        return CppWhileStatement(statement_spec.condition, *statement_spec.statements)
-
-    elif statement_type == "for_statement":
-        s = statement_spec
-        return CppForStatement(s.lvalue,
-                               s.iterator,
-                               s.statements,
-                               s.for_statement_PyNode)
-
-    elif statement_type == "if_statement":
-        if ss.extended_clause == None:
-            return CppIfStatement(ss.condition, ss.statements)
-        else:
-            return CppIfStatement(ss.condition, ss.statements, ss.extended_clause)
-
-    elif statement_type == "pass_statement":
-        return CppEmptyStatement()
-
-    elif statement_type == "break_statement":
-        return CppBreakStatement()
-
-    elif statement_type == "continue_statement":
-        return CppContinueStatement()
-
-    else:
-        print("Unknown statement type", statement_type, ss)
-        raise Exception("Unhandlable statement type: ", statement_type)
-
-def c_repr_of_expression(expression):
-    cexpression = expression.identifier
-    return cexpression
-
-def mkProgram(iiprogram):
-    program = CppProgram()
-    program.name = iiprogram.name
-    program.includes = iiprogram.includes
-
-    for identifier in iiprogram.global_identifiers:
-        value_type = identifier.value_type
-        name = identifier.name
-        program.main_cframe.identifiers.append(CppIdentifier(value_type, name))
-
-    for statement in iiprogram.statements:
-        conc_statement = mkStatement(statement)
-        program.main_cframe.statements.append(conc_statement)
-
-    return program
-
-def iioperator_to_cpp_repr(iioperator): # FIXME: Terrible name
-
-    # Converts an iiNode representation of an operator
-    op_type = iioperator.operator
-
-    print("ARG", iioperator, op_type)
-    if op_type == "plus": return "+"
-    if op_type == "minus": return "-"
-    if op_type == "times": return "*"
-    if op_type == "divide": return "/"
-    if op_type == "boolean_or": return " || "
-    if op_type == "boolean_and": return " && "
-    if op_type == "boolean_not": return " ! "
-
-    if op_type in ["<", ">", "==", ">=", "<=", "!="]:
-        return op_type
-
-    if op_type == "<>": return "!="
-
-    return TypeError("Cannot convert operator", iioperator, op_type)
-
-
-#
 # CppNodes representing C++ Programs. From these you can generate C++ code.
-#
 
-#
-#
 # Below here should be C++ Nodes, representing C++ programs
 # They should be able to generate C++ code directly from the data they have.
 # They should NOT be doing any transformations.
 # The fact they do at present should be viewed as a areas needing improvements
-#
 
 
 class CppNode(object):
@@ -290,15 +196,13 @@ class CppFunctionCall(CppNode):
             expression = self.identifier.expression
             attribute = self.identifier.attribute
 
-            c_expression = "(" + c_repr_of_expression(expression) + ")"
-            c_attribute = c_repr_of_expression(attribute)
-#            c_attribute = attribute[1]
+            c_expression = "(" + expression.identifier + ")"
+            c_attribute = attribute.identifier
 
             identifier = c_expression + "." + c_attribute
 
         else:
-            identifier = c_repr_of_expression(self.identifier)
-#            identifier = self.identifier[1]
+            identifier = self.identifier.identifier
 
             # FUDGE: The following would need to be profile specific
             #

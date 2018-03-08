@@ -34,7 +34,7 @@ from pyxie.transform.py2ii import pynodes_to_iinodes
 from pyxie.transform.clib import files as clib_files
 from pyxie.transform.simple_cpp import CppProgram, source, reset_parser
 
-from pyxie.model.cppnodes import mkProgram
+from pyxie.transform.ii2cpp import mkProgram
 
 from pyxie.model.iinodes import iiNode
 
