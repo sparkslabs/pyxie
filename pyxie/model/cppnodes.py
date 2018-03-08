@@ -32,7 +32,6 @@ from pyxie.util import todo
 from pyxie.util import get_blank_line
 from pyxie.util import Print
 
-
 def mkStatement(statement_spec):
     ss = statement_spec
     statement_type = statement_spec.tag
@@ -78,12 +77,8 @@ def mkStatement(statement_spec):
         print("Unknown statement type", statement_type, ss)
         raise Exception("Unhandlable statement type: ", statement_type)
 
-
 def c_repr_of_expression(expression):
-    try:
-        cexpression = expression[1]
-    except TypeError:
-        cexpression = expression.identifier
+    cexpression = expression.identifier
     return cexpression
 
 def mkProgram(iiprogram):
