@@ -1,0 +1,43 @@
+
+#include <Servo.h>
+
+leftwheel = Servo()
+rightwheel = Servo()
+
+headlights_led_pin = 13
+leftwheel_pin = 2
+rightwheel_pin = 3
+
+pinMode(headlights_led_pin, OUTPUT)
+leftwheel.attach(leftwheel_pin)
+rightwheel.attach(rightwheel_pin)
+
+leftwheel.write(90)
+rightwheel.write(90)
+
+while True:
+    leftwheel.write(180)
+    rightwheel.write(180)
+    delay(500)
+
+    leftwheel.write(180)
+    rightwheel.write(0)
+    delay(500)
+
+    leftwheel.write(0)
+    rightwheel.write(0)
+    delay(500)
+
+    leftwheel.write(0)
+    rightwheel.write(180)
+    delay(500)
+
+    leftwheel.write(90)
+    rightwheel.write(90)
+    delay(500)
+
+    digitalWrite(headlights_led_pin, HIGH)
+    delay(1000)
+    digitalWrite(headlights_led_pin, LOW)
+    delay(1000)
+
