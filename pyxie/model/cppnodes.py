@@ -25,6 +25,7 @@ import pprint
 
 unique_id = 0 # FIXME: Naming - Used to generate unique ids within for statements. 
               # FIXME: Implies there should be a better way of doing this.
+              # FIXME: WORSE: this isn't even actually used - since it happens in the wrong place.
 
 from pyxie.util import todo
 from pyxie.util import get_blank_line
@@ -72,6 +73,7 @@ class CppProgram(CppNode):
                }
 
 
+
 class CppFrame(CppNode):
     def __init__(self):
         self.identifiers = []
@@ -99,7 +101,6 @@ class CppFrame(CppNode):
                 block.append(code + ";")
         block_as_string = "\n".join(block)
         return block_as_string
-
 
 class CppIdentifier(CppNode):
     def __init__(self, ctype, name):
@@ -149,14 +150,13 @@ class CppAssignment(CppNode):
         print("crvalue",type(crvalue), crvalue)
         return self.lvalue + " "+self.assigntype+" " + crvalue
 
-
 # A pass statement is not a commented out statement.
 #
 # By that this:
 # while True: pass
 #
 # Is equivalent to while(true);
-# As opposed to while(true);
+# As opposed to while(true)
 #
 # So that's why this returns ";" not ""
 class CppEmptyStatement(CppNode):
@@ -174,13 +174,13 @@ class CppBreakStatement(CppNode):
     def code(self):
         return "break"
 
-
 class CppContinueStatement(CppNode):
     def json(self):
         return ["continue_statement"]
 
     def code(self):
         return "continue"
+
 
 class CppFunctionCall(CppNode):
     def __init__(self, identifier, args):
@@ -215,7 +215,6 @@ class CppFunctionCall(CppNode):
         return identifier + "(" + arglist + ")"
 
 
-
 class CppArgumentList(CppNode):
     def __init__(self, *args):
         self.args = args
@@ -223,73 +222,12 @@ class CppArgumentList(CppNode):
     def json(self):
         return list(self.args[:])
 
-    def code_op(self,arg):  # PERFORMING A TRANSFORM FROM AN IINODE
-        c_op = iioperator_to_cpp_repr(arg)   # PERFORMING A TRANSFORM FROM AN IINODE
-        if c_op:
-            if len(arg.args) == 2:
-                print("GENERATING CODE FOR INFIX OPERATORS")
-                # We would like to try to assert here that the values on both sides
-                # are integers, but at present we cannot do that, since we use too simplistic
-                # a structure. If I remove that constraint, we can generate more code.
-                # But we will need to revisit this.
-                lit_args = [ self.code_arg(x) for x in arg.args ]
-                result = "(" + lit_args[0] + c_op + lit_args[1] + ")"
-                return result
-
-            if len(arg.args) == 1:
-                print("HERE INSTEAD")
-                arg1 = arg.args[0]
-#                # We will need to revisit this.
-                lit_arg1 = self.code_arg(arg1)
-
-                result = "(" + c_op + lit_arg1 + ")"
-                return result
-
-        todo("Handle code ops for anything other than plus/int,int")
-        raise NotImplementedError("Handle code ops for anything other than plus/int,int" + repr(arg))
-
-
-    def code_arg(self, arg):                         # PERFORMING A TRANSFORM FROM AN IINODE
-        if arg.tag == "identifier":
-            return arg.identifier
-        elif arg.tag == "integer":
-            the_integer = arg.the_integer
-            r = repr(the_integer)
-            if the_integer<0:
-                r = "(" + r + ")"
-            return r
-        elif arg.tag == "string":
-            the_string = arg.the_string
-            carg = the_string.replace('"', '\\"')
-            return '"' + carg + '"' # Force double quotes
-        elif arg.tag == "double":
-            the_float = arg.the_float
-            return repr(the_float)
-        elif arg.tag == "boolean":
-            the_boolean = arg.the_boolean
-            return the_boolean
-        elif arg.tag == "op":
-            return self.code_op(arg)                     # PERFORMING A TRANSFORM FROM AN IINODE
-        elif arg.tag == "function_call":
-            print("WE REACH HERE")
-            code_gen = CppFunctionCall(arg.iifunc_object, arg.iifunc_call_args)
-            return code_gen.code()
-            print("We don't know how to generate code for function calls yet", arg)
-            return ""
-
-        todo("Handle print value types that are more than the basic types", arg[0])
-        raise NotImplementedError("Handle print value types that are more than the basic types" + repr(arg))
-
-    def code_list(self):                                           # PERFORMING A TRANSFORM FROM AN IINODE
-        cargs = []
-        for arg in self.args:
-            c_str = self.code_arg(arg)                             # PERFORMING A TRANSFORM FROM AN IINODE
-            cargs.append(c_str)
-
+    def code_list(self):                                  # PERFORMING A TRANSFORM FROM AN IINODE
+        cargs = [ code_arg(arg) for arg in self.args ]    # METHOD IS USED OUTSIDE THIS CLASS
         return cargs
 
-    def code(self):                                # TRANSFORM INVOLVES IINODES :-(
-        return ",".join(self.code_list())          # TRANSFORM INVOLVES IINODES :-(
+    def code(self):                                                   # TRANSFORM INVOLVES IINODES :-(
+        return ",".join(  [ code_arg(arg) for arg in self.args ]  )   # TRANSFORM INVOLVES IINODES :-(
 
 
 class CppExpressionStatement(CppNode):
@@ -309,7 +247,6 @@ class CppExpressionStatement(CppNode):
 
         return cvalue
 
-
 class CppPrintStatement(CppNode):
     def __init__(self, args):
         self.args = args
@@ -322,37 +259,26 @@ class CppPrintStatement(CppNode):
         return "( std::cout << " + " << \" \" << ".join(self.arg_list.code_list()) + " << std::endl )"
 
 
-class CppWhileStatement(CppNode):
-    def __init__(self, condition, *statements):
-        self.raw_condition = condition
-        self.raw_statements = list(statements)
-        self.block_cframe = CppFrame()
-
-        for statement in self.raw_statements:
-            conc_statement = mkStatement(statement)
-            self.block_cframe.statements.append(conc_statement)
-
-    def json(self):
-        return ["while_statement", self.raw_condition] + self.raw_statements
-
-    def code(self):
-        code = "while"
-        code += "("
-        code += CppArgumentList(self.raw_condition).code()
-        code += ") {"
-#        code += "\n".join( self.block_cframe.concrete() )
-        code += self.block_cframe.code()
-        code += "}"
-        return code
-
-
 class CppForStatement(CppNode):
     def __init__(self, identifier, iterable, statements, for_statement_pynode):
         self.raw_identifier = identifier
         self.raw_iterable = iterable
         self.raw_statements = list(statements)
         self.block_cframe = CppFrame()
-        self.for_statement_pynode = for_statement_pynode
+        self.for_statement_pynode = for_statement_pynode  
+
+        # FIXME: for_statement_pynode
+        # This is pulled in, in this slightly bizarre way due to the way variables are found during
+        # the process of analysis. Variables are found at the python stage, and these effectively
+        # get used to generate declarations.
+        #
+        # The problem here is that the expression being iterated over needs a name so that it can be
+        # treated as an iterator. As a result, it cannot be given a name at this stage.
+        # As a result the whole pynode gets pulled over.
+        #
+        # This is clearly a bug, but it's really symptomatic of how and where analysis is performed.
+        # For now it means anything to do with unique ids *here* is irrelevant.
+        #
 
         for statement in self.raw_statements:
             conc_statement = mkStatement(statement)
@@ -416,13 +342,10 @@ class CppForStatement(CppNode):
         template_args =  { "ITERATOR_TYPE": iterator_ctype,
                            "ITERATOR_EXPRESSION": iterator_expression,
                            "ITERATOR_NAME": iterator_name,
-                           "UNIQIFIER":repr(unique_id),
                            "IDENTIFIER": self.raw_identifier,
-                           "BODY": self.block_cframe.code()
+                           "BODY": self.block_cframe.code(),
+                           "DEBUG": repr(dir(self.for_statement_pynode.expression))
                          }
-
-
-
         print("=== template args =================================================")
         pprint.pprint (template_args )
         print("--- template args -------------------------------------------------")
@@ -444,7 +367,32 @@ class CppForStatement(CppNode):
         return code
 
 
-class CppIfStatement(CppNode):
+class CppWhileStatement(CppNode): # PURE EXISTS _while_statement
+
+    def __init__(self, condition, *statements):
+        self.raw_condition = condition
+        self.raw_statements = list(statements)
+        self.block_cframe = CppFrame()
+
+        for statement in self.raw_statements:
+            conc_statement = mkStatement(statement)
+            self.block_cframe.statements.append(conc_statement)
+
+    def json(self):
+        return ["while_statement", self.raw_condition] + self.raw_statements
+
+    def code(self):
+
+        cpp_condition = CppArgumentList(self.raw_condition).code()
+        cpp_block_code = self.block_cframe.code()
+
+        code = "while ( %s) { %s }" % (cpp_condition, cpp_block_code)
+
+        return code
+
+
+class CppIfStatement(CppNode): # PURE EXISTS _if_statement
+
     def __init__(self, condition, statements, extended_clause=None):
         self.raw_condition = condition
         self.raw_statements = list(statements)
@@ -485,7 +433,8 @@ class CppIfStatement(CppNode):
         return code
 
 
-class CppElseIfClause(CppNode):
+class CppElseIfClause(CppNode): # PURE EXISTS _else_if_clause
+
     def __init__(self, condition, statements, extended_clause=None):
         self.raw_condition = condition
         self.raw_statements = list(statements)
@@ -528,8 +477,8 @@ class CppElseIfClause(CppNode):
             code = code + extended_clauses_code
         return code
 
+class CppElseClause(CppNode):  # PURE EXISTS: _else_clause
 
-class CppElseClause(CppNode):
     def __init__(self, statements):
         self.raw_statements = list(statements)
 
