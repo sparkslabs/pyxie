@@ -28,7 +28,11 @@ from pyxie.model.cppnodes import CppProgram, \
                                  CppAssignment, \
                                  CppExpressionStatement, \
                                  CppWhileStatement, \
-                                     CppIfStatement
+                                     CppIfStatement, \
+                                         CppPrintStatement,\
+                                             CppForStatement, \
+                                                 CppFunctionCall
+
 
 import pyxie.model.cppnodes
 
@@ -68,12 +72,14 @@ def mkStatement(statement_spec):
     elif statement_type == "while_statement":
         return CppWhileStatement(statement_spec.condition, *statement_spec.statements)
 
+
     elif statement_type == "for_statement":
         s = statement_spec
         return CppForStatement(s.lvalue,
                                s.iterator,
                                s.statements,
                                s.for_statement_PyNode)
+
 
     elif statement_type == "if_statement":
         if ss.extended_clause == None:
@@ -115,11 +121,70 @@ def iioperator_to_cpp_repr(iioperator): # FIXME: Terrible name
 
     return TypeError("Cannot convert operator", iioperator, op_type)
 
+def code_op(arg):  # PERFORMING A TRANSFORM FROM AN IINODE
+    print("CODE_OP", type(arg), arg.__class__, repr(arg)[:50])
+    c_op = iioperator_to_cpp_repr(arg)   # PERFORMING A TRANSFORM FROM AN IINODE
+    if c_op:
+        if len(arg.args) == 2:
+            print("GENERATING CODE FOR INFIX OPERATORS")
+            # We would like to try to assert here that the values on both sides
+            # are integers, but at present we cannot do that, since we use too simplistic
+            # a structure. If I remove that constraint, we can generate more code.
+            # But we will need to revisit this.
+            lit_args = [ code_arg(x) for x in arg.args ]
+            result = "(" + lit_args[0] + c_op + lit_args[1] + ")"
+            return result
+
+        if len(arg.args) == 1:
+            print("HERE INSTEAD")
+            arg1 = arg.args[0]
+            lit_arg1 = code_arg(arg1)
+
+            result = "(" + c_op + lit_arg1 + ")"
+            return result
+
+    todo("Handle code ops for anything other than plus/int,int")
+    raise NotImplementedError("Handle code ops for anything other than plus/int,int" + repr(arg))
+
+
+
+def code_arg(arg):                         # PERFORMING A TRANSFORM FROM AN IINODE
+    print("CODE_ARG", type(arg), arg.__class__, repr(arg)[:50])
+    if arg.tag == "identifier":
+        return arg.identifier
+    elif arg.tag == "integer":
+        the_integer = arg.the_integer
+        r = repr(the_integer)
+        if the_integer<0:
+            r = "(" + r + ")"
+        return r
+    elif arg.tag == "string":
+        the_string = arg.the_string
+        carg = the_string.replace('"', '\\"')
+        return '"' + carg + '"' # Force double quotes
+    elif arg.tag == "double":
+        the_float = arg.the_float
+        return repr(the_float)
+    elif arg.tag == "boolean":
+        the_boolean = arg.the_boolean
+        return the_boolean
+    elif arg.tag == "op":
+        return code_op(arg)                     # PERFORMING A TRANSFORM FROM AN IINODE
+    elif arg.tag == "function_call":
+        print("WE REACH HERE")
+        code_gen = CppFunctionCall(arg.iifunc_object, arg.iifunc_call_args)
+        return code_gen.code()
+        print("We don't know how to generate code for function calls yet", arg)
+        return ""
+
+    todo("Handle print value types that are more than the basic types", arg[0])
+    raise NotImplementedError("Handle print value types that are more than the basic types" + repr(arg))
+
+
 
 # FIXME: These are indicative of a problem.
-
 pyxie.model.cppnodes.mkStatement = mkStatement
-pyxie.model.cppnodes.iioperator_to_cpp_repr = iioperator_to_cpp_repr
+pyxie.model.cppnodes.code_arg = code_arg
 
 
 if __name__ == "__main__":
