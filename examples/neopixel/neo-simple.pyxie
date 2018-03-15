@@ -14,3 +14,8 @@ while True:
         pixels.setPixelColor(i, pixels.Color(0,150,0))
         pixels.show()
         delay(delayval)
+
+    for i in range(number_of_pixels):
+        pixels.setPixelColor(i, pixels.Color(150,0,0))
+        pixels.show()
+        delay(delayval)
