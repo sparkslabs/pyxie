@@ -26,7 +26,6 @@ from __future__ import absolute_import
 # FIXME: This all needs work.
 #
 
-
 class _assignment_statement(object):  #NOTE: TBC
     def __init__(self, lvalue, rvalue, assign_operator):  # Assume assign_operator is "="
         self.lvalue = lvalue
@@ -35,25 +34,49 @@ class _assignment_statement(object):  #NOTE: TBC
 
         assert self.assign_operator.cpp() == "="
 
+    def __json__(self):
+        return (self.__class__.__name__,
+                self.assign_operator.__json__(),
+                self.lvalue.__json__(),
+                self.rvalue.__json__())
+
     def cpp(self):
         self.lvalue.cpp() + " " +  self.assign_operator.cpp() + " " + self.rvalue.cpp()
+
 
 class _empty_statement(object):   #NOTE: TBC # NB, means "pass"
     def cpp(self):
         return ";"
 
+    def __json__(self):
+        return (self.__class__.__name__, )
+
+
 class _break_statement(object):  #NOTE: TBC
     def cpp(self):
         return "break"
+    def __json__(self):
+        return (self.__class__.__name__, )
+
 
 class _continue_statement(object):  #NOTE: TBC
     def cpp(self):
         return "continue"
+    def __json__(self):
+        return (self.__class__.__name__, )
+
 
 class _function_call(object):  #NOTE: TBC
     def __init__(self, identifier_expression, *args):
         self.identifier_expression = identifier_expression
         self.args = args
+
+    def __json__(self):
+        return (self.__class__.__name__,
+                self.assign_operator.__json__(),
+                self.identifier_expression.__json__(),
+                [arg.__json__() for arg in self.args]
+                )
 
     def cpp(self):
         call_label = self.identifier_expression.cpp()
@@ -62,7 +85,6 @@ class _function_call(object):  #NOTE: TBC
             return _print_statement(args).cpp()
 
         arg_list = _argument_list(args).cpp()
-        call_label = self.identifier.cpp()
 
         return call_label + "(" + arg_list + ")"
 
@@ -70,6 +92,12 @@ class _function_call(object):  #NOTE: TBC
 class _argument_list(object):  #NOTE: TBC
     def __init__(self, *args):
         self.args = args
+
+    def __json__(self):
+        return (self.__class__.__name__,
+                [arg.__json__() for arg in self.args]
+                )
+
     def cpp(self):
         return ",".join(  [ arg.cpp() for arg in self.args ]  )   
 
@@ -77,12 +105,20 @@ class _argument_list(object):  #NOTE: TBC
 class _expression_statement(object):   #NOTE: TBC
     def __init__(self, expression):
         self.expression = expression
+    def __json__(self):
+        return (self.__class__.__name__,
+                self.expression .__json__(),
+                )
     def cpp(self):
         return self.expression.cpp()
  
 class _print_statement(object):  #NOTE: TBC
     def __init__(self, list_args):  # list_args : list of cpp args - that is things that have a .cpp() method
         self.list_args = list_args
+    def __json__(self):
+        return (self.__class__.__name__,
+                [ arg.__json__() for arg in self.list_args ],
+                )
     def cpp(self):
         list_cpp_args = [ arg.cpp() for arg in self.list_args ]
         list_cpp_args = " << \" \" << ".join( list_cpp_args )
@@ -95,18 +131,6 @@ class _iterable(object):  #NOTE: TBD
     # FIXME: method:: iterable.cpp()
     # FIXME: method:: iterable.name()
     pass
-
-
-
-
-#class _statements(object):
-#    # FIXME: Used _for_iter_loop_statement
-#    # FIXME: REPRESENTS A BLOCK OF STATEMENTS (sans enclosing braces - probably)
-#    # * Implies that this also may have local variables.
-#    # * Local variables will also have types/etc
-#    # * *Python* local variables in here need to be migrated out to containing scope for definition.
-#    #       - Not the case for C++ variables after all.
-#    pass
 
 
 class _for_iter_loop_statement(object):  #NOTE: TBC
@@ -125,6 +149,13 @@ class _for_iter_loop_statement(object):  #NOTE: TBC
         self.identifier = identifier
         self.iterable = iterable
         self.statements = statements
+
+    def __json__(self):
+        return (self.__class__.__name__,
+                self.identifier .__json__(),
+                self.iterable.__json__(),
+                self.statements.__json__(),
+                )
 
     def cpp(self):
         template = """
@@ -149,6 +180,11 @@ class _while_statement(object):  #NOTE: TBC
     def __init__(self, condition, statements):
         self.condition = condition
         self.statements = statements
+    def __json__(self):
+        return (self.__class__.__name__,
+                self.condition.__json__(),
+                self.statements.__json__(),
+                )
     def cpp(self):
         cpp_condition = self.condition.cpp()
         cpp_statements = self.statements.cpp()
@@ -161,6 +197,13 @@ class _if_statement(object):  #NOTE: TBC
         self.condition = condition
         self.block = block
         self.extended_clause = extended_clause
+
+    def __json__(self):
+        return (self.__class__.__name__,
+                self.condition.__json__(),
+                self.block.__json__(),
+                self.extended_clause.__json__() if self.extended_clause else None,
+                )
 
     def cpp(self):
         cpp_condition = self.condition.cpp()
@@ -178,6 +221,13 @@ class _else_if_clause(object):  #NOTE: TBC
         self.block = block
         self.extended_clause = extended_clause
 
+    def __json__(self):
+        return (self.__class__.__name__,
+                self.condition.__json__(),
+                self.block.__json__(),
+                self.extended_clause.__json__() if self.extended_clause else None,
+                )
+
     def cpp(self):
         cpp_condition = self.condition.cpp()
         cpp_block = self.block.cpp()
@@ -191,6 +241,10 @@ class _else_if_clause(object):  #NOTE: TBC
 class _else_clause(object):  #NOTE: TBC
     def __init__(self, block):
         self.block = block
+    def __json__(self):
+        return (self.__class__.__name__,
+                self.block.__json__(),
+                )
     def cpp(self):
         cpp_block = self.block.cpp()
         return  "else { %s } " % (cpp_block, )
@@ -206,6 +260,11 @@ class  _identifier(object):  #NOTE: TBC
         self.ctype = ctype
         self.name = name
 
+    def __json__(self):
+        return (self.__class__.__name__,
+                self.name.__json__(),
+                self.ctype.__json__() if self.ctype else None,
+                )
     def cpp_decl(self):   # FIXME: Really? Maybe, yes.
         if ctype == None:
             raise ValueError("This label does not have a type")
@@ -216,11 +275,18 @@ class  _identifier(object):  #NOTE: TBC
 
 
 class _statements_block(object):  #USED
+#    # FIXME: Used _for_iter_loop_statement
+#    # FIXME: REPRESENTS A BLOCK OF STATEMENTS (sans enclosing braces - probably)
     # TODO: SHOULD THIS ACTUALLY INCLUDE THE BRACES?
     def __init__(self, identifiers, statements):
         self.identifiers = identifiers
         self.statements = statements
 
+    def __json__(self):
+        return (self.__class__.__name__,
+                [ i.__json__() for i in self.identifiers],
+                [ s.__json__() for s in self.statements],
+                )
     def cpp(self):
         decl_lines = [ i.cpp_decl() + ";" for i in self.identifiers ]
         if len(decl_lines) > 0:
@@ -345,6 +411,27 @@ class _op(object): # USED
 
         return left + " " + self.op_literal + " " + right
 
+# NOTE: WOULD BE NICE TO ACTUALLY CHAIN THINGS - to clarify code.
+# Clearly there are only specific cases where use of this is valid.
+class _op_chain(object): # USED
+    chainable_ops = ( "<<", "+", "*" )
+    def __init__(self, op_literal, *args):
+        self.op_literal = op_literal
+        self.args = args
+
+    def cpp(self):
+        cpp_args = []
+        for arg in self.args:
+            cpp_arg = arg.cpp()
+            if type(arg) == _op:
+                cpp_arg = "(" +  cpp_arg + ")"
+            cpp_args.append(cpp_arg)
+
+        op = " " + self.op_literal+ " "
+        result = op.join(cpp_args)
+        return result
+
+
 
 def mkMainFunction(identifiers, statements): # USED
     lstatements = statements[:]
@@ -389,7 +476,7 @@ if __name__ == "__main__":
 
     includes = [
         _core_include("iostream"),
-        _relative_include("iterators.cpp")
+#        _relative_include("iterators.cpp")
         ]
     decls = [
         _using_namespace("std")
@@ -416,9 +503,16 @@ if __name__ == "__main__":
     mainFunction = mkMainFunction([ # List of identifiers
                                   ],
                                   [  # List of statements
+                                    _op_chain( "<<",
+                                               _label("std::cout"),
+                                               _string_literal('Hello'),
+                                               _string_literal(' '),
+                                               _string_literal('World'),
+                                               _label("std::endl"),
+                                                )
                                   ])
 
-    functions = [ debugFunction, mainFunction ]
-
-    p = _program( includes, decls, functions )
+    p = _program( includes =[ _core_include("iostream")],
+                  decls =   [ _using_namespace("std") ],
+                  functions=[ debugFunction, mainFunction ])
     print(p.cpp())
