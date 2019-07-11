@@ -80,6 +80,7 @@ import pyxie.parsing.context
 from pyxie.core import parse_file
 from pyxie.core import analyse_file
 from pyxie.core import compile_file
+from pyxie.core import convert_file
 from pyxie.core import codegen_phase
 from pyxie.core import compilation_tests
 from pyxie.core import compile_testfile
@@ -170,6 +171,11 @@ class StandardOptions(CommandLineDispatcher):
     def compile(filename, result_filename=None):
         """compiles the given file to path/to/filename -- result_filename can be provide an alternative output name"""
         compile_file(filename, profile, result_filename)
+    
+    @staticmethod
+    def convert(filename, result_filename=None):
+        """converts the given file to cpp code but does not compile"""
+        convert_file(filename, profile, result_filename)
 
 
 def initialise_API(profile_name):

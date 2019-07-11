@@ -72,6 +72,7 @@ def show_help():
     pyxie codegen filename -- parses, analyse and generate code for the given filename, outputs result to console. Does not attempt compiling
     pyxie [--profile arduino] compile path/to/filename.suffix -- compiles the given file to path/to/filename
     pyxie [--profile arduino] compile path/to/filename.suffix  path/to/other/filename -- compiles the given file to the destination filename
+    pyxie [--profile arduino] convert path/to/filename.suffix -- converts the python code to a cpp build folde but does not compile
 """)
 
 

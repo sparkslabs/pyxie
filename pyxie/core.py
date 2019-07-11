@@ -273,6 +273,39 @@ def build_program(source, work_dir, name, profile):
     print("build_program: Done!")
     print()
 
+# Just complete the build process and produce source files without compiling
+def convert_file(filename, profile, result_filename=None):
+
+    build_env = get_build_environment(filename, result_filename)
+
+    rootdir = build_env["rootdir"]
+    base_dir = build_env["base_dir"]
+    base_filename = build_env["base_filename"]
+    cname = build_env["cname"]
+    result_filename = build_env["result_filename"]
+
+    c_code  = codegen_phase(filename, result_filename, profile)
+
+    c_code = code_header + c_code
+
+    print("C_CODE:::", repr(c_code))
+    print("compile_file: COMPILING", filename)
+    print("compile_file: IN", base_dir)
+    print("compile_file: SOURCEFILE", base_filename)
+    print("compile_file: cname", cname)
+    print("compile_file: result_filename", result_filename)
+
+    build_dir = os.path.join(base_dir, cname)
+    try:
+        os.mkdir(build_dir)
+    except OSError as e:
+       if e.errno != 17: # Directory exists
+           raise
+
+    build_program(c_code, build_dir, cname, profile)
+
+    os.chdir(rootdir)
+    return
 
 # Next function is called by compile_file, but could be called independently
 # This is why both do "build_env", rather that expect the caller to
