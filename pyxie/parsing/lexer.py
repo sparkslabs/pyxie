@@ -54,7 +54,8 @@ tokens = [
    'BOOLEAN',
    'CHARACTER',
    'UNSIGNEDLONG',
-   'SIGNEDLONG'
+   'SIGNEDLONG',
+   'FUNCRETURN'
    ]
 
 punctuation = [ "COMMA", "PARENL", "PARENR", "COLON", "TIMES", "DIVIDE", "PLUS", "MINUS", "POWER", "DOT",
@@ -242,6 +243,10 @@ def t_INITIAL_BLOCKS_INDENT(t):
 
     t.lexer.begin('NORMAL')
 
+def t_NORMAL_FUNCRETURN(t):
+    r'->'
+    return t
+
 def t_ENDBLOCKS_DEDENT(t):
     r'.'
 
@@ -282,25 +287,18 @@ if __name__ == "__main__":
 
     lexer = build_lexer()
     # Test it out
-    data = '''\
-and not or
-True False
-class def yield return
-while for in if elif else break continue
-from import
-pass
-print
+    data = '''
+def hello(fruits: str, price: int) -> int:
+    print(fruits)
+    print(price)
+    print("Hello World")
+    return fruits
+print("Start", "end", "file")
+result = hello("apple", 4)
 
-first = 1
-second = 2
-third = 3
+print("should not see this")
 
-if 1:
-    print first, second, third
-
-print 1, 2, "hello"
-print 1, 2.1, 0x20, 0b10101, 0100, True, False, "hello"
-print -1, -2.1, -0x20, -0b10101, -0100, True, False, "hello"
+#
 '''
 
     # Give the lexer some input

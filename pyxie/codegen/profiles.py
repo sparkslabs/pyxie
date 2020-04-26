@@ -35,6 +35,8 @@ void DebugFunction() {
     std::cout << "DEBUG FUNCTION CALLED" << std::endl;
 }
 
+%(FUNCTION_TEXT)s
+
 int main(int argc, char *argv[])
 {
 %(FRAME_TEXT)s

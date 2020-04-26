@@ -70,6 +70,40 @@ class PyBoolean(PyValueLiteral):
         return "bool"
 
 
+class PyDefReturn(PyValueLiteral):
+    tag = "def_return"
+
+    def __init__(self, line_no, value):
+        super(PyDefReturn, self).__init__(line_no, value)
+        self.value = value
+
+    def __repr__(self):
+        return "%s(%d, %s)" % (self.classname(), self.lineno, repr(self.value))
+
+    def get_type(self):
+        return self.ntype
+
+
+class PyParam(PyValueLiteral):
+    tag = 'param'
+
+    def __init__(self, line_no, value, ntype):
+        print("PyParam, ", line_no, value, ntype)
+        super(PyParam, self).__init__(line_no, value)
+        self.value = value.value
+        # TODO only support int or str, others?
+        if ntype.value == "int":
+            self.ntype = "int"
+        else:
+            self.ntype = "str"
+
+    def __repr__(self):
+        return "%s(%d, %s, %s)" % (self.classname(), self.lineno, repr(self.value), repr(self.ntype))
+
+    def get_type(self):
+        return self.ntype
+
+
 # Resist the urge to put PyIdentifiers into a LUT immediately.
 class PyIdentifier(PyValueLiteral):
     tag = "identifier"

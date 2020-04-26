@@ -101,7 +101,7 @@ class PyBoolOperator(PyOperation):
         self.add_children(*argv)
 
     def __info__(self):
-        info = super(PyAndOperator, self).__info__()
+        info = super(PyBoolOperator, self).__info__()
         i = 1
         for arg in self.argv:
             info[self.tag]["arg%d" % i] = arg.__info__()

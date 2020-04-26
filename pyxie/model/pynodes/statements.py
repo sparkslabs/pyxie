@@ -23,7 +23,9 @@ from .values import PyAttributeAccess
 
 from pyxie.model.functions import builtins
 from pyxie.model.functions import profile_funcs
-
+from pyxie.model.cppnodes import set_function_type
+# from pyxie.codegen.simple_cpp import set_variable_type
+import pyxie.codegen.simple_cpp
 
 class PyAssignment(PyStatement):
     tag = "assignment_statement"
@@ -194,16 +196,19 @@ class PyFunctionCall(PyStatement):
 
 class PyDefStatement(PyStatement):
     tag = "def_statement"
-    def __init__(self, identifier, parameterlist, block):
+    def __init__(self, identifier, parameterlist, block, return_type=None):
 
         #TODO: In later interations, we probably want to add a context here.
         #TODO: Figure out how this works with chaining
         #TODO: Figure out how local variables get generated.
-
+        print("PyDefStatement, ", return_type)
         super(PyDefStatement,self).__init__()
         self.identifier= identifier
         self.parameterlist= parameterlist
         self.block = block
+        # only support int and str and None,
+        self.return_type = return_type.value if return_type else None
+        set_function_type(self.identifier.value, self.return_type)
 
         if parameterlist:
             self.add_children(identifier, parameterlist, block)

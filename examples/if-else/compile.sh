@@ -3,4 +3,4 @@
 cd ../..
 export PYTHONPATH=.
 
-./bin/pyxie --profile arduino compile examples/if-else/if_else.pyxie
+./bin/pyxie --profile default compile examples/if-else/if_else.pyxie

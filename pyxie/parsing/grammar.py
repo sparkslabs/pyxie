@@ -27,7 +27,8 @@ class Grammar(object):
     precedence = (
         ('left', 'PLUS','MINUS'),
         ('left', 'TIMES','DIVIDE'),
-        ('right', 'UMINUS')
+        ('right', 'UMINUS'),
+        ('left', 'IDENTIFIER', 'COLON', 'IDENTIFIER')
     )
     tokens = tokens
 
@@ -86,6 +87,10 @@ class Grammar(object):
         "statement : def_statement"
         p[0] = p[1]
 
+    def p_statement_12(self, p):
+        "statement : RETURN general_expression"
+        # include return value
+        p[0] = PyDefReturn(p.lineno(1), p[2])
 
     def p_pass_statement_1(self,p):
         "pass_statement : PASS"
@@ -194,6 +199,18 @@ class Grammar(object):
         #print("------------------> BLOCK :", p[5])
         #print("------------------> RESULT :", p[0])
 
+    def p_param_expression(self, p):
+        "param_expression : value_literal COLON value_literal"
+        # param list
+        p[0] = PyParam(p.lineno(1), p[1], p[3])
+
+    def p_param_list1(self, p):
+        "param_list : param_expression"
+        p[0] = PyExprList(p[1])
+
+    def p_param_list2(self, p):
+        "param_list : param_expression COMMA param_list"
+        p[0] = PyExprList(p[1], p[3])
 
     # NOTE: loosely based on for_statement structure due to similarities
     def p_def_statement_1(self, p):
@@ -206,6 +223,39 @@ class Grammar(object):
 
         print("DEF STATEMENT")
 
+    def p_def_statement_2(self, p):
+        "def_statement : DEF IDENTIFIER PARENL param_list PARENR COLON EOL statement_block"
+        # function takes parameters, but no return value
+        identifier = PyIdentifier(p.lineno(1), p[2])
+        params = p[4]
+        statement_block = p[8]
+        p[0] = PyDefStatement(identifier, params, statement_block)
+
+        print("DEF STATEMENT")
+
+    def p_def_statement_3(self, p):
+        "def_statement : DEF IDENTIFIER PARENL PARENR FUNCRETURN general_expression COLON EOL statement_block"
+        # function not takes parameters, but return something
+
+        identifier = PyIdentifier(p.lineno(1), p[2])
+        params = None
+        statement_block = p[9]
+        return_type = p[6]
+        p[0] = PyDefStatement(identifier, params, statement_block, return_type)
+
+        print("DEF STATEMENT")
+
+    def p_def_statement_4(self, p):
+        "def_statement : DEF IDENTIFIER PARENL param_list PARENR FUNCRETURN general_expression COLON EOL statement_block"
+        # function takes parameters, and return something
+
+        identifier = PyIdentifier(p.lineno(1), p[2])
+        params = p[4]
+        statement_block = p[10]
+        return_type = p[7]
+        p[0] = PyDefStatement(identifier, params, statement_block, return_type)
+
+        print("DEF STATEMENT")
 
     def p_for_statement_1(self, p):
         "for_statement : FOR IDENTIFIER IN general_expression COLON EOL statement_block"
@@ -219,8 +269,6 @@ class Grammar(object):
         p[0] = PyBlock(p[2])
         print()
         print("-> REACHED BLOCK")
-        #print("------------------> STATEMENTS :", p[2])
-        #print("------------------> RESULT :", p[0])
 
     def p_expr_list_1(self,p):
         "expr_list : general_expression"
@@ -434,3 +482,13 @@ def parse(source,lexer):
    yacc.yacc(module=Grammar())
    result = yacc.parse(source, lexer=lexer)
    return result
+
+
+if __name__ == '__main__':
+    yacc.yacc(module=Grammar())
+    from pyxie.parsing.lexer import build_lexer
+    lexer = build_lexer()
+    data = '''def hello(apple: int):
+    print(apple)'''
+    result = yacc.parse(data, lexer=lexer)
+    print(result)

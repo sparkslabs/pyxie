@@ -32,7 +32,7 @@ from pyxie.model.pynode import jdump
 from pyxie.model.transform import ast_to_cst
 
 from pyxie.codegen.clib import files as clib_files
-from pyxie.codegen.simple_cpp import CppProgram, source, reset_parser
+from pyxie.codegen.simple_cpp import CppProgram, source, reset_parser, reset_variable_type
 
 from pyxie.model.iinodes import iiNode
 
@@ -101,6 +101,7 @@ def get_build_environment(filename, result_filename):
 def parse_file(somefile):
     lexer = build_lexer()
     reset_parser()
+    reset_variable_type()
     data = open(somefile).read() + "\n#\n"
     AST = parse(data, lexer)
     AST.includes = lexer.includes
@@ -345,6 +346,7 @@ def parse_testfile(testprogs_dir, testfile, debug=False):
 
 def compile_testfile(testprogs_dir, testfile, profile):
     # The compiled c name is the filename with the suffix removed
+    testfile = testfile.split("/")[-1]
     p = testfile.rfind(".")
     cname = testfile[:p]
 

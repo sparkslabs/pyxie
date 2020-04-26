@@ -1,10 +1,26 @@
-
-def hello():
+def hello_none(fruits: str, price: int):
+    print(fruits)
+    print(price)
     print("Hello World")
+
+def hello(fruits: str, price: int) -> str:
+    print("hello", fruits)
+    print("hello", price)
+    print("hello", "Hello World")
+    return fruits
+
+
+def world(fruits: str, price: int) -> int:
+    print("world", fruits)
+    print("world", price)
+    print("world", "Hello World")
+    return price
 
 
 print("Start")
-while True:
-    hello()
 
-print("should not see this")
+hello_none("banana", 12)
+result = hello("apple", 4)
+price = world("orange", 10)
+
+print("End")

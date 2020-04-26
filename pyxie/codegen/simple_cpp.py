@@ -22,6 +22,7 @@ from pyxie.model.cppnodes import CppProgram
 
 blank_line = ""
 source = []
+variable = {}
 
 def Print(*args):
     y = " ".join([str(x) for x in args])
@@ -36,6 +37,20 @@ def reset_parser():
     global source
     source = []
 
+
+def reset_variable_type():
+    # init function return type
+    global variable
+    variable = {}
+
+
+def set_variable_type(name, value):
+    # save function return type
+    if value == "str":
+        value = "string"
+    elif value == "int":
+        value = "integer"
+    variable[name] = value
 
 # def build_program(json):
 #     json = CppProgram.fromjson(json)

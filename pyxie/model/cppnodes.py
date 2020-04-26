@@ -37,8 +37,13 @@ def get_blank_line():
 def Print(*args):
     return pyxie.codegen.simple_cpp.Print(*args)
 
+def set_function_type(name, value):
+    return pyxie.codegen.simple_cpp.set_variable_type(name, value)
+
 class CppNode(object):
-    pass
+    def __str__(self):
+        return str(self)
+
 
 # --------------------------------------------------------------------------------------------
 # Support code to cover intermediate stages of conversion
@@ -120,10 +125,13 @@ def mkStatement(statement_spec):
     elif statement_type == "continue_statement":
         return CppContinueStatement()
 
+    elif statement_type == "func_defintion":
+        return CppDefStatement(ss.name, ss.params, ss.block, ss.return_type)
+    elif statement_type == "def_return":
+        return CppDefReturn(ss.value)
     else:
         print("Unknown statement type", statement_type, ss)
         raise Exception("Unhandlable statement type: ", statement_type)
-
 
 
 class CppProgram(CppNode):
@@ -145,13 +153,19 @@ class CppProgram(CppNode):
 
         for statement in iiprogram.statements:
             conc_statement = mkStatement(statement)
-            program.main_cframe.statements.append(conc_statement)
+            if isinstance(conc_statement, CppDefStatement):
+                # save function text, the function is placed outside the main function
+                program.main_cframe.def_statements.append(conc_statement)
+            else:
+                program.main_cframe.statements.append(conc_statement)
 
         return program
 
     def generate(self, profile = "default"):
         print("BUILDING FOR PROFILE", profile)
         frame_lines = self.main_cframe.concrete()
+        function_lines = self.main_cframe.generate_function_code()
+
         seen = {}
         for include in self.includes:
             if not seen.get(include, False):
@@ -161,8 +175,9 @@ class CppProgram(CppNode):
 
         print_def = cpp_templates.get(profile, cpp_templates.get("default"))
         frame_text = "\n".join(["   "+line for line in frame_lines])
+        function_text = "\n".join(["\n\n"+line for line in function_lines])
 
-        Print(print_def % { "FRAME_TEXT": frame_text } )
+        Print(print_def % { "FUNCTION_TEXT": function_text, "FRAME_TEXT": frame_text } )
 
     def json(self):
         return { "PROGRAM": {"name": self.name,
@@ -175,6 +190,7 @@ class CppFrame(CppNode):
     def __init__(self):
         self.identifiers = []
         self.statements = []
+        self.def_statements = []
 
     def json(self):
         for y in self.statements:
@@ -182,6 +198,18 @@ class CppFrame(CppNode):
         return {"c_frame": {"identifiers" : [ x.json() for x in self.identifiers ],
                             "statements" : [y.json() for y in self.statements ] }
                }
+
+    def generate_function_code(self):
+        def_block = []
+        for statement in self.def_statements:
+            if not statement:
+                continue
+
+            code = statement.code()
+            if code is None:
+                print("STATEMENT IS None, WHY?", statement)
+            def_block.append(code + ";")
+        return def_block
 
     def concrete(self):
         block = []
@@ -316,13 +344,49 @@ class CppFunctionCall(CppNode):
                 return X.code()
 
         arglist = ", ".join(self.arg_list.code_list())
+        print("CppFunctionCall,", identifier + "(" + arglist + ")")
         return identifier + "(" + arglist + ")"
 
+
+class CppDefStatement(CppNode):
+    def __init__(self, name, params, statements, return_type=None):
+        print("PARSMS,", name, params, statements)
+        self.name = name
+        self.params = params
+        self.raw_statements = statements
+        # self.arg_list = CppArgumentList(params)
+
+        self.raw_statements = list(statements)
+        self.block_cframe = CppFrame()
+        if not return_type:
+            self.return_type = 'void'
+        elif return_type == 'int':
+            self.return_type = 'int'
+        else:
+            self.return_type = 'string'
+
+        for statement in self.raw_statements:
+            conc_statement = mkStatement(statement)
+            self.block_cframe.statements.append(conc_statement)
+
+    def json(self):
+        return ["def_statement"]
+
+    def code(self):
+        code = "%s " % self.return_type
+        code += self.name
+        code += "("
+        code += CppArgumentList(*self.params).code() if self.params else ""
+        code += ") {"
+        code += "\n".join(self.block_cframe.concrete())
+        code += "}"
+        return code
 
 
 class CppArgumentList(CppNode):
     def __init__(self, *args):
         self.args = args
+        print("ARGS,--", self.args, args)
 
     def json(self):
         return list(self.args[:])
@@ -370,6 +434,9 @@ class CppArgumentList(CppNode):
 
 
     def code_arg(self, arg):
+        print("CODE_ARG,")
+        print(arg)
+        print(node_type(arg))
         if node_type(arg) == "identifier":
             return arg.identifier
         elif node_type(arg) == "integer":
@@ -396,12 +463,17 @@ class CppArgumentList(CppNode):
             return code_gen.code()
             print("We don't know how to generate code for function calls yet", arg)
             return ""
+        elif node_type(arg) == "param":
+            if arg.ntype == 'int':
+                return 'int' + " " + arg.value
+            return "string " + arg.value
 
         todo("Handle print value types that are more than the basic types", arg[0])
         raise NotImplementedError("Handle print value types that are more than the basic types" + repr(arg))
 
     def code_list(self):
         cargs = []
+        print("SELF_ARGS", self.args)
         for arg in self.args:
             c_str = self.code_arg(arg)
             cargs.append(c_str)
@@ -429,6 +501,12 @@ class CppExpressionStatement(CppNode):
 
         return cvalue
 
+class CppDefReturn(CppNode):
+    def __init__(self, value):
+        self.value = value.value
+
+    def code(self):
+        return "return %s" % self.value
 
 class CppPrintStatement(CppNode):
     def __init__(self, args):
@@ -577,7 +655,7 @@ class CppIfStatement(CppNode):
     def json(self):
         result = ["if_statement", self.raw_condition, self.raw_statements ]
         if self.extended_clause is not None:
-            result.append(extended_clauses.json())
+            result.append(self.extended_clause.json())
 
     def code(self):
         extended_clauses_code = None
@@ -618,7 +696,7 @@ class CppElseIfClause(CppNode):
     def json(self):
         result = ["elif_clause", self.raw_condition, self.raw_statements ]
         if self.extended_clause is not None:
-            result.append(extended_clause.json())
+            result.append(self.extended_clause.json())
 
     def code(self):
         extended_clauses_code = None

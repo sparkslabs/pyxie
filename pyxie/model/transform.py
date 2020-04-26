@@ -30,6 +30,9 @@ from pyxie.model.functions import builtins
 from pyxie.model.functions import profile_types
 
 from pyxie.model.iinodes import *
+from pyxie.model.pynodes.statements import PyFunctionCall
+# from pyxie.codegen.simple_cpp import variable
+import pyxie.codegen.simple_cpp
 
 iterator_unique_base = 0
 
@@ -99,6 +102,10 @@ def find_variables(AST):
             lvalue, rvalue, assign_type = node.lvalue, node.rvalue, node.assign_type
             identifier = lvalue.value
             v_type = lvalue.ntype
+            if isinstance(node.rvalue, PyFunctionCall):
+                # get function return type,  default string
+                variables[identifier] = pyxie.codegen.simple_cpp.variable.get(node.rvalue.func_label.value, 'string')
+                continue
 
             if identifier in variables:
                 todo("we could check that the identifier doesn't change type")
@@ -252,6 +259,8 @@ def convert_value_literal(arg):
     if arg.tag == "attribute":
         x = convert_value_literal(arg.value)
         return x
+    if arg.tag == "param":
+        return iiParam(arg.value, arg.ntype)
 
     tag, value, vtype, line = arg.tag, arg.value, arg.get_type(), arg.lineno
 
@@ -273,6 +282,7 @@ def convert_value_literal(arg):
         else:
             value = "false"
         return iiBoolean(the_boolean=value)
+
 
     todo("CONVERSION: Cannot handle other value literals %s" % repr(arg))
     todo("CONVERSION: %s %s %s %d" % (tag, repr(value), repr(vtype), line))
@@ -451,11 +461,16 @@ def convert_def_statement(def_statement):
     lvalue = def_statement.identifier
     cidentifer = lvalue.value # FIXME: This is only valid for identifiers
 
-    cparamlist = None # TODO: This needs extending to parameters. This could be tricky...
+    cparamlist = []
+    for child in def_statement.parameterlist.children:
+        cparamlist.append(convert_value_literal(child))
+    # cparamlist = None # TODO: This needs extending to parameters. This could be tricky...
+    print(cparamlist)
 
     block = def_statement.block
     cblock = convert_statements(block)
-    return iiDefStatement(name=cidentifer, params=cparamlist, block=cblock, def_statement_PyNode=def_statement)
+    return_type = def_statement.return_type
+    return iiDefStatement(name=cidentifer, params=cparamlist, block=cblock, def_statement_PyNode=def_statement, return_type=return_type)
 
 
 def convert_extended_clause(extended_clause):
@@ -507,6 +522,10 @@ def convert_continue_statement(continue_statement):
     return iiContinueStatement()
 
 
+def convert_defreturn_statement(defreturn_statement):
+    return iiDefReturn(defreturn_statement.value)
+
+
 def convert_expression_statement(statement):
     print("CONVERTING EXPRESSION STATEMENTS", statement.value)
     print("EXPRESSION STATEMENT", statement.value.tag)
@@ -524,7 +543,6 @@ def convert_statements(AST):
         try:
             if statement.tag == "assignment_statement":
                 cstatement = convert_assignment(statement)
-                print(cstatement)
                 cstatements.append(cstatement)
             elif statement.tag == "print_statement":
                 cstatement = convert_print(statement)
@@ -553,6 +571,9 @@ def convert_statements(AST):
             elif statement.tag == "continue_statement":
                 cstatement = convert_continue_statement(statement)
                 cstatements.append(cstatement)
+            elif statement.tag == "def_return":
+                cstatement = convert_defreturn_statement(statement)
+                cstatements.append(cstatement)
             else:
                 print("SKIPPING STATEMENT", statement.tag)
                 raise CannotConvert("Statement: "+ statement.tag)
@@ -576,7 +597,8 @@ def ast_to_cst(program_name, AST):
 
     # includes = []
     includes = [x.replace("#include ","") for x in AST.includes]
-    names = pvariables.keys()
+    # for compatibility with py2 and py3
+    names = list(pvariables.keys())
     names.sort()
     for name in names:
         ctype = python_type_to_c_type(pvariables[name])

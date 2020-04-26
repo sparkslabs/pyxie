@@ -126,6 +126,19 @@ class iiIdentifier(iiNode):
         return ["identifier", self.identifier]
 
 
+class iiParam(iiNode):
+    tag = "param"
+
+    def __init__(self, value, ntype):
+        self.value = value
+        self.ntype = ntype
+
+class iiDefReturn(iiNode):
+    tag = "def_return"
+    def __init__(self, value):
+        self.value = value
+
+
 class iiString(iiNode):
     tag = "string"
     def __init__(self, the_string):
@@ -208,11 +221,12 @@ class iiForStatement(iiNode):
 
 class iiDefStatement(iiNode):
     tag = "func_defintion"
-    def __init__(self, name, params, block, def_statement_PyNode):
+    def __init__(self, name, params, block, def_statement_PyNode, return_type=None):
         self.name = name
         self.params = params
         self.block = block
         self.def_statement_PyNode = def_statement_PyNode
+        self.return_type = return_type
 
     def __json__(self):
         return ["func_defintion", self.name, self.params, self.block, repr(self.def_statement_PyNode) ]
