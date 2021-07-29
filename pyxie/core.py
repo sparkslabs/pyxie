@@ -288,7 +288,6 @@ def build_program(source, work_dir, name, profile):
 # Next function is called by compile_file, but could be called independently
 # This is why both do "build_env", rather that expect the caller to
 def compile_file(filename, profile, result_filename=None):
-
     build_env = get_build_environment(filename, result_filename)
 
     rootdir = build_env["rootdir"]

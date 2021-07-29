@@ -72,8 +72,6 @@ class CppProgram(CppNode):
                              "main": self.main_cframe.json()}
                }
 
-
-
 class CppFrame(CppNode):
     def __init__(self):
         self.identifiers = []
@@ -113,7 +111,6 @@ class CppIdentifier(CppNode):
     def decl_code(self):
         return self.ctype + " " + self.name
 
-
 class CppAssignment(CppNode):
     def __init__(self, lvalue, rvalue, assigntype="="):
         self.lvalue = lvalue
@@ -150,22 +147,21 @@ class CppAssignment(CppNode):
         print("crvalue",type(crvalue), crvalue)
         return self.lvalue + " "+self.assigntype+" " + crvalue
 
-# A pass statement is not a commented out statement.
-#
-# By that this:
-# while True: pass
-#
-# Is equivalent to while(true);
-# As opposed to while(true)
-#
-# So that's why this returns ";" not ""
 class CppEmptyStatement(CppNode):
+    # A pass statement is not a commented out statement.
+    #
+    # By that this:
+    # while True: pass
+    #
+    # Is equivalent to while(true);
+    # As opposed to while(true)
+    #
+    # So that's why this returns ";" not ""
     def json(self):
         return ["pass_statement"]
 
     def code(self):
         return ";"
-
 
 class CppBreakStatement(CppNode):
     def json(self):
@@ -180,7 +176,6 @@ class CppContinueStatement(CppNode):
 
     def code(self):
         return "continue"
-
 
 class CppFunctionCall(CppNode):
     def __init__(self, identifier, args):
@@ -214,7 +209,6 @@ class CppFunctionCall(CppNode):
         arglist = ", ".join(self.arg_list.code_list())
         return identifier + "(" + arglist + ")"
 
-
 class CppArgumentList(CppNode):
     def __init__(self, *args):
         self.args = args
@@ -228,7 +222,6 @@ class CppArgumentList(CppNode):
 
     def code(self):                                                   # TRANSFORM INVOLVES IINODES :-(
         return ",".join(  [ code_arg(arg) for arg in self.args ]  )   # TRANSFORM INVOLVES IINODES :-(
-
 
 class CppExpressionStatement(CppNode):
     def __init__(self, expression):
@@ -257,7 +250,6 @@ class CppPrintStatement(CppNode):
 
     def code(self):
         return "( std::cout << " + " << \" \" << ".join(self.arg_list.code_list()) + " << std::endl )"
-
 
 class CppForStatement(CppNode):
     def __init__(self, identifier, iterable, statements, for_statement_pynode):
@@ -367,7 +359,8 @@ class CppForStatement(CppNode):
         return code
 
 
-class CppWhileStatement(CppNode): # PURE EXISTS _while_statement
+class CppWhileStatement(CppNode): 
+    # PURE EXISTS _while_statement
 
     def __init__(self, condition, *statements):
         self.raw_condition = condition
@@ -390,8 +383,8 @@ class CppWhileStatement(CppNode): # PURE EXISTS _while_statement
 
         return code
 
-
-class CppIfStatement(CppNode): # PURE EXISTS _if_statement
+class CppIfStatement(CppNode):
+    # PURE EXISTS _if_statement
 
     def __init__(self, condition, statements, extended_clause=None):
         self.raw_condition = condition
@@ -432,8 +425,8 @@ class CppIfStatement(CppNode): # PURE EXISTS _if_statement
             code = code + extended_clauses_code
         return code
 
-
-class CppElseIfClause(CppNode): # PURE EXISTS _else_if_clause
+class CppElseIfClause(CppNode):
+    # PURE EXISTS _else_if_clause
 
     def __init__(self, condition, statements, extended_clause=None):
         self.raw_condition = condition
@@ -477,7 +470,8 @@ class CppElseIfClause(CppNode): # PURE EXISTS _else_if_clause
             code = code + extended_clauses_code
         return code
 
-class CppElseClause(CppNode):  # PURE EXISTS: _else_clause
+class CppElseClause(CppNode):
+    # PURE EXISTS: _else_clause
 
     def __init__(self, statements):
         self.raw_statements = list(statements)

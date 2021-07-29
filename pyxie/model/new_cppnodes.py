@@ -274,7 +274,8 @@ class  _identifier(object):  #NOTE: TBC
         return self.name
 
 
-class _statements_block(object):  #USED
+class _statements_block(object):
+     #USED
 #    # FIXME: Used _for_iter_loop_statement
 #    # FIXME: REPRESENTS A BLOCK OF STATEMENTS (sans enclosing braces - probably)
     # TODO: SHOULD THIS ACTUALLY INCLUDE THE BRACES?

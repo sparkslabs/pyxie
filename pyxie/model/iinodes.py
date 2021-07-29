@@ -26,7 +26,6 @@ class iiNode(object):
     def __json__(self):
         raise TypeError("Abstract Base class method called")
 
-
 class iiProgram(iiNode):
     tag = "program"
     def __init__(self, name, includes, identifiers, statements):
@@ -49,7 +48,6 @@ class iiProgram(iiNode):
         result = {"PROGRAM" : program }
         return result
 
-
 class iiAssignment(iiNode):
     tag = "assignment"
     def __init__(self, lvalue, assignment_op, rvalue):
@@ -58,7 +56,6 @@ class iiAssignment(iiNode):
         self.rvalue= rvalue
     def __json__(self):
         return ["assignment", self.lvalue, self.assignment_op, self.rvalue ]
-
 
 class iiOperator(iiNode):
     tag = "operator"
@@ -97,7 +94,6 @@ class iiOperator(iiNode):
     def __json__(self):
         return ["operator", self.operator, self.args ]
 
-
 class iiFunctionCall(iiNode):
     tag = "function_call"
     def __init__(self, func_object, args):
@@ -106,7 +102,6 @@ class iiFunctionCall(iiNode):
 
     def __json__(self):
         return ["function_call", self.iifunc_object, self.iifunc_call_args ]
-
 
 class iiAttributeAccess(iiNode):
     tag = "attributeaccess"
@@ -117,7 +112,6 @@ class iiAttributeAccess(iiNode):
     def __json__(self):
         return ["attributeaccess", self.expression, self.attribute]
 
-
 class iiIdentifier(iiNode):
     tag = "identifier"
     def __init__(self, identifier):
@@ -126,7 +120,6 @@ class iiIdentifier(iiNode):
     def __json__(self):
         return ["identifier", self.identifier]
 
-
 class iiString(iiNode):
     tag = "string"
     def __init__(self, the_string):
@@ -134,7 +127,6 @@ class iiString(iiNode):
 
     def __json__(self):
         return ["string", self.the_string]
-
 
 class iiInteger(iiNode):
     tag = "integer"
@@ -152,8 +144,6 @@ class iiFloat(iiNode):
     def __json__(self):
         return ["double", self.the_float]
 
-
-
 class iiBoolean(iiNode):
     tag = "boolean"
     def __init__(self, the_boolean):
@@ -161,7 +151,6 @@ class iiBoolean(iiNode):
  
     def __json__(self):
         return ["boolean", self.the_boolean]
-
 
 class iiComparison(iiNode):
     tag = "op"
@@ -174,8 +163,6 @@ class iiComparison(iiNode):
     def __json__(self):
         return ["op", self.comparator, self.left, self.right]
 
-
-
 class iiWhileStatement(iiNode):
     tag = "while_statement"
     def __init__(self, condition, statements):
@@ -185,7 +172,6 @@ class iiWhileStatement(iiNode):
     def __json__(self):
         return ["while_statement", self.condition] + self.statements
 
-
 class iiIterator(iiNode):
     tag = "iterator"
     def __init__(self, expression):
@@ -193,7 +179,6 @@ class iiIterator(iiNode):
 
     def __json__(self):
         return ["iterator", self.expression]
-
 
 class iiForStatement(iiNode):
     tag = "for_statement"
@@ -206,7 +191,6 @@ class iiForStatement(iiNode):
     def __json__(self):
         return ["for_statement", self.lvalue, self.iterator, self.statements, self.for_statement_PyNode]
 
-
 class iiDefStatement(iiNode):
     tag = "func_defintion"
     def __init__(self, name, params, block, def_statement_PyNode):
@@ -218,7 +202,6 @@ class iiDefStatement(iiNode):
     def __json__(self):
         return ["func_defintion", self.name, self.params, self.block, repr(self.def_statement_PyNode) ]
 
-
 class iiPassStatement(iiNode):
     tag = "pass_statement"
     def __init__(self):
@@ -227,14 +210,12 @@ class iiPassStatement(iiNode):
     def __json__(self):
         return ["pass_statement"]
 
-
 class iiBreakStatement(iiNode):
     tag = "break_statement"
     def __init__(self):
         pass
     def __json__(self):
         return ["break_statement"]
-
 
 class iiContinueStatement(iiNode):
     tag = "continue_statement"
@@ -244,7 +225,6 @@ class iiContinueStatement(iiNode):
     def __json__(self):
         return ["continue_statement"]
 
-
 class iiExpressionStatement(iiNode):
     tag = "expression_statement"
     def __init__(self, expression):
@@ -252,8 +232,6 @@ class iiExpressionStatement(iiNode):
 
     def __json__(self):
         return ["expression_statement", self.expression]
-
-
 
 class iiIdentifierDeclaration(iiNode):
     tag = "identifier"
@@ -263,7 +241,6 @@ class iiIdentifierDeclaration(iiNode):
 
     def __json__(self):
         return ["identifier", self.value_type, self.name]
-
 
 class iiElifClause(iiNode):
     tag = "elif_clause"
@@ -278,7 +255,6 @@ class iiElifClause(iiNode):
         else:
             return ["elif_clause", self.condition, self.statements]
 
-
 class iiElseClause(iiNode):
     tag = "else_clause"
     def __init__(self, statements ):
@@ -286,7 +262,6 @@ class iiElseClause(iiNode):
 
     def __json__(self):
         return ["else_clause", self.statements]
-
 
 class iiIfStatement(iiNode):
     tag = "if_statement"
@@ -300,7 +275,6 @@ class iiIfStatement(iiNode):
             return ["if_statement", self.condition, self.statements, self.extended_clause]
         else:
             return ["if_statement", self.condition, self.statements]
-
 
 def ExpressionIsPrintBuiltin(expression):
     assert expression.tag == 'function_call'

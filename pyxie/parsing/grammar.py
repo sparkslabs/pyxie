@@ -32,7 +32,7 @@ def DebugPrint(*args):
 class Grammar(object):
     precedence = (
         ('left', 'PLUS','MINUS'),
-        ('left', 'TIMES','DIVIDE'),
+        ('left', 'DIVIDE','TIMES'),
         ('right', 'UMINUS')
     )
     tokens = tokens
