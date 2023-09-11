@@ -18,8 +18,9 @@
 # NOTE: EDIT site/setup.tmpl instead
 #
 
-from distutils.core import setup
-from distutils.version import LooseVersion
+# from distutils.core import setup
+from setuptools import setup
+
 import os
 
 def is_package(path):

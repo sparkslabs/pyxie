@@ -50,10 +50,10 @@ ppadeb:
 	@echo "Clean up dist before uploading to pypi, or it'll contain too much junk"
 
 use:
-	sudo dpkg -i dist/deb_dist/python-$(PROJECT)*deb
+	sudo dpkg -i dist/deb_dist/python3-$(PROJECT)*deb
 
 purge:
-	sudo apt-get purge python-$(PROJECT)
+	sudo apt-get purge python3-$(PROJECT)
 
 clean:
 	$(PYTHON) setup.py clean
