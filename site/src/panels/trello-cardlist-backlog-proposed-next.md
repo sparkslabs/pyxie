@@ -2,11 +2,12 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Backlog: Proposed Next
-updated: February 2018
+updated: January 2020
 title: Trello Cardlist Backlog: Proposed Next
 ---
 ### Backlog: Proposed Next
 
+* Add web assmbly target to Pyxie?
 * 271\. Transformation from python AST to C-CST exists/works - for simplest possible function
 * 268\. Code generation for very basic functions succeeds. (no args, return values or variables)
 * 267\. Analysis of functions not using any variables succeeds (no args, no return values)

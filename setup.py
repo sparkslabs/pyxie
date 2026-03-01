@@ -500,7 +500,7 @@ As of 0.1.23, the print\_statement has been removed. As well as being
 simplifying the syntax, it also means that Arudino statements like
 Serial.print now become legal statements.
 
-Michael Sparks, February 2018
+Michael Sparks, July 2018
 
 """
       )

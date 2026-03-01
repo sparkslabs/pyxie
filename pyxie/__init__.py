@@ -400,7 +400,7 @@ the syntax, it also means that Arudino statements like Serial.print now become
 legal statements.
 
 
-Michael Sparks, February 2018
+Michael Sparks, July 2018
 
 
 """

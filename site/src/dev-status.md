@@ -2,7 +2,7 @@
 template: mainpage
 source_form: markdown
 name: Dev Status
-updated: 08 February 2018
+updated: 31 January 2020
 title: Detailed Dev status
 ---
 ## Detailed Development status

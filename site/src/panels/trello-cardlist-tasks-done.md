@@ -2,11 +2,12 @@
 template: mainpanel
 source_form: markdown
 name: Trello Cardlist Tasks Done
-updated: February 2018
+updated: January 2020
 title: Trello Cardlist Tasks Done
 ---
 ### Tasks Done
 
+* 0\.1.25 - - - - - (tasks)
 * 0\.1.23 - - - - - (tasks)
 * 0\.1.23 Release tasks
 * 0\.0.22 - - - - - (tasks)

@@ -19,9 +19,8 @@ commits. _(This is exported from trello)_
 
 ### WIP
 
-* 297\. Detangle the code transforms out from the cppnodes...
-* 18\. Code generation of C literals is muddled up a touch with structural representation #internals
-* 293\. Extract the transforms from cppnodes into pyxie.transform.ii2cpp
+* 298\. Implement "pure" CPP Nodes
+* 299\. "new" CPP Nodes have a json debug representation
 
 
 ### Paused
@@ -37,17 +36,19 @@ commits. _(This is exported from trello)_
 
 ### Release Backlog: Features
 
-* 0\.1.26 = = = = = = = = = =
+* Experiment with making an appropriate json-ish value type core
 * 286\. Revise iiNodes to use ECS like ideas
-* 288\. Use ECS style iiNodes for type inference and variable collation
 * 291\. Rename model.transform to transform.pynodetoiinode
+* 288\. Use ECS style iiNodes for type inference and variable collation
+* 0\.1.26 = = = = = = = = = =
 * 32\. C Syntax Tree is a Tree #internals
+* 297\. Detangle the code transforms out from the cppnodes...
+* 18\. Code generation of C literals is muddled up a touch with structural representation #internals
+* 293\. Extract the transforms from cppnodes into pyxie.transform.ii2cpp
 
 
 ### Release Backlog: Tasks
 
-* 0\.1.26 - - - - - (tasks)
-* 0\.1.25 - - - - - (tasks)
 * 287\. Make repo more visible
 * 57\. Blog post: Pyxie structure #website
 
@@ -58,6 +59,7 @@ commits. _(This is exported from trello)_
 
 ### Backlog: Proposed Next
 
+* Add web assmbly target to Pyxie?
 * 271\. Transformation from python AST to C-CST exists/works - for simplest possible function
 * 268\. Code generation for very basic functions succeeds. (no args, return values or variables)
 * 267\. Analysis of functions not using any variables succeeds (no args, no return values)
@@ -353,6 +355,7 @@ commits. _(This is exported from trello)_
 
 ### Tasks Done
 
+* 0\.1.25 - - - - - (tasks)
 * 0\.1.23 - - - - - (tasks)
 * 0\.1.23 Release tasks
 * 0\.0.22 - - - - - (tasks)
